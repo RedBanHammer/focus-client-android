@@ -7,3 +7,8 @@
 /build
 /captures
 .externalNativeBuild
+
+# From SO
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/gradle.xml
