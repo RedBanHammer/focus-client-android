@@ -1,0 +1,18 @@
+package edu.usc.csci310.focus.focus.managers;
+
+/**
+ * Delegate for ScheduleManager
+ */
+
+public interface ScheduleManagerDelegate {
+
+    /*
+    * managerDidUpdateSchedule method. Takes in a ScheduleManager object and a Schedule object
+    */
+    public void managerDidUpdateSchedule(ScheduleManager manager, Schedule schedule);
+
+    /*
+    * managerDidRemoveSchedule method. Takes in a ScheduleManager object and a Schedule object
+    */
+    public void managerDidRemoveSchedule(ScheduleManager manager, Schedule schedule);
+}
