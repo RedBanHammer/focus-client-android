@@ -1,5 +1,8 @@
 package edu.usc.csci310.focus.focus.managers;
 
+import edu.usc.csci310.focus.focus.dataobjects.Schedule;
+
+
 /**
  * Schedule Manager object. Handles events for schedules.
  */
