@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import edu.usc.csci310.focus.focus.R;
+import edu.usc.csci310.focus.focus.dataobjects.Profile;
 
 public class SelectProfile {
     private SelectProfileInterface selectProfileInterface;

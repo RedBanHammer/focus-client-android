@@ -1,5 +1,7 @@
 package edu.usc.csci310.focus.focus.presentation;
 
+import edu.usc.csci310.focus.focus.dataobjects.App;
+
 /**
  * SelectAppInterfaceControllerDelegate Class
  */
