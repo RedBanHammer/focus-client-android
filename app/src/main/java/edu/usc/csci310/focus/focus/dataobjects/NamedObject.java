@@ -53,6 +53,6 @@ public class NamedObject implements Serializable {
      * @param binaryRepresentation The bytewise representation to parse.
      */
     public void NamedObject(byte[] binaryRepresentation) {
-        
+        // unsure what to do
     }
 }
