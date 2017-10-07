@@ -1,6 +1,6 @@
 package edu.usc.csci310.focus.focus.dataobjects;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.UUID;
 
 /**
@@ -53,6 +53,22 @@ public class NamedObject implements Serializable {
      * @param binaryRepresentation The bytewise representation to parse.
      */
     public void NamedObject(byte[] binaryRepresentation) {
-        // unsure what to do
+        NamedObject no;
+
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(binaryRepresentation);
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            no = (NamedObject) ois.readObject();
+        }catch(IOException i) {
+            i.printStackTrace();
+            return;
+        }catch(ClassNotFoundException c) {
+            System.out.println("NamedObject class not found");
+            c.printStackTrace();
+            return;
+        }
+
+        this.name = no.getName();
+        this.identifier = no.getIdentifier();
     }
 }
