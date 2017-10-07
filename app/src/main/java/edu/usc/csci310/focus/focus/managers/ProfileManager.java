@@ -1,11 +1,22 @@
 package edu.usc.csci310.focus.focus.managers;
 
+import java.lang.ref.WeakReference;
+
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
+
 /**
  * Profile Manager. Controls activities of profiles.
  */
 
 public class ProfileManager {
+    private static ProfileManager defaultManager = new ProfileManager();
+
+    public static ProfileManager getDefaultManager() {
+        return defaultManager;
+    }
+
+    public WeakReference<ProfileManagerDelegate> delegate;
+
     /*
      * Profile Manager constructor.
      */
