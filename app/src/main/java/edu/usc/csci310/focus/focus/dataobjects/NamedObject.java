@@ -27,8 +27,8 @@ public class NamedObject implements Serializable {
      */
     public NamedObject(String name) {
         this.name = name;
-        UUID ident = UUID.randomUUID();
-        this.identifier = "" + ident;
+        UUID id = UUID.randomUUID();
+        this.identifier = "" + id;
     }
 
     public String getName() {
@@ -45,7 +45,20 @@ public class NamedObject implements Serializable {
      * @return A bytewise representation of the object.
      */
     public byte[] getBinaryRepresentation() {
-        return new byte[50];
+        byte[] binaryRepresentation = new byte[50];
+
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream out = new ObjectOutputStream(baos);
+            out.writeObject(this);
+            binaryRepresentation = baos.toByteArray();
+            out.close();
+            baos.close();
+        }catch(IOException i) {
+            i.printStackTrace();
+        }
+
+        return binaryRepresentation;
     }
 
     /**
@@ -59,11 +72,13 @@ public class NamedObject implements Serializable {
             ByteArrayInputStream bais = new ByteArrayInputStream(binaryRepresentation);
             ObjectInputStream ois = new ObjectInputStream(bais);
             no = (NamedObject) ois.readObject();
+            ois.close();
+            bais.close();
         }catch(IOException i) {
             i.printStackTrace();
             return;
         }catch(ClassNotFoundException c) {
-            System.out.println("NamedObject class not found");
+            System.out.println("NamedObject class not found.");
             c.printStackTrace();
             return;
         }

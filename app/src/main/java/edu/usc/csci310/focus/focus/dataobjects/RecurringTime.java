@@ -40,7 +40,8 @@ public class RecurringTime {
      * @param dayIndex The day of the week to remove times at.
      */
     public void removeTimes(Integer dayIndex) {
-        this.times.remove(dayIndex);
+        int index = dayIndex;
+        this.times.remove(index);
     }
 
     /**
