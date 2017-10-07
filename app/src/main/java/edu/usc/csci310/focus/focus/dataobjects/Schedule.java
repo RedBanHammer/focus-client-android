@@ -20,6 +20,7 @@ public class Schedule extends NamedObject {
      */
     public Schedule(ArrayList<Profile> profiles, String name) {
         super(name);
+        this.profiles = profiles;
     }
 
     /**
@@ -28,15 +29,26 @@ public class Schedule extends NamedObject {
      * @param time The recurring times the profile should activate in the schedule.
      */
     public void addProfile(Profile profile, RecurringTime time) {
+        this.profiles.add(profile);
+        this.profileTimes.put(profile.getName(), time);
+    }
 
+    /**
+     * Remove a profile from the schedule and remove its recurring time entry
+     * @param profile The profile to remove.
+     */
+    public void removeProfile(Profile profile) {
+        int index = this.profiles.indexOf(profile);
+        this.profiles.remove(index);
+        this.profileTimes.remove(profile.getName());
     }
 
     public ArrayList<Profile> getProfiles() {
-        return null;
+        return this.profiles;
     }
 
-    public HashMap<String, RecurringTime> getProfileTimes() {
-        return null;
+    public Map<String, RecurringTime> getProfileTimes() {
+        return this.profileTimes;
     }
 
     public void setIsActive(boolean flag) {

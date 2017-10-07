@@ -19,21 +19,32 @@ public class Profile extends NamedObject {
     }
 
     public void addApp(App app) {
-
+        this.apps.add(app);
     }
 
     public void removeAppWithName(String name) {
-
+        int index = -1;
+        for (int i = 0; i < apps.size(); i++) {
+            if (this.apps.get(i).getName().equalsIgnoreCase(name)) {
+                index = i;
+            }
+        }
+        if (index >= 0)
+            this.apps.remove(index);
     }
 
     public void removeAppWithIdentifier(String bundleID) {
-
+        int index = -1;
+        for (int i = 0; i < apps.size(); i++) {
+            if (this.apps.get(i).getIdentifier().equals(bundleID)) {
+                index = i;
+            }
+        }
+        if (index >= 0)
+            this.apps.remove(index);
     }
 
-    public ArrayList<App> getApps() {
-        return null;
-    }
-
+    public ArrayList<App> getApps() { return this.apps; }
 
     public void setIsActive(boolean flag) {
         this.isActive = flag;
