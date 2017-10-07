@@ -1,5 +1,7 @@
 package edu.usc.csci310.focus.focus.managers;
 
+import java.lang.ref.WeakReference;
+
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 import edu.usc.csci310.focus.focus.dataobjects.TimeInterval;
 
@@ -8,7 +10,15 @@ import edu.usc.csci310.focus.focus.dataobjects.TimeInterval;
  * Schedule Manager object. Handles events for schedules.
  */
 
-public class ScheduleManager implements ScheduleManagerDelegate{
+public class ScheduleManager implements ScheduleManagerDelegate {
+    private static ScheduleManager defaultManager = new ScheduleManager();
+
+    public static ScheduleManager getDefaultManager() {
+        return defaultManager;
+    }
+
+    public WeakReference<ScheduleManagerDelegate> delegate;
+
     /*
     * Constructor for Schedule Manager
     * */

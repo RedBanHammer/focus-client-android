@@ -7,7 +7,7 @@ import edu.usc.csci310.focus.focus.dataobjects.Schedule;
  * Delegate for ScheduleManager
  */
 
-public interface ScheduleManagerDelegate {
+abstract interface ScheduleManagerDelegate {
 
     /*
     * managerDidUpdateSchedule method. Takes in a ScheduleManager object and a Schedule object
