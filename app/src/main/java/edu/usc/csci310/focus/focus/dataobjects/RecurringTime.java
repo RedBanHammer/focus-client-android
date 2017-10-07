@@ -2,6 +2,7 @@ package edu.usc.csci310.focus.focus.dataobjects;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.HashMap;
 
 /**
  * An object holding a recurring set of times during the week.
@@ -11,7 +12,7 @@ public class RecurringTime {
     private ArrayList<Map<Long, Long>> times;
 
     public RecurringTime() {
-
+        this.times = new ArrayList<Map<Long, Long>>();
     }
 
     /**
@@ -21,7 +22,9 @@ public class RecurringTime {
      * @param duration The duration of the time block.
      */
     public void addTime(Integer dayIndex, Long minuteIndex, Long duration) {
-
+        Map<Long, Long> data = new HashMap<Long, Long>();
+        data.put(minuteIndex, duration);
+        this.times.add(dayIndex, data);
     }
 
     /**
@@ -37,7 +40,7 @@ public class RecurringTime {
      * @param dayIndex The day of the week to remove times at.
      */
     public void removeTimes(Integer dayIndex) {
-
+        this.times.remove(dayIndex);
     }
 
     /**
@@ -46,6 +49,6 @@ public class RecurringTime {
      * @param minuteIndex The specific starting minute of the time block.
      */
     public void removeTime(Integer dayIndex, Long minuteIndex) {
-
+        this.times.get(dayIndex).remove(minuteIndex);
     }
 }

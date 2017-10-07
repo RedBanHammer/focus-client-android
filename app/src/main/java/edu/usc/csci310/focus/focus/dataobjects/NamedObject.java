@@ -1,6 +1,7 @@
 package edu.usc.csci310.focus.focus.dataobjects;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * An object with a name and unique identifier.
@@ -25,7 +26,9 @@ public class NamedObject implements Serializable {
      * @param name The string name of the object.
      */
     public NamedObject(String name) {
-
+        this.name = name;
+        UUID ident = UUID.randomUUID();
+        this.identifier = "" + ident;
     }
 
     public String getName() {
@@ -50,6 +53,6 @@ public class NamedObject implements Serializable {
      * @param binaryRepresentation The bytewise representation to parse.
      */
     public void NamedObject(byte[] binaryRepresentation) {
-
+        
     }
 }
