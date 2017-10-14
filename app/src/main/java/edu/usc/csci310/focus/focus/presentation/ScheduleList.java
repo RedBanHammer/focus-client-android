@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -21,7 +23,7 @@ import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 
-public class ScheduleList extends Fragment {
+public class ScheduleList extends Fragment implements CreateScheduleDialog.NameListener{
     public final static String PROFILE_LIST = "edu.usc.csci310.focus.focus.presentation.profile_list";
     private ListView listView;
     ArrayList<Schedule> schedules;
@@ -58,7 +60,7 @@ public class ScheduleList extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.activity_schedule_list, container, false);
         // call the views with this layout
-        listView = (ListView)getActivity().findViewById(R.id.scheduleListView);
+        listView = (ListView)v.findViewById(R.id.scheduleListView);
         profiles = new ArrayList<Profile>();
         profiles.add(new Profile("Profile1"));
         schedules = new ArrayList<Schedule>();
@@ -71,9 +73,18 @@ public class ScheduleList extends Fragment {
         addScheduleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                intent = new Intent(getActivity(), CreateScheduleInterfaceController.class);
-                intent.putExtra(PROFILE_LIST, profiles);
-                startActivityForResult(intent, 0);
+//                intent = new Intent(getActivity(), CreateScheduleInterfaceController.class);
+//                intent.putExtra(PROFILE_LIST, profiles);
+//                startActivityForResult(intent, 0);
+                // close existing dialog fragments
+                FragmentManager manager = getFragmentManager();
+                Fragment frag = manager.findFragmentByTag("createScheduleDialog");
+                if (frag != null) {
+                    manager.beginTransaction().remove(frag).commit();
+                }
+                CreateScheduleDialog editNameDialog = new CreateScheduleDialog();
+                editNameDialog.show(manager, "createScheduleDialog");
+
             }
         });
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -85,5 +96,9 @@ public class ScheduleList extends Fragment {
             }
         });
         return v;
+    }
+    @Override
+    public void onFinishUserDialog(String user) {
+        Toast.makeText(getActivity(), "Hello, " + user, Toast.LENGTH_SHORT).show();
     }
 }
