@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Focus</string>
     <string name="action_settings">Settings</string>
+    <string name="notification_service_label">NotificationBlocker</string>
 	<string name="textview">TextView</string>
     <string name="appicon">appicon</string>
     <string name="profilename">ProfileName</string>
