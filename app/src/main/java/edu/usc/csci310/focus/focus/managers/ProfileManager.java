@@ -1,8 +1,12 @@
 package edu.usc.csci310.focus.focus.managers;
 
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
+import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
+import edu.usc.csci310.focus.focus.storage.StorageManager;
 
 /**
  * Profile Manager. Controls activities of profiles.
@@ -17,6 +21,8 @@ public class ProfileManager {
 
     public WeakReference<ProfileManagerDelegate> delegate;
 
+    private StorageManager storage = StorageManager.getDefaultManager();
+
     /*
      * Profile Manager constructor.
      */
@@ -29,7 +35,10 @@ public class ProfileManager {
     */
     public void setProfile(Profile profile)
     {
-
+        // notify delegate
+        ((ProfileManagerDelegate) delegate).managerDidUpdateProfile(this, profile);
+        // update with storage manager
+        storage.setObject(profile, "Profiles", profile.getIdentifier());
     }
 
     /*
@@ -37,7 +46,8 @@ public class ProfileManager {
     */
     public void removeProfile(Profile profile)
     {
-
+        ((ProfileManagerDelegate) delegate).managerDidRemoveProfile(this, profile);
+        storage.removeObject("Profiles", profile.getIdentifier());
     }
 
     /*
@@ -50,7 +60,20 @@ public class ProfileManager {
     */
     public Profile getProfileWithName(String name)
     {
-        return null;
+        ArrayList<Serializable> serials = storage.getObjectsWithPrefix("Profiles");
+        ArrayList<Profile> profiles = new ArrayList<Profile>();
+
+        for (Serializable o : serials) {
+            profiles.add((Profile) o);
+        }
+
+        Profile p = null;
+        for (Profile prof : profiles) {
+            if (prof.getName().equals(name))
+                p = prof;
+        }
+
+        return p;
     }
 
     /*
@@ -59,31 +82,76 @@ public class ProfileManager {
     */
     public Profile getProfileWithIdentifier(String identifier)
     {
-        return null;
+        return storage.getObject("Profiles", identifier);
     }
 
     /*
     * getProfilesWithNames() method. Takes in a string with profile name,
     * returns the corresponding Profile objects in an array.
     */
-    public Profile[] getProfilesWithNames(String appName)
+    public ArrayList<Profile> getProfilesWithNames(String appName)
     {
-        return null;
+        ArrayList<Serializable> serials = storage.getObjectsWithPrefix("Profiles");
+        ArrayList<Profile> profiles = new ArrayList<Profile>();
+
+        for (Serializable o : serials) {
+            profiles.add((Profile) o);
+        }
+
+        ArrayList<App> apps = new ArrayList<App>();
+        ArrayList<Profile> profs = new ArrayList<Profile>();
+
+        for (Profile s:profiles) {
+            apps = s.getApps();
+            for (App a : apps) {
+                if (a.getName().equals(appName)) {
+                    profs.add(s);
+                }
+            }
+        }
+
+        return profs;
     }
 
     /*
     * getProfileWithIdentifiers() method. Takes in a string with profile name,
     * returns the corresponding Profile objects in an array.
     */
-    public Profile[] getProfileWithIdentifiers(String appBundleID)
+    public ArrayList<Profile> getProfileWithIdentifiers(String appBundleID)
     {
-        return null;
+        ArrayList<Serializable> serials = storage.getObjectsWithPrefix("Profiles");
+        ArrayList<Profile> profiles = new ArrayList<Profile>();
+
+        for (Serializable o : serials) {
+            profiles.add((Profile) o);
+        }
+
+        ArrayList<App> apps = new ArrayList<App>();
+        ArrayList<Profile> profs = new ArrayList<Profile>();
+
+        for (Profile s:profiles) {
+            apps = s.getApps();
+            for (App a : apps) {
+                if (a.getIdentifier().equals(appBundleID)) {
+                    profs.add(s);
+                }
+            }
+        }
+
+        return profs;
     }
     /*
     * getAllProfiles() method. Returns every Profile object in a Profile array
     */
-    public Profile[] getAllProfiles()
+    public ArrayList<Profile> getAllProfiles()
     {
-        return null;
+        ArrayList<Serializable> serials = storage.getObjectsWithPrefix("Profiles");
+        ArrayList<Profile> profiles = new ArrayList<Profile>();
+
+        for (Serializable o : serials) {
+            profiles.add((Profile) o);
+        }
+
+        return profiles;
     }
 }

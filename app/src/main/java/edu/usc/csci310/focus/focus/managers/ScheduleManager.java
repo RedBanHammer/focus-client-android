@@ -1,16 +1,20 @@
 package edu.usc.csci310.focus.focus.managers;
 
+import java.io.Serializable;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
+import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 import edu.usc.csci310.focus.focus.dataobjects.TimeInterval;
+import edu.usc.csci310.focus.focus.storage.StorageManager;
 
 
 /**
  * Schedule Manager object. Handles events for schedules.
  */
 
-public class ScheduleManager implements ScheduleManagerDelegate {
+public class ScheduleManager {
     private static ScheduleManager defaultManager = new ScheduleManager();
 
     public static ScheduleManager getDefaultManager() {
@@ -19,6 +23,8 @@ public class ScheduleManager implements ScheduleManagerDelegate {
 
     public WeakReference<ScheduleManagerDelegate> delegate;
 
+    private StorageManager storage = StorageManager.getDefaultManager();
+
     /*
     * Constructor for Schedule Manager
     * */
@@ -26,24 +32,13 @@ public class ScheduleManager implements ScheduleManagerDelegate {
 
     }
 
-    @Override
-    /* Method from ScheduleManagerDelegate*/
-    public void managerDidUpdateSchedule(ScheduleManager manager, Schedule schedule) {
-
-    }
-
-    @Override
-    /* Method from ScheduleManagerDelegate*/
-    public void managerDidRemoveSchedule(ScheduleManager manager, Schedule schedule) {
-
-    };
-
     /*
     * setSchedule method, takes in a Schedule object
     * */
     public void setSchedule(Schedule schedule)
     {
-
+        ((ScheduleManagerDelegate) delegate).managerDidUpdateSchedule(this, schedule);
+        storage.setObject(schedule, "Schedules", schedule.getIdentifier());
     }
 
     /*
@@ -51,7 +46,8 @@ public class ScheduleManager implements ScheduleManagerDelegate {
    * */
     public void removeSchedule(String scheduleidentifier)
     {
-
+        //((ScheduleManagerDelegate) delegate).managerDidRemoveSchedule(this, schedule);
+        storage.removeObject("Schedules", scheduleidentifier);
     }
     /*
     * -------------------GETTERS-------------------------------
@@ -61,24 +57,55 @@ public class ScheduleManager implements ScheduleManagerDelegate {
    * getSchedulesInTimeInterval method, takes in a TimeInterval, returns array of Schedule objects.
    *  ----perhaps we can use java.time class to replace a timeinterval object? will need further consideration-----
    * */
-    public Schedule[] getSchedulesInTimeInterval(TimeInterval timeinterval)
+    public ArrayList<Schedule> getSchedulesInTimeInterval(TimeInterval timeinterval)
     {
+        // Unsure what to do here?
         return null;
     }
+
+    /*
+    * getScheduleWithName() method. Takes in a string with schedule name,
+    * returns the corresponding Schedule object.
+    */
+    public Schedule getScheduleWithName(String name)
+    {
+        ArrayList<Serializable> serials = storage.getObjectsWithPrefix("Schedules");
+        ArrayList<Schedule> schedules = new ArrayList<Schedule>();
+
+        for (Serializable o : serials) {
+            schedules.add((Schedule) o);
+        }
+
+        Schedule s = null;
+        for (Schedule sched : schedules) {
+            if (sched.getName().equals(name))
+                s = sched;
+        }
+
+        return s;
+    }
+
     /*
    * getSchedule method, takes in a Schedule object
    * */
-    public Schedule[] getSchedule(String scheduleidentifier)
+    public ArrayList<Schedule> getScheduleWithIdentifier(String identifier)
     {
-        return null;
+        return storage.getObject("Schedules", identifier);
     }
 
     /*
     * getAllSchedules method, returns an array of all Schedule objects
     * */
-    public Schedule[] getAllSchedules()
+    public ArrayList<Schedule> getAllSchedules()
     {
-        return null;
+        ArrayList<Serializable> serials = storage.getObjectsWithPrefix("Schedules");
+        ArrayList<Schedule> schedules = new ArrayList<Schedule>();
+
+        for (Serializable o : serials) {
+            schedules.add((Schedule) o);
+        }
+
+        return schedules;
     }
 
 

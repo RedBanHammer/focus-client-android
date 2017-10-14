@@ -2,6 +2,7 @@ package edu.usc.csci310.focus.focus.dataobjects;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import edu.usc.csci310.focus.focus.managers.ProfileManager;
 
 /**
  * A profile holds a collection of blocked apps.
@@ -17,6 +18,7 @@ public class Profile extends NamedObject {
      */
     public Profile(String name) {
         super(name);
+        ProfileManager.getDefaultManager().setProfile(this);
     }
 
     public void setApps(ArrayList<App> apps)
@@ -26,6 +28,7 @@ public class Profile extends NamedObject {
 
     public void addApp(App app) {
         this.apps.add(app);
+        ProfileManager.getDefaultManager().setProfile(this);
     }
 
     public void removeAppWithName(String name) {
@@ -35,8 +38,10 @@ public class Profile extends NamedObject {
                 index = i;
             }
         }
-        if (index >= 0)
+        if (index >= 0) {
             this.apps.remove(index);
+            ProfileManager.getDefaultManager().setProfile(this);
+        }
     }
 
     public void removeAppWithIdentifier(String bundleID) {
@@ -46,17 +51,18 @@ public class Profile extends NamedObject {
                 index = i;
             }
         }
-        if (index >= 0)
+        if (index >= 0) {
             this.apps.remove(index);
+            ProfileManager.getDefaultManager().setProfile(this);
+        }
     }
 
     public ArrayList<App> getApps() { return this.apps; }
 
     public void setIsActive(boolean flag) {
         this.isActive = flag;
+        ProfileManager.getDefaultManager().setProfile(this);
     }
 
-    public boolean getIsActive() {
-        return this.isActive;
-    }
+    public boolean getIsActive() { return this.isActive; }
 }
