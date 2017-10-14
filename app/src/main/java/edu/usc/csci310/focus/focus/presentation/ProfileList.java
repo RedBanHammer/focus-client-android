@@ -40,9 +40,14 @@ public class ProfileList extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Profile profile = new Profile("NAME");
+        String name = profile.getName();
         profiles = new ArrayList<Profile>();
         profiles.add(new Profile("Profile1"));
+        profiles.add(new Profile("Profile2"));
+        profiles.add(new Profile("Profile3"));
+        profiles.add(profile);
+        profiles.add(new Profile("Profile4"));
     }
 
     //handle UI events
@@ -51,7 +56,6 @@ public class ProfileList extends Fragment {
         View v = inflater.inflate(R.layout.activity_profile_list, container, false);
 
         addProfileButton = (FloatingActionButton) v.findViewById(R.id.addProfileButton);
-
 
         // call the views with this layout
         listView = (ListView) v.findViewById(R.id.profileListView);

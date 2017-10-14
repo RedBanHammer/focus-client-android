@@ -39,36 +39,35 @@ public class ScheduleList extends Fragment {
         return scheduleListFragment;
     }
 
-    /*
-     * Renders the schedule list view
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        profiles = new ArrayList<Profile>();
-        profiles.add(new Profile("Profile1"));
-        schedules = new ArrayList<Schedule>();
-        schedules.add(new Schedule(profiles,"Schedule1"));
+
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // call the views with this layout
-        listView = (ListView)getActivity().findViewById(R.id.scheduleListView);
-
-        scheduleListViewAdapter = new ScheduleListViewAdapter(getActivity(), 0, schedules);
-        listView.setAdapter(scheduleListViewAdapter);
     }
 
+    /*
+     * Renders the schedule list view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.activity_schedule_list, container, false);
-
+        // call the views with this layout
+        listView = (ListView)getActivity().findViewById(R.id.scheduleListView);
+        profiles = new ArrayList<Profile>();
+        profiles.add(new Profile("Profile1"));
+        schedules = new ArrayList<Schedule>();
+        schedules.add(new Schedule(profiles,"Schedule1"));
+        scheduleListViewAdapter = new ScheduleListViewAdapter(getActivity(), 0, schedules);
+        listView.setAdapter(scheduleListViewAdapter);
         addScheduleButton = (FloatingActionButton) v.findViewById(R.id.addScheduleButton);
 
-        // add new profile
+        // create new schedule
         addScheduleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

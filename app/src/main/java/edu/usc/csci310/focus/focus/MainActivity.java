@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(viewPagerAdapter);
@@ -53,9 +54,11 @@ public class MainActivity extends AppCompatActivity {
 
     public static class MyPagerAdapter extends FragmentStatePagerAdapter {
         private static int NUM_TABS = 3;
+        private FragmentManager fm;
 
         public MyPagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager);
+            fm = fragmentManager;
         }
 
         // Returns total number of pages
@@ -71,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 case 0: // Fragment # 0 - This will show FirstFragment
                     return ProfileList.newInstance(0, tabs[0]);
                 case 1: // Fragment # 0 - This will show FirstFragment different title
-                    return ProfileList.newInstance(1, tabs[1]);
+                    return ScheduleList.newInstance(1, tabs[1]);
                 case 2: // Fragment # 1 - This will show SecondFragment
                     return ProfileList.newInstance(2, tabs[2]);
                 default:
