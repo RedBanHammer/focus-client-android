@@ -1,7 +1,23 @@
 <resources>
     <string name="app_name">Focus</string>
     <string name="action_settings">Settings</string>
+    <string name="notification_service_label">NotificationBlocker</string>
     <string name="textview">TextView</string>
     <string name="appicon">appicon</string>
     <string name="profilename">ProfileName</string>
+    <string name="create_schedule_name">Name:</string>
+    <string name="create_schedule_profiles">Profiles</string>
+    <string name="create_schedule_days">Days: </string>
+    <string name="add_profiles">Add</string>
+    <string name="sunday">Sun</string>
+    <string name="monday">M</string>
+    <string name="tuesday">Tu</string>
+    <string name="wednesday">W</string>
+    <string name="thursday">Th</string>
+    <string name="friday">F</string>
+    <string name="saturday">Sat</string>
+    <string name="repeat_weekly">Repeat Weekly</string>
+    <string name="set_schedule_name">Schedule Name</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
