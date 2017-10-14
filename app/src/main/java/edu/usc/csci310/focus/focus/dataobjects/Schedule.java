@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.usc.csci310.focus.focus.managers.ScheduleManager;
+
 /**
  * A collection of profiles and recurring times when they should activate.
  */
@@ -21,6 +23,7 @@ public class Schedule extends NamedObject {
     public Schedule(ArrayList<Profile> profiles, String name) {
         super(name);
         this.profiles = profiles;
+        ScheduleManager.getDefaultManager().setSchedule(this);
     }
 
     /**
@@ -31,6 +34,7 @@ public class Schedule extends NamedObject {
     public void addProfile(Profile profile, RecurringTime time) {
         this.profiles.add(profile);
         this.profileTimes.put(profile.getName(), time);
+        ScheduleManager.getDefaultManager().setSchedule(this);
     }
 
     /**
@@ -41,6 +45,7 @@ public class Schedule extends NamedObject {
         int index = this.profiles.indexOf(profile);
         this.profiles.remove(index);
         this.profileTimes.remove(profile.getName());
+        ScheduleManager.getDefaultManager().setSchedule(this);
     }
 
     public ArrayList<Profile> getProfiles() {
@@ -53,6 +58,7 @@ public class Schedule extends NamedObject {
 
     public void setIsActive(boolean flag) {
         this.isActive = flag;
+        ScheduleManager.getDefaultManager().setSchedule(this);
     }
 
     public boolean getIsActive(boolean flag) {

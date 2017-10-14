@@ -12,12 +12,12 @@ abstract interface ProfileManagerDelegate {
      * @param manager The ProifileManager that is sending the event.
      * @param profile The profile whose data was updated.
      */
-    void managerDidUpdateProfile(ProfileManager manager, Profile profile);
+    public void managerDidUpdateProfile(ProfileManager manager, Profile profile);
 
     /**
      * Called when the manager deletes a profile object.
      * @param manager The ProifileManager that is sending the event.
      * @param profile The profile that was deleted.
      */
-    void managerDidRemoveProfile(ProfileManager manager, Profile profile);
+    public void managerDidRemoveProfile(ProfileManager manager, Profile profile);
 }
