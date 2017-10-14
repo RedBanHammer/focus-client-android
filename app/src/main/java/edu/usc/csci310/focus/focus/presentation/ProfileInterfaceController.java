@@ -4,6 +4,7 @@ package edu.usc.csci310.focus.focus.presentation;
  *
  * Activity that shows an edit ProfileInterfaceController page
  */
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
@@ -36,14 +37,12 @@ public class ProfileInterfaceController extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        //LOAD APP ICONS
-        /*try {
-            loadAppIcons();
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }*/
+        //get the profile information passed through CreateProfileInterfaceController
+        //MAKE SURE THIS MATCHES HOW WE RECEIVE THE PROFILE FROM THE MAIN MENU
+        Intent intent = getIntent();
+        this.profile = (Profile) intent.getSerializableExtra("PROFILE");
 
-        appListAdapter appAdapter = new appListAdapter(this, profile.getApps());
+        appViewAdapter appAdapter = new appViewAdapter(this, profile.getApps());
 
         ListView listView = (ListView) findViewById(R.id.listviewprofile);
         listView.setAdapter(appAdapter);
@@ -52,7 +51,6 @@ public class ProfileInterfaceController extends AppCompatActivity {
         tv.setText(profile.getName());
 
     }
-
 
 
     /*
@@ -77,12 +75,5 @@ public class ProfileInterfaceController extends AppCompatActivity {
         return false;
     }
 
-    private void loadAppIcons() throws PackageManager.NameNotFoundException {
-        for (int i = 0; i < profile.getApps().size(); i++) {
-            App temp = profile.getApps().get(i);
-            Drawable appIcon = getPackageManager().getApplicationIcon(temp.getIdentifier());
-            temp.setIcon(appIcon);
-        }
 
-    }
 }

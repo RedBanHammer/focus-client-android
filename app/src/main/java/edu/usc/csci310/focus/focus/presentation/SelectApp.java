@@ -4,11 +4,16 @@ package edu.usc.csci310.focus.focus.presentation;
  *
  * Activity that displays all of the user's Android apps
  */
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +22,8 @@ import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.App;
 
 public class SelectApp extends AppCompatActivity implements SelectAppInterface {
-    private ArrayList<App> appList;
+    private ArrayList<App> appList = new ArrayList<>();
+    private appListAdapter appAdapter;
     /*
      * Renders the list of Android apps
      */
@@ -28,7 +34,8 @@ public class SelectApp extends AppCompatActivity implements SelectAppInterface {
 
         //LOAD THE APPLIST WITH EVERY APPLICATION ON THE PHONE
         List<PackageInfo> apps = getPackageManager().getInstalledPackages(0);
-        for(int i = 0; i < apps.size(); i++)
+        int appsize = apps.size();
+        for(int i = 0; i < appsize; i++)
         {
             PackageInfo packageInfo = apps.get(i);
             String name = packageInfo.applicationInfo.loadLabel(getPackageManager()).toString();
@@ -49,6 +56,25 @@ public class SelectApp extends AppCompatActivity implements SelectAppInterface {
         }
 
         //load the apps into the interface
+        appAdapter = new appListAdapter(this, appList);
+
+        ListView listView = (ListView) findViewById(R.id.appListView);
+        listView.setAdapter(appAdapter);
+
+        //done with selecting apps
+        Button selectButton = (Button) findViewById(R.id.selectAppButton);
+        selectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //this pulls back up the createprofile interface class.... MAKE SURE IT'S THE SAME ONE AS BEFORE, NOT A BLANK ONE
+                Intent myIntent = new Intent();
+                myIntent.putExtra("SELECTED_APPS", appAdapter.getAppList());
+                setResult(RESULT_OK, myIntent);
+                finish();
+
+            }
+        });
+
     }
 
     /*

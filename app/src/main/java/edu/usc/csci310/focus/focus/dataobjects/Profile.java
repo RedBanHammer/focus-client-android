@@ -1,5 +1,6 @@
 package edu.usc.csci310.focus.focus.dataobjects;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -16,6 +17,11 @@ public class Profile extends NamedObject {
      */
     public Profile(String name) {
         super(name);
+    }
+
+    public void setApps(ArrayList<App> apps)
+    {
+        this.apps = apps;
     }
 
     public void addApp(App app) {
