@@ -18,11 +18,13 @@ import edu.usc.csci310.focus.focus.dataobjects.App;
  * Block a set of apps from opening.
  */
 
-public class AppBlocker extends Thread implements Blocker {
+public class AppBlocker extends Thread implements Blocker, Logger {
     private ArrayList<App> apps = new ArrayList<App>();
 
     private Object isBlockingMutex = new Object();
     private boolean isBlocking = false;
+
+    private LoggingService loggingService = new LoggingService();
 
     private Context context;
 
@@ -58,8 +60,13 @@ public class AppBlocker extends Thread implements Blocker {
 
                     for (App app : this.apps) {
                         if (packageName.equals(app.getIdentifier())) {
+                            // Create a log entry
+                            LogEntry logEntry = new LogEntry(app, null, null, LogEntry.LogEntryEventType.OPEN);
+                            this.loggingService.logEntry(logEntry);
+
                             // Block the app by bringing Focus into the foreground with info.
                             this.bringToForeground();
+
                             break;
                         }
                     }
@@ -80,6 +87,11 @@ public class AppBlocker extends Thread implements Blocker {
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
 
         // TODO: startActivity(intent);
+    }
+
+    /** Logger interface impl. **/
+    public ArrayList<LogEntry> getLogEntries() {
+        return this.loggingService.getLogEntries();
     }
 
     /** Utility **/
