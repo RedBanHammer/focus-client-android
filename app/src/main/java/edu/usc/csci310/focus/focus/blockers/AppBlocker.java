@@ -1,6 +1,7 @@
 package edu.usc.csci310.focus.focus.blockers;
 
 import android.app.ActivityManager;
+import android.app.IntentService;
 import android.app.usage.UsageEvents;
 import android.app.usage.UsageStatsManager;
 import android.content.ComponentName;
@@ -18,7 +19,7 @@ import edu.usc.csci310.focus.focus.dataobjects.App;
  * Block a set of apps from opening.
  */
 
-public class AppBlocker extends Thread implements Blocker, Logger {
+public class AppBlocker extends IntentService implements Blocker, Logger {
     private ArrayList<App> apps = new ArrayList<App>();
 
     private Object isBlockingMutex = new Object();
@@ -26,10 +27,18 @@ public class AppBlocker extends Thread implements Blocker, Logger {
 
     private LoggingService loggingService = new LoggingService();
 
-    private Context context;
+    public Context context = null;
 
-    public AppBlocker(Context context) {
-        this.context = context;
+    public AppBlocker(String name) {
+        super(name);
+    }
+
+    @Override
+    protected void onHandleIntent(Intent workIntent) {
+        // Get data from the incoming Intent
+        String dataString = workIntent.getDataString();
+
+        this.run();
     }
 
     public void setApps(ArrayList<App> apps) {
@@ -48,10 +57,7 @@ public class AppBlocker extends Thread implements Blocker, Logger {
         }
     }
 
-    @Override
     public void run() {
-        super.run();
-
         while (true) {
             // If blocking, monitor system apps
             synchronized (this.isBlockingMutex) {
