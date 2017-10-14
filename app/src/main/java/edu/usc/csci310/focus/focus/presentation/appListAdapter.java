@@ -23,11 +23,12 @@ import edu.usc.csci310.focus.focus.dataobjects.App;
  */
 
 public class appListAdapter extends ArrayAdapter<App>{
+    private ArrayList<App> sendAppList = new ArrayList<>();
 
     public appListAdapter(Context context, ArrayList<App> app) {
         super(context, 0, app);
+        sendAppList = app;
     }
-    private ArrayList<App> sendAppList = new ArrayList<>();
     Intent intent;
 
 
