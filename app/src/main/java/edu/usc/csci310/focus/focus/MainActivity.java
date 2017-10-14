@@ -24,6 +24,7 @@ import java.util.ArrayList;
 
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.managers.BlockingManager;
+import edu.usc.csci310.focus.focus.managers.ProfileManager;
 import edu.usc.csci310.focus.focus.presentation.ProfileList;
 import edu.usc.csci310.focus.focus.presentation.ProfileListViewAdapter;
 import edu.usc.csci310.focus.focus.presentation.ScheduleList;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Profile> profiles;
     ViewPager mViewPager;
     TabLayout tabLayout;
+    ProfileManager pm;
 
     // Tab titles
     private static String[] tabs = { "Profiles", "Schedules", "Notifications" };
@@ -42,7 +44,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Set up managers
         BlockingManager.getDefaultManager();
-
+        pm = new ProfileManager();
+        profiles = pm.getAllProfiles();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -57,8 +60,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public static class MyPagerAdapter extends FragmentStatePagerAdapter {
-        private static int NUM_TABS = 3;
+    public class MyPagerAdapter extends FragmentStatePagerAdapter {
+        private int NUM_TABS = 3;
         private FragmentManager fm;
 
         public MyPagerAdapter(FragmentManager fragmentManager) {
@@ -77,11 +80,12 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0: // Fragment # 0 - This will show FirstFragment
-                    return ProfileList.newInstance(0, tabs[0]);
+
+                    return ProfileList.newInstance(0, tabs[0], profiles);
                 case 1: // Fragment # 0 - This will show FirstFragment different title
                     return ScheduleList.newInstance(1, tabs[1]);
                 case 2: // Fragment # 1 - This will show SecondFragment
-                    return ProfileList.newInstance(2, tabs[2]);
+                    return ProfileList.newInstance(2, tabs[2], profiles);
                 default:
                     return null;
             }
