@@ -1,20 +1,25 @@
 package edu.usc.csci310.focus.focus.presentation;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.App;
 
 /**
- * Created by bdeng on 10/6/17.
+ * THIS IS TO SELECT APPS AND SEND TO BACKEND
  */
 
 public class appListAdapter extends ArrayAdapter<App>{
@@ -22,6 +27,9 @@ public class appListAdapter extends ArrayAdapter<App>{
     public appListAdapter(Context context, ArrayList<App> app) {
         super(context, 0, app);
     }
+    private ArrayList<App> sendAppList = new ArrayList<>();
+    Intent intent;
+
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -32,15 +40,44 @@ public class appListAdapter extends ArrayAdapter<App>{
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.app_list_layout, parent, false);
         }
         // Lookup view for data population
-        TextView appName = (TextView) convertView.findViewById(R.id.appName);
+        final CheckBox appName = (CheckBox) convertView.findViewById(R.id.checkBox1);
         ImageView appImage = (ImageView) convertView.findViewById(R.id.appImage);
         // Populate the data into the template view using the data object
         appName.setText(app.getName());
         appImage.setBackground(app.getIcon());
 
-        //get image method from app?
+        appName.setTag(app);
+
+        //checkbox listener
+        appName.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked)
+                {
+
+                    //get the app
+                    App taggedApp = (App) appName.getTag();
+                    //store it to send to next activity (Profile interface?)
+                    sendAppList.add(taggedApp);
+                    //pass to intent through a serialized list
+
+                    //this should happen on the button click?
+                    //send the selected apps
+                    //intent = new Intent(getContext(), CreateProfileInterfaceController.class);
+                    //intent.putExtra("APP_LIST", (Serializable) sendAppList);
+
+                }
+
+            }
+        });
+
 
         // Return the completed view to render on screen
         return convertView;
+    }
+
+    public ArrayList<App> getAppList()
+    {
+        return sendAppList;
     }
 }
