@@ -37,7 +37,8 @@ public class ScheduleManager {
     * */
     public void setSchedule(Schedule schedule)
     {
-        ((ScheduleManagerDelegate) delegate).managerDidUpdateSchedule(this, schedule);
+        ScheduleManagerDelegate delegateRef = this.delegate.get();
+        delegateRef.managerDidUpdateSchedule(this, schedule);
         storage.setObject(schedule, "Schedules", schedule.getIdentifier());
     }
 

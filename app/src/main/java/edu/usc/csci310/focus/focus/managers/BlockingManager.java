@@ -10,6 +10,12 @@ import edu.usc.csci310.focus.focus.dataobjects.Schedule;
  */
 
 public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerDelegate {
+    private static BlockingManager defaultManager = new BlockingManager();
+
+    public static BlockingManager getDefaultManager() {
+        return defaultManager;
+    }
+
     private ScheduleManager scheduleManager;
     private ProfileManager profileManager;
 

@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import java.util.ArrayList;
 
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
+import edu.usc.csci310.focus.focus.managers.BlockingManager;
 import edu.usc.csci310.focus.focus.presentation.ProfileList;
 import edu.usc.csci310.focus.focus.presentation.ProfileListViewAdapter;
 import edu.usc.csci310.focus.focus.presentation.ScheduleList;
@@ -38,6 +39,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Set up managers
+        BlockingManager.getDefaultManager();
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
