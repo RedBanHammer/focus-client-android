@@ -1,6 +1,7 @@
 package edu.usc.csci310.focus.focus.blockers;
 
 import android.app.ActivityManager;
+import android.app.DialogFragment;
 import android.app.IntentService;
 import android.app.usage.UsageEvents;
 import android.app.usage.UsageStatsManager;
@@ -14,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.usc.csci310.focus.focus.dataobjects.App;
+import edu.usc.csci310.focus.focus.presentation.AppBlockedPopup;
+import edu.usc.csci310.focus.focus.presentation.SplashScreen;
 
 /**
  * Block a set of apps from opening.
@@ -84,15 +87,16 @@ public class AppBlocker extends IntentService implements Blocker, Logger {
     }
 
     public void bringToForeground() {
-//        // TODO: App blocked info screen class
-//        Intent intent = new Intent(context, SplashScreen.class);
-//
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // You need this if starting
-//        //  the activity from a service
-//        intent.setAction(Intent.ACTION_MAIN);
-//        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        // TODO: App blocked info screen class
+        Intent intent = new Intent(context, SplashScreen.class);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // You need this if starting
+        //  the activity from a service
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
 
         // TODO: startActivity(intent);
+        startActivity(intent);
     }
 
     /** Logger interface impl. **/
