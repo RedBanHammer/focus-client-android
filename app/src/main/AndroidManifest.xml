@@ -38,7 +38,7 @@
         <activity android:name=".presentation.ScheduleList" />
         <activity android:name=".presentation.ScheduleInterfaceController" />
         <activity android:name=".presentation.ProfileInterfaceController" />
-        <activity android:name=".presentation.Notification">
+        <activity android:name=".presentation.NotificationListFragment">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
