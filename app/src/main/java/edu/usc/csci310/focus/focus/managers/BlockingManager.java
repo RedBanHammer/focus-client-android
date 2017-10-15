@@ -54,10 +54,6 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
         this.profileManager.delegate = new WeakReference<ProfileManagerDelegate>(this);
     }
 
-    public void debug_triggerForeground() {
-        this.appBlocker.bringToForeground();
-    }
-
     /**
      * Return the notification log entries captured by the NotificationBlocker module.
      * @return An ArrayList of LogEntries with the NOTFICIATION type.

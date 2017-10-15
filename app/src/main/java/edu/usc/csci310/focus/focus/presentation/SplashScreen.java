@@ -17,7 +17,7 @@ public class SplashScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Start home activity
-        startActivity(new Intent(SplashScreen.this, MainActivity.class));
+        //startActivity(new Intent(SplashScreen.this, MainActivity.class));
 
         DialogFragment newFragment = new AppBlockedPopup();
         newFragment.show(getFragmentManager(), "App Blocked");

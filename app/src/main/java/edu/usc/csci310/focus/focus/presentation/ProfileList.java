@@ -63,13 +63,8 @@ public class ProfileList extends Fragment {
         addProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent(getActivity(), CreateProfileInterfaceController.class);
-//                startActivityForResult(intent, 0);
-                try {
-                    Thread.sleep(3000);
-                } catch (java.lang.InterruptedException ie) {}
-
-                BlockingManager.getDefaultManager().debug_triggerForeground();
+                Intent intent = new Intent(getActivity(), CreateProfileInterfaceController.class);
+                startActivityForResult(intent, 0);
             }
         });
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
