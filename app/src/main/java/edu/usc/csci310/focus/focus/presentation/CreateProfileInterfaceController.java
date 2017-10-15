@@ -22,6 +22,7 @@ import java.util.List;
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
+import edu.usc.csci310.focus.focus.managers.ProfileManager;
 
 public class CreateProfileInterfaceController extends AppCompatActivity {
     private ArrayList<App> appList;
@@ -53,10 +54,15 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // PASS INFO TO THE PROFILEINTERFACECONTROLLER....
+
+                // PASS INFO TO THE PROFILEINTERFACECONTROLler
                 TextView tv = (TextView) findViewById(R.id.profileName2);
                 Profile profile = new Profile(tv.getText().toString());
                 profile.setApps(appList);
+
+                //pass info to manager
+                ProfileManager.getDefaultManager().setProfile(profile);
+
                 Intent intent = new Intent(CreateProfileInterfaceController.this, ProfileInterfaceController.class);
                 intent.putExtra("PROFILE", (Serializable) profile);
                 startActivity(intent);
