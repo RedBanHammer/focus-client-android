@@ -1,21 +1,20 @@
-package edu.usc.csci310.focus.focus.presentation;
+package edu.usc.csci310.focus.focus.presentation.schedule;
 /*
  * Activity that shows a list of all Schedules
  */
+import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -23,8 +22,8 @@ import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 
-public class ScheduleList extends Fragment implements CreateScheduleDialog.NameListener{
-    public final static String PROFILE_LIST = "edu.usc.csci310.focus.focus.presentation.profile_list";
+public class ScheduleList extends Fragment implements CreateScheduleDialog.EditNameDialogListener {
+    public final static String PROFILE_LIST = "edu.usc.csci310.focus.focus.presentation.schedule_list";
     private ListView listView;
     ArrayList<Schedule> schedules;
     ArrayList<Profile> profiles;
@@ -73,18 +72,7 @@ public class ScheduleList extends Fragment implements CreateScheduleDialog.NameL
         addScheduleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                intent = new Intent(getActivity(), CreateScheduleInterfaceController.class);
-//                intent.putExtra(PROFILE_LIST, profiles);
-//                startActivityForResult(intent, 0);
-                // close existing dialog fragments
-                FragmentManager manager = getFragmentManager();
-                Fragment frag = manager.findFragmentByTag("createScheduleDialog");
-                if (frag != null) {
-                    manager.beginTransaction().remove(frag).commit();
-                }
-                CreateScheduleDialog editNameDialog = new CreateScheduleDialog();
-                editNameDialog.show(manager, "createScheduleDialog");
-
+                showEditDialog();
             }
         });
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -97,8 +85,21 @@ public class ScheduleList extends Fragment implements CreateScheduleDialog.NameL
         });
         return v;
     }
-    @Override
-    public void onFinishUserDialog(String user) {
-        Toast.makeText(getActivity(), "Hello, " + user, Toast.LENGTH_SHORT).show();
+    // Call this method to launch the edit dialog
+    private void showEditDialog() {
+        FragmentManager fm = getFragmentManager();
+        CreateScheduleDialog editNameDialogFragment = CreateScheduleDialog.newInstance("new schedule");
+        // SETS the target fragment for use later when sending results
+        editNameDialogFragment.setTargetFragment(ScheduleList.this, 0);
+        editNameDialogFragment.show(fm, "new schedule");
     }
+
+    // This is called when the dialog is completed and the results have been passed
+    @Override
+    public void onFinishEditDialog(String data) {
+        schedules.add(new Schedule(null, data));
+        scheduleListViewAdapter.notifyDataSetChanged();
+    }
+
+
 }

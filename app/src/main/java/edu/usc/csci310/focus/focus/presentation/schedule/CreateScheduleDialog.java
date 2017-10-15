@@ -1,5 +1,6 @@
-package edu.usc.csci310.focus.focus.presentation;
+package edu.usc.csci310.focus.focus.presentation.schedule;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -20,11 +21,16 @@ public class CreateScheduleDialog extends DialogFragment implements TextView.OnE
 
     private EditText mEditText;
 
-    public interface NameListener {
-        void onFinishUserDialog(String user);
-    }
     // Empty constructor required for DialogFragment
     public CreateScheduleDialog() {}
+
+    public static CreateScheduleDialog newInstance(String name) {
+        
+        Bundle args = new Bundle();
+        CreateScheduleDialog fragment = new CreateScheduleDialog();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,9 +51,20 @@ public class CreateScheduleDialog extends DialogFragment implements TextView.OnE
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         // Return input text to activity
-        NameListener activity = (NameListener) getActivity();
-        activity.onFinishUserDialog(mEditText.getText().toString());
-        this.dismiss();
+        sendBackResult();
         return true;
     }
+    // Defines the listener interface
+    public interface EditNameDialogListener {
+        void onFinishEditDialog(String inputText);
+    }
+
+    // Call this method to send the data back to the parent fragment
+    public void sendBackResult() {
+        // Notice the use of `getTargetFragment` which will be set when the dialog is displayed
+        EditNameDialogListener listener = (EditNameDialogListener) getTargetFragment();
+        listener.onFinishEditDialog(mEditText.getText().toString());
+        dismiss();
+    }
+
 }
