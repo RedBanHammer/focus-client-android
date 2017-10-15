@@ -1,7 +1,11 @@
 package edu.usc.csci310.focus.focus.managers;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
+import edu.usc.csci310.focus.focus.blockers.AppBlocker;
+import edu.usc.csci310.focus.focus.blockers.LogEntry;
+import edu.usc.csci310.focus.focus.blockers.NotificationBlocker;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 
@@ -19,13 +23,24 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
     private ScheduleManager scheduleManager;
     private ProfileManager profileManager;
 
-    public BlockingManager() {
+    private NotificationBlocker notificationBlocker = new NotificationBlocker("notification-blocker");
+    private AppBlocker appBlocker = new AppBlocker("app-blocker");
+
+    private BlockingManager() {
         // Initialize manager singleton references
         this.scheduleManager = ScheduleManager.getDefaultManager();
         this.profileManager = ProfileManager.getDefaultManager();
 
         this.scheduleManager.delegate = new WeakReference<ScheduleManagerDelegate>(this);
         this.profileManager.delegate = new WeakReference<ProfileManagerDelegate>(this);
+    }
+
+    /**
+     * Return the notification log entries captured by the NotificationBlocker module.
+     * @return An ArrayList of LogEntries with the NOTFICIATION type.
+     */
+    public ArrayList<LogEntry> getNotificationLogEntries() {
+        return this.notificationBlocker.getLogEntries();
     }
 
     /** ProfileManagerDelegate implementation **/

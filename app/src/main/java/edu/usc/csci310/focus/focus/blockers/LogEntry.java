@@ -1,5 +1,7 @@
 package edu.usc.csci310.focus.focus.blockers;
 
+import android.os.Bundle;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,7 +23,7 @@ public class LogEntry implements Serializable {
 
     private App app;
     private ArrayList<Profile> profiles = new ArrayList<Profile>();
-    private String metadata;
+    private Serializable metadata;
     private LogEntryEventType eventType;
     private Date timestamp;
 
@@ -33,7 +35,7 @@ public class LogEntry implements Serializable {
         return this.profiles;
     }
 
-    public String getMetadata() {
+    public Serializable getMetadata() {
         return this.metadata;
     }
 
@@ -41,7 +43,11 @@ public class LogEntry implements Serializable {
         return this.eventType;
     }
 
-    public LogEntry(App app, ArrayList<Profile> profiles, String metadata, LogEntryEventType eventType) {
+    public Date getTimestamp() {
+        return this.timestamp;
+    }
+
+    public LogEntry(App app, ArrayList<Profile> profiles, Serializable metadata, LogEntryEventType eventType) {
         this.app = app;
         this.profiles = profiles;
         this.metadata = metadata;

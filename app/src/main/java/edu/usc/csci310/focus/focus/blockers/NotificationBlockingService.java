@@ -1,11 +1,14 @@
 package edu.usc.csci310.focus.focus.blockers;
 
+import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import edu.usc.csci310.focus.focus.dataobjects.App;
@@ -55,8 +58,12 @@ public class NotificationBlockingService extends NotificationListenerService imp
         App matchedApp = this.getAppWithPackageName(packageName);
 
         if (matchedApp != null) {
+            Notification mNotification = notification.getNotification();
+            Bundle extras = mNotification.extras;
+            NotificationMetadata metadata = new NotificationMetadata(extras);
+
             // Create a log entry
-            LogEntry logEntry = new LogEntry(matchedApp, null, null, LogEntry.LogEntryEventType.NOTIFICATION);
+            LogEntry logEntry = new LogEntry(matchedApp, null, metadata, LogEntry.LogEntryEventType.NOTIFICATION);
             this.loggingService.logEntry(logEntry);
 
             // Remove the notification

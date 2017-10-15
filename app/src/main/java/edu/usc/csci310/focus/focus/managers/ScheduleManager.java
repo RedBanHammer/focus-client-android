@@ -28,7 +28,7 @@ public class ScheduleManager {
     /*
     * Constructor for Schedule Manager
     * */
-    public void ScheduleManager(){
+    private void ScheduleManager(){
 
     }
 

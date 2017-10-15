@@ -26,7 +26,7 @@ public class ProfileManager {
     /*
      * Profile Manager constructor.
      */
-    public void ProfileManager() {
+    private void ProfileManager() {
         //constructor
     }
 
