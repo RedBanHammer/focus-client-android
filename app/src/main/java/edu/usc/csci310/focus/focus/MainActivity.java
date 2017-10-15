@@ -1,37 +1,25 @@
 package edu.usc.csci310.focus.focus;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.widget.TextView;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
 
-import edu.usc.csci310.focus.focus.blockers.LogEntry;
-import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.managers.BlockingManager;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
 import edu.usc.csci310.focus.focus.presentation.NotificationListFragment;
 import edu.usc.csci310.focus.focus.presentation.ProfileList;
-import edu.usc.csci310.focus.focus.presentation.ProfileListViewAdapter;
-import edu.usc.csci310.focus.focus.presentation.ScheduleList;
 import edu.usc.csci310.focus.focus.storage.StorageManager;
+import edu.usc.csci310.focus.focus.presentation.schedule.ScheduleList;
 
 public class MainActivity extends AppCompatActivity {
     MyPagerAdapter viewPagerAdapter;

@@ -1,4 +1,4 @@
-package edu.usc.csci310.focus.focus.presentation;
+package edu.usc.csci310.focus.focus.presentation.schedule;
 /*
 * CreateScheduleInterfaceController Class
 *
