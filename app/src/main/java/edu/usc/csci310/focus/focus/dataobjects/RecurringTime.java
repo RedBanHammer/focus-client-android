@@ -18,7 +18,7 @@ public class RecurringTime {
     /**
      * Add a time block to a day in the week.
      * @param dayIndex The day of the week to add the time to.
-     * @param minuteIndex The time in seconds when the time block starts.
+     * @param minuteIndex The time in minutes when the time block starts.
      * @param duration The duration of the time block.
      */
     public void addTime(Integer dayIndex, Long minuteIndex, Long duration) {
