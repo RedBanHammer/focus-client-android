@@ -16,8 +16,8 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="@string/profilename"
-        tools:ignore="LabelFor" />
+        tools:ignore="LabelFor"
+        tools:text="Profile Name" />
 
     <Button
         android:id="@+id/chooseAppButton"

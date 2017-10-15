@@ -4,6 +4,7 @@ package edu.usc.csci310.focus.focus.presentation;
  *
  * Activity that displays all of the user's Android apps
  */
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,8 +24,10 @@ import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.App;
 
 public class SelectApp extends AppCompatActivity implements SelectAppInterface {
+    public static final String SELECTED_APPS = "SELECTED_APPS";
     private ArrayList<App> appList = new ArrayList<>();
     private appListAdapter appAdapter;
+    private Button selectAppButton;
     /*
      * Renders the list of Android apps
      */
@@ -46,13 +50,15 @@ public class SelectApp extends AppCompatActivity implements SelectAppInterface {
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }
+            if(!name.contains("com.android"))
+            {
+                //create the app object
+                App app = new App(name, identifier);
 
-            //create the app object
-            App app = new App(name, identifier);
-            app.setIcon(appIcon);
+                //add the app object to the array
+                appList.add(app);
+            }
 
-            //add the app object to the array
-            appList.add(app);
         }
 
         //load the apps into the interface
@@ -62,16 +68,18 @@ public class SelectApp extends AppCompatActivity implements SelectAppInterface {
         listView.setAdapter(appAdapter);
 
         //done with selecting apps
-        Button selectButton = (Button) findViewById(R.id.selectAppButton);
-        selectButton.setOnClickListener(new View.OnClickListener() {
+        selectAppButton = (Button) findViewById(R.id.selectAppButton);
+        selectAppButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //this pulls back up the createprofile interface class.... MAKE SURE IT'S THE SAME ONE AS BEFORE, NOT A BLANK ONE
-                Intent myIntent = new Intent();
-                myIntent.putExtra("SELECTED_APPS", appAdapter.getAppList());
-                setResult(RESULT_OK, myIntent);
+                Intent i = new Intent();
+                ArrayList<App> send = appAdapter.getAppList();
+                i.putExtra(SELECTED_APPS, send);
+                //i.putExtra(SELECTED_APPS, ";lskdjfl;k");
+                setResult(Activity.RESULT_OK, i);
+                //SelectApp.super.onBackPressed();
                 finish();
-
             }
         });
 

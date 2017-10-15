@@ -43,7 +43,7 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
             public void onClick(View v) {
                 // Start NewActivity.class
                 Intent myIntent = new Intent(CreateProfileInterfaceController.this, SelectApp.class);
-                startActivityForResult(myIntent, 0);
+                startActivityForResult(myIntent, 10);
             }
         });
 
@@ -55,7 +55,7 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
             public void onClick(View v) {
                 // PASS INFO TO THE PROFILEINTERFACECONTROLLER....
                 TextView tv = (TextView) findViewById(R.id.profileName2);
-                Profile profile = new Profile(tv.toString());
+                Profile profile = new Profile(tv.getText().toString());
                 profile.setApps(appList);
                 Intent intent = new Intent(CreateProfileInterfaceController.this, ProfileInterfaceController.class);
                 intent.putExtra("PROFILE", (Serializable) profile);
@@ -67,14 +67,17 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data!=null){
+            if (requestCode == 10) {
+                if(resultCode == Activity.RESULT_OK){
+                    appList = (ArrayList<App>) data.getSerializableExtra(SelectApp.SELECTED_APPS);
+                    //String result = data.getStringExtra(SelectApp.SELECTED_APPS);
+                    reloadAppList();
+                }
 
-        if (requestCode == 0) {
-            if(resultCode == Activity.RESULT_OK){
-                appList = (ArrayList<App>) data.getSerializableExtra("SELECTED_APPS");
-                reloadAppList();
             }
-
         }
+
     }//onActivityResult
 
     /*

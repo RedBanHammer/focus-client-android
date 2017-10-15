@@ -2,6 +2,8 @@ package edu.usc.csci310.focus.focus.presentation;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +24,10 @@ import edu.usc.csci310.focus.focus.dataobjects.App;
  */
 
 public class appViewAdapter extends ArrayAdapter<App> {
-
+    Context context;
     public appViewAdapter(Context context, ArrayList<App> app) {
         super(context, 0, app);
+        this.context = context;
     }
 
 
@@ -41,8 +44,13 @@ public class appViewAdapter extends ArrayAdapter<App> {
         ImageView appImage = (ImageView) convertView.findViewById(R.id.appImage2);
         // Populate the data into the template view using the data object
         appName.setText(app.getName());
-        appImage.setBackground(app.getIcon());
-
+        Drawable icon2 = null;
+        try {
+            icon2 = context.getPackageManager().getApplicationIcon(app.getIdentifier());
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        appImage.setImageDrawable(icon2);
 
         // Return the completed view to render on screen
         return convertView;

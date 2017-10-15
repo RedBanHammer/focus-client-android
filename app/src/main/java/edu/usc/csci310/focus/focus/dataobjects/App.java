@@ -10,18 +10,8 @@ import android.graphics.drawable.Drawable;
  */
 
 public class App extends NamedObject {
-    private Drawable icon;
     public App(String name, String identifier) {
         super(name, identifier);
     }
 
-    public void setIcon(Drawable icon)
-    {
-        this.icon = icon;
-    }
-
-    public Drawable getIcon()
-    {
-        return this.icon;
-    }
 }
