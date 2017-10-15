@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Set up managers
         StorageManager.getDefaultManagerWithContext(getApplicationContext());
-        BlockingManager.getDefaultManager();
+        BlockingManager.getDefaultManagerWithContext(getApplicationContext());
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

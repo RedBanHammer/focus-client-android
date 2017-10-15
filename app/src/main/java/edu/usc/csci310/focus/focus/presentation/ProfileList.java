@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
+import edu.usc.csci310.focus.focus.managers.BlockingManager;
 
 public class ProfileList extends Fragment {
     private ListView listView;
