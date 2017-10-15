@@ -1,5 +1,7 @@
 package edu.usc.csci310.focus.focus.managers;
 
+import android.content.Context;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +24,20 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
     public static BlockingManager getDefaultManager() {
         return defaultManager;
     }
+    public static BlockingManager getDefaultManagerWithContext(Context context) {
+        defaultManager.setContext(context);
+        defaultManager.setContext(context);
+
+        return defaultManager;
+    }
+
+    private Context context = null;
+
+    public void setContext(Context context) {
+        this.context = context;
+        this.appBlocker.setContext(context);
+        this.notificationBlocker.setContext(context);
+    }
 
     private ScheduleManager scheduleManager;
     private ProfileManager profileManager;
@@ -36,6 +52,10 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
 
         this.scheduleManager.delegate = new WeakReference<ScheduleManagerDelegate>(this);
         this.profileManager.delegate = new WeakReference<ProfileManagerDelegate>(this);
+    }
+
+    public void debug_triggerForeground() {
+        this.appBlocker.bringToForeground();
     }
 
     /**

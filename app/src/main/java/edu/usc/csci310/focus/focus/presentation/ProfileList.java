@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
+import edu.usc.csci310.focus.focus.managers.BlockingManager;
 
 public class ProfileList extends Fragment {
     private ListView listView;
@@ -62,8 +63,13 @@ public class ProfileList extends Fragment {
         addProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), CreateProfileInterfaceController.class);
-                startActivityForResult(intent, 0);
+//                Intent intent = new Intent(getActivity(), CreateProfileInterfaceController.class);
+//                startActivityForResult(intent, 0);
+                try {
+                    Thread.sleep(3000);
+                } catch (java.lang.InterruptedException ie) {}
+
+                BlockingManager.getDefaultManager().debug_triggerForeground();
             }
         });
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

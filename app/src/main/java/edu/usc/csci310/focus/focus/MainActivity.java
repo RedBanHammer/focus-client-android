@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Set up managers
         StorageManager.getDefaultManagerWithContext(getApplicationContext());
-        BlockingManager.getDefaultManager();
+        BlockingManager.getDefaultManagerWithContext(getApplicationContext());
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -48,12 +48,6 @@ public class MainActivity extends AppCompatActivity {
         tabLayout = (TabLayout)findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-
-        try {
-            Thread.sleep(3000);
-        } catch (java.lang.InterruptedException ie) {}
-
-        BlockingManager.getDefaultManager();
     }
 
 

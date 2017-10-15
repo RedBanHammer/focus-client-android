@@ -25,6 +25,10 @@ public class NotificationBlocker extends IntentService implements Blocker, Logge
         super(name);
     }
 
+    public void setContext(Context context){
+        this.context = context;
+    }
+
     @Override
     protected void onHandleIntent(Intent workIntent) {
         // Get data from the incoming Intent

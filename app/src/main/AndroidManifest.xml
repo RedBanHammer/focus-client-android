@@ -51,6 +51,13 @@
             android:name=".presentation.schedule.CreateScheduleInterfaceController"
             android:label="@string/title_activity_schedule"/>
         <activity android:name=".presentation.SelectProfile"></activity>
+        <activity android:name=".presentation.SplashScreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
