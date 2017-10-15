@@ -54,14 +54,20 @@ public class ScheduleManager {
     * -------------------GETTERS-------------------------------
     */
 
-    /*
-   * getSchedulesInTimeInterval method, takes in a TimeInterval, returns array of Schedule objects.
-   *  ----perhaps we can use java.time class to replace a timeinterval object? will need further consideration-----
-   * */
-    public ArrayList<Schedule> getSchedulesInTimeInterval(TimeInterval timeinterval)
-    {
-        // Unsure what to do here?
-        return null;
+    /**
+     * Get all schedules that are active.
+     * @return An ArrayList of active schedules.
+     */
+    public ArrayList<Schedule> getActiveSchedules() {
+        ArrayList<Schedule> activeSchedules = new ArrayList<Schedule>();
+
+        for (Schedule schedule : this.getAllSchedules()) {
+            if (schedule.getIsActive()) {
+                activeSchedules.add(schedule);
+            }
+        }
+
+        return activeSchedules;
     }
 
     /*

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 public class StorageManager {
     private static StorageManager defaultManager = new StorageManager();
+    private Context context;
 
     private StorageManager() {
 
@@ -28,6 +29,14 @@ public class StorageManager {
 
     public static StorageManager getDefaultManager() {
         return defaultManager;
+    }
+    public static StorageManager getDefaultManagerWithContext(Context context) {
+        defaultManager.setContext(context);
+        return defaultManager;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 
     /**
@@ -42,7 +51,7 @@ public class StorageManager {
      */
     public <T extends Serializable> void setObject(T object, String group, String identifier) {
         try {
-            String fullPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + group;
+            String fullPath = this.context.getFilesDir().getAbsolutePath() + "/" + group;
 
             File dir = new File(fullPath);
             if (!dir.exists()) {
@@ -81,7 +90,7 @@ public class StorageManager {
         T object = null;
 
         try {
-            String fullPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + group;
+            String fullPath = this.context.getFilesDir().getAbsolutePath() + "/" + group;
 
             File dir = new File(fullPath);
             if (!dir.exists()) {
@@ -118,7 +127,7 @@ public class StorageManager {
     public ArrayList<Serializable> getObjectsWithPrefix(String group) {
         ArrayList<Serializable> objects = new ArrayList<Serializable>();
 
-        String fullPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + group;
+        String fullPath = this.context.getFilesDir().getAbsolutePath() + "/" + group;
 
         File dir = new File(fullPath);
         if (!dir.exists()) {
@@ -139,7 +148,7 @@ public class StorageManager {
      * @param identifier A unique identifier for the object to delete.
      */
     public void removeObject(String group, String identifier) {
-        String fullPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + group;
+        String fullPath = this.context.getFilesDir().getAbsolutePath() + "/" + group;
 
         File dir = new File(fullPath);
         if (!dir.exists()) {
@@ -159,7 +168,7 @@ public class StorageManager {
      * @param group The name of the group to delete the objects from.
      */
     public void removeObjectsWithPrefix(String group) {
-        String fullPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + group;
+        String fullPath = this.context.getFilesDir().getAbsolutePath() + "/" + group;
 
         File dir = new File(fullPath);
         if (!dir.exists()) {

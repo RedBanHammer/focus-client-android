@@ -31,6 +31,7 @@ import edu.usc.csci310.focus.focus.presentation.NotificationListFragment;
 import edu.usc.csci310.focus.focus.presentation.ProfileList;
 import edu.usc.csci310.focus.focus.presentation.ProfileListViewAdapter;
 import edu.usc.csci310.focus.focus.presentation.ScheduleList;
+import edu.usc.csci310.focus.focus.storage.StorageManager;
 
 public class MainActivity extends AppCompatActivity {
     MyPagerAdapter viewPagerAdapter;
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Set up managers
+        StorageManager.getDefaultManagerWithContext(getApplicationContext());
         BlockingManager.getDefaultManager();
 
         setContentView(R.layout.activity_main);
