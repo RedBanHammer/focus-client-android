@@ -19,7 +19,7 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
     private ScheduleManager scheduleManager;
     private ProfileManager profileManager;
 
-    public BlockingManager() {
+    private BlockingManager() {
         // Initialize manager singleton references
         this.scheduleManager = ScheduleManager.getDefaultManager();
         this.profileManager = ProfileManager.getDefaultManager();
