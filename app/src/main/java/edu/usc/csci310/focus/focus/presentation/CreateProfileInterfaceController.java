@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.usc.csci310.focus.focus.MainActivity;
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
@@ -49,7 +50,7 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
         });
 
 
-        //hook up done button to pull up the newly created profile's interface
+        //hook up done button to pull up the main activity
         done = (Button) findViewById(R.id.submitProfileButton);
         done.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,8 +64,10 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
                 //pass info to manager
                 ProfileManager.getDefaultManager().setProfile(profile);
 
-                Intent intent = new Intent(CreateProfileInterfaceController.this, ProfileInterfaceController.class);
-                intent.putExtra("PROFILE", (Serializable) profile);
+                //notify profileList
+
+                Intent intent = new Intent(CreateProfileInterfaceController.this, MainActivity.class);
+               // intent.putExtra("PROFILE", (Serializable) profile);
                 startActivity(intent);
             }
         });
