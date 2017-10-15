@@ -48,6 +48,12 @@ public class MainActivity extends AppCompatActivity {
         tabLayout = (TabLayout)findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        try {
+            Thread.sleep(3000);
+        } catch (java.lang.InterruptedException ie) {}
+
+        BlockingManager.getDefaultManager();
     }
 
 
