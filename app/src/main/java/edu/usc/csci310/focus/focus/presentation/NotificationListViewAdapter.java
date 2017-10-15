@@ -55,7 +55,7 @@ class NotificationListViewAdapter extends ArrayAdapter<LogEntry> {
         viewHolder.notificationTime.setText(logEntry.getTimestamp().toString() + " (" + logEntry.getApp().getName() + ")");
         viewHolder.notificationTitle.setText(metadata.title);
         viewHolder.notificationText.setText(metadata.text);
-        viewHolder.notificationIcon.setImageDrawable(logEntry.getApp().getIcon());
+//        viewHolder.notificationIcon.setImageDrawable(logEntry.getApp().getIcon());
         // TODO: Notification icon
 
         // Return the completed view to render on screen

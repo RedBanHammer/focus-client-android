@@ -35,8 +35,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".presentation.ProfileList" />
-        <activity android:name=".presentation.ScheduleList" />
-        <activity android:name=".presentation.ScheduleInterfaceController" />
+        <activity android:name=".presentation.schedule.ScheduleList" />
+        <activity android:name=".presentation.schedule.ScheduleInterfaceController" />
         <activity android:name=".presentation.ProfileInterfaceController" />
         <activity android:name=".presentation.NotificationListFragment">
             <intent-filter>
@@ -47,7 +47,9 @@
         </activity>
         <activity android:name=".presentation.SelectApp" />
         <activity android:name=".presentation.CreateProfileInterfaceController" />
-        <activity android:name=".presentation.CreateScheduleInterfaceController" />
+        <activity
+            android:name=".presentation.schedule.CreateScheduleInterfaceController"
+            android:label="@string/title_activity_schedule"/>
         <activity android:name=".presentation.SelectProfile"></activity>
     </application>
 
