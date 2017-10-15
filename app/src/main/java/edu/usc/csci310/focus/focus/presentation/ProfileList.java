@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import edu.usc.csci310.focus.focus.R;
@@ -26,12 +27,14 @@ public class ProfileList extends Fragment {
     ArrayList<Profile> profiles;
     FloatingActionButton addProfileButton;
     ProfileListViewAdapter profileListViewAdapter;
+    public final static String PROFILE_ARRAYLIST = "profile_arraylist";
     // newInstance constructor for creating fragment with arguments
-    public static ProfileList newInstance(int page, String title) {
+    public static ProfileList newInstance(int page, String title, ArrayList<Profile> profiles) {
         ProfileList profileListFragment = new ProfileList();
         Bundle args = new Bundle();
 //        args.putInt("someInt", page);
 //        args.putString("someTitle", title);
+        args.putSerializable(PROFILE_ARRAYLIST, profiles);
         profileListFragment.setArguments(args);
         return profileListFragment;
     }
@@ -40,14 +43,7 @@ public class ProfileList extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Profile profile = new Profile("NAME");
-        String name = profile.getName();
-        profiles = new ArrayList<Profile>();
-        profiles.add(new Profile("Profile1"));
-        profiles.add(new Profile("Profile2"));
-        profiles.add(new Profile("Profile3"));
-        profiles.add(profile);
-        profiles.add(new Profile("Profile4"));
+        profiles = (ArrayList<Profile>)getArguments().getSerializable(PROFILE_ARRAYLIST);
     }
 
     //handle UI events

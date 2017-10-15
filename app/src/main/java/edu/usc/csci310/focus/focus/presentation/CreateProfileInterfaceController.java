@@ -26,7 +26,7 @@ import edu.usc.csci310.focus.focus.dataobjects.Profile;
 public class CreateProfileInterfaceController extends AppCompatActivity {
     private ArrayList<App> appList;
     private appViewAdapter appAdapter;
-
+    private Button button, done;
     public CreateProfileInterfaceController(){
         //constructor....??
     };
@@ -37,7 +37,7 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
         setContentView(R.layout.activity_create_profile);
 
         //hook up the select app button to pull up the select app activity
-        Button button = (Button) findViewById(R.id.chooseAppButton);
+        button = (Button) findViewById(R.id.chooseAppButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,8 +49,8 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
 
 
         //hook up done button to pull up the newly created profile's interface
-        Button done = (Button) findViewById(R.id.submitProfileButton);
-        button.setOnClickListener(new View.OnClickListener() {
+        done = (Button) findViewById(R.id.submitProfileButton);
+        done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // PASS INFO TO THE PROFILEINTERFACECONTROLLER....
