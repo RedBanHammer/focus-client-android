@@ -1,47 +1,65 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="edu.usc.csci310.focus.focus.presentation.schedule.ScheduleInterfaceController"
-    android:background="#fff">
-    <TextView
-        android:id="@+id/schedule_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"/>
-    <Button
-        android:id="@+id/edit_schedule_name_button"
-        android:layout_width="@dimen/edit_schedule_name_button"
-        android:layout_height="@dimen/edit_schedule_name_button"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="@dimen/fab_margin"/>
+    android:background="#fff"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <Button
+            android:id="@+id/edit_schedule_name_button"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="@dimen/fab_margin"
+            android:text="Edit Name"/>
+
+        <TextView
+            android:id="@+id/schedule_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/app_name"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/delete_schedule_button"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
+            android:text="Delete"
+            android:layout_alignParentRight="true"
+            android:background="@android:color/holo_red_light"/>
+    </RelativeLayout>
+
+
     <LinearLayout
         android:id="@+id/toggle_weekly_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:layout_below="@id/schedule_name"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="@dimen/fab_margin">
+        android:orientation="horizontal">
+
         <TextView
             android:id="@+id/repeat_weekly"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="repeat weekly"/>
-        <ToggleButton
-            android:id="@+id/repeat_weekly_toggle"
+            android:layout_height="match_parent"
+            android:text="Repeat Weekly"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimaryDark"
+            android:gravity="center_vertical"/>
+
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/delete_schedule"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="delete schedule"/>
-        <Button
-            android:id="@+id/delete_schedule_button"
-            android:layout_width="@dimen/del_schedule_button"
-            android:layout_height="@dimen/del_schedule_button"
-            android:text="-"/>
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true">
+            <ToggleButton
+                android:id="@+id/repeat_weekly_toggle"
+                android:layout_width="50dp"
+                android:layout_height="match_parent" />
+        </LinearLayout>
     </LinearLayout>
 
     <com.alamkanak.weekview.WeekView
@@ -62,5 +80,5 @@
         app:todayBackgroundColor="#1848adff"
         app:headerColumnBackground="#ffffffff"
         app:todayHeaderTextColor="@color/accent" />
-</RelativeLayout>
+</LinearLayout>
 
