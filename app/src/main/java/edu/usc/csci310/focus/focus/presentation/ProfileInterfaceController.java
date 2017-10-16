@@ -136,6 +136,38 @@ public class ProfileInterfaceController extends AppCompatActivity {
 
         });
 
+        initializeDeleteButton();
+
+    }
+
+    private void initializeDeleteButton() {
+        this.deleteButton = (Button) findViewById(R.id.deleteButton);
+        this.deleteButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(ProfileInterfaceController.this)
+                        .setTitle("Confirm Delete")
+                        .setMessage("Are you sure you want to delete this profile? This action cannot be undone.")
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Delete the schedule
+                                ProfileManager.getDefaultManager().removeProfile(profile);
+                                // Close activity
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // User canceled deleting
+                            }
+                        })
+                        .show();
+            }
+
+        });
     }
 
     private void renderProfileInfo() {
