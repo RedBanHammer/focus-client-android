@@ -23,6 +23,8 @@ import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.managers.BlockingManager;
 
+import static android.R.drawable.ic_menu_delete;
+
 public class NotificationListFragment extends Fragment {
     private ListView listView;
     ArrayList<LogEntry> notificationLogEntries = new ArrayList<LogEntry>();
@@ -99,6 +101,7 @@ public class NotificationListFragment extends Fragment {
         listView.setAdapter(notificationListViewAdapter);
 
         clearNotificationsButton = (FloatingActionButton) v.findViewById(R.id.addProfileButton);
+        clearNotificationsButton.setImageResource(android.R.drawable.ic_menu_delete);
         clearNotificationsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
