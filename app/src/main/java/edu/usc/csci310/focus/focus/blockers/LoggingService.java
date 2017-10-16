@@ -1,5 +1,7 @@
 package edu.usc.csci310.focus.focus.blockers;
 
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -32,7 +34,7 @@ class LoggingService {
      * Get previously logged entries.
      * @return An array of LogEntries.
      */
-    public ArrayList<LogEntry> getLogEntries() {
+    public @NonNull ArrayList<LogEntry> getLogEntries() {
         StorageManager manager = StorageManager.getDefaultManager();
 
         ArrayList<Serializable> rawLogs = manager.getObjectsWithPrefix(sLoggerGroupIdentifier);
@@ -43,5 +45,9 @@ class LoggingService {
         }
 
         return logs;
+    }
+
+    public void removeAllLogEntries() {
+        StorageManager.getDefaultManager().removeObjectsWithPrefix(sLoggerGroupIdentifier);
     }
 }
