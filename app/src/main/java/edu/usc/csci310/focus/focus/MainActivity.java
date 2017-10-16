@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
             ArrayList<Profile> profiles = ProfileManager.getDefaultManager().getAllProfiles();
             switch (position) {
                 case 0: // Fragment # 0 - This will show FirstFragment
-                    return ProfileList.newInstance(0, tabs[0], profiles);
+                    return ProfileList.newInstance(0, tabs[0]);
                 case 1: // Fragment # 0 - This will show FirstFragment different title
                     return ScheduleList.newInstance(1, tabs[1]);
                 case 2: // Fragment # 1 - This will show SecondFragment
