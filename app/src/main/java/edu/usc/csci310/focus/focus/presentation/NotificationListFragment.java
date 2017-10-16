@@ -51,7 +51,7 @@ public class NotificationListFragment extends Fragment {
         metadata1.icon = "";
 
         this.notificationLogEntries.add(new LogEntry(
-                new App("Facebook", "com.facebook.android"),
+                new App("Facebook", "com.google.android.youtube"),
                 null,
                 metadata1,
                 LogEntry.LogEntryEventType.NOTIFICATION
@@ -64,7 +64,7 @@ public class NotificationListFragment extends Fragment {
         metadata2.icon = "";
 
         this.notificationLogEntries.add(new LogEntry(
-                new App("Snapchat", "com.snapchat.android"),
+                new App("Focus", "com.android.chrome"),
                 null,
                 metadata2,
                 LogEntry.LogEntryEventType.NOTIFICATION
@@ -77,7 +77,7 @@ public class NotificationListFragment extends Fragment {
         metadata3.icon = "";
 
         this.notificationLogEntries.add(new LogEntry(
-                new App("Instagram", "com.instagram.android"),
+                new App("Instagram", "com.google.android.maps"),
                 null,
                 metadata3,
                 LogEntry.LogEntryEventType.NOTIFICATION
@@ -111,15 +111,6 @@ public class NotificationListFragment extends Fragment {
             }
         });
 
-
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> a, View v, int position,
-//                                    long id) {
-//                Intent intent = new Intent(getActivity(), ProfileInterfaceController.class);
-//                startActivityForResult(intent, 0);
-//            }
-//        });
         return v;
     }
 
