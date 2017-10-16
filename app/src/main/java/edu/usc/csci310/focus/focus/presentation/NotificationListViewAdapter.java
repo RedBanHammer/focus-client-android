@@ -1,6 +1,9 @@
 package edu.usc.csci310.focus.focus.presentation;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,10 +25,11 @@ import edu.usc.csci310.focus.focus.dataobjects.Profile;
 
 class NotificationListViewAdapter extends ArrayAdapter<LogEntry> {
     protected ArrayList<LogEntry> logEntries;
+    private Activity activity;
 
     public NotificationListViewAdapter(Activity activity, int id, ArrayList<LogEntry> objects) {
         super(activity, 0, objects);
-
+        this.activity = activity;
         this.logEntries = objects;
     }
 
@@ -55,8 +59,14 @@ class NotificationListViewAdapter extends ArrayAdapter<LogEntry> {
         viewHolder.notificationTime.setText(logEntry.getTimestamp().toString() + " (" + logEntry.getApp().getName() + ")");
         viewHolder.notificationTitle.setText(metadata.title);
         viewHolder.notificationText.setText(metadata.text);
-        //viewHolder.notificationIcon.setImageDrawable(logEntry.getApp().getIcon());
-        // TODO: Notification icon
+        //get icon from android system
+        Drawable appIcon = null;
+        try {
+            appIcon = activity.getPackageManager().getApplicationIcon(logEntry.getApp().getIdentifier());
+        } catch (PackageManager.NameNotFoundException e) {
+            //yikes
+        }
+        viewHolder.notificationIcon.setImageDrawable(appIcon);
 
         // Return the completed view to render on screen
         return view;
