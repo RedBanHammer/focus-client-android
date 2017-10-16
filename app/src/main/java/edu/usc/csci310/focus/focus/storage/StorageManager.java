@@ -1,6 +1,7 @@
 package edu.usc.csci310.focus.focus.storage;
 import android.content.Context;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 
 import edu.usc.csci310.focus.focus.dataobjects.*;
 
@@ -30,12 +31,12 @@ public class StorageManager {
     public static StorageManager getDefaultManager() {
         return defaultManager;
     }
-    public static StorageManager getDefaultManagerWithContext(Context context) {
+    public static StorageManager getDefaultManagerWithContext(@NonNull Context context) {
         defaultManager.setContext(context);
         return defaultManager;
     }
 
-    public void setContext(Context context) {
+    public void setContext(@NonNull Context context) {
         this.context = context;
     }
 
@@ -49,7 +50,7 @@ public class StorageManager {
      * @param group The name of the group to store the object in.
      * @param identifier A unique identifier for the object to store.
      */
-    public <T extends Serializable> void setObject(T object, String group, String identifier) {
+    public <T extends Serializable> void setObject(@NonNull  T object, @NonNull String group, @NonNull String identifier) {
         try {
             String fullPath = this.context.getFilesDir().getAbsolutePath() + "/" + group;
 
@@ -86,7 +87,7 @@ public class StorageManager {
      * @param identifier A unique identifier for the object to retrieve.
      * @return An in the group `group` and the identifier `identifier` if it exists.
      */
-    public <T extends Serializable> T getObject(String group, String identifier) {
+    public <T extends Serializable> T getObject(@NonNull String group, @NonNull String identifier) {
         T object = null;
 
         try {
@@ -124,7 +125,7 @@ public class StorageManager {
      * @param group The name of the group to retrieve objects from.
      * @return An ArrayList of all objects inside the grouop
      */
-    public ArrayList<Serializable> getObjectsWithPrefix(String group) {
+    public @NonNull ArrayList<Serializable> getObjectsWithPrefix(@NonNull String group) {
         ArrayList<Serializable> objects = new ArrayList<Serializable>();
 
         String fullPath = this.context.getFilesDir().getAbsolutePath() + "/" + group;
@@ -135,8 +136,14 @@ public class StorageManager {
         }
 
         for (final File fileEntry : dir.listFiles()) {
-            Serializable object = this.getObject(group, fileEntry.getName());
-            objects.add(object);
+            String identifier = fileEntry.getName();
+            Serializable object = this.getObject(group, identifier);
+            if (object != null) {
+                objects.add(object);
+            } else {
+                // Unable to deserialize the object, delete it
+                this.removeObject(group, identifier);
+            }
         }
 
         return objects;
@@ -147,7 +154,7 @@ public class StorageManager {
      * @param group The name of the group to delete the object from.
      * @param identifier A unique identifier for the object to delete.
      */
-    public void removeObject(String group, String identifier) {
+    public void removeObject(@NonNull String group, @NonNull String identifier) {
         String fullPath = this.context.getFilesDir().getAbsolutePath() + "/" + group;
 
         File dir = new File(fullPath);
@@ -167,7 +174,7 @@ public class StorageManager {
      * Remove all objects inside a group.
      * @param group The name of the group to delete the objects from.
      */
-    public void removeObjectsWithPrefix(String group) {
+    public void removeObjectsWithPrefix(@NonNull String group) {
         String fullPath = this.context.getFilesDir().getAbsolutePath() + "/" + group;
 
         File dir = new File(fullPath);

@@ -9,6 +9,8 @@ import edu.usc.csci310.focus.focus.managers.ProfileManager;
  */
 
 public class Profile extends NamedObject {
+    private static final long serialVersionUID = 1L;
+
     private ArrayList<App> apps = new ArrayList<App>();
     private boolean isActive;
 
@@ -18,7 +20,6 @@ public class Profile extends NamedObject {
      */
     public Profile(String name) {
         super(name);
-        ProfileManager.getDefaultManager().setProfile(this);
     }
 
     public void setApps(ArrayList<App> apps)
@@ -28,7 +29,6 @@ public class Profile extends NamedObject {
 
     public void addApp(App app) {
         this.apps.add(app);
-        ProfileManager.getDefaultManager().setProfile(this);
     }
 
     public void removeAppWithName(String name) {
@@ -40,7 +40,6 @@ public class Profile extends NamedObject {
         }
         if (index >= 0) {
             this.apps.remove(index);
-            ProfileManager.getDefaultManager().setProfile(this);
         }
     }
 
@@ -53,7 +52,6 @@ public class Profile extends NamedObject {
         }
         if (index >= 0) {
             this.apps.remove(index);
-            ProfileManager.getDefaultManager().setProfile(this);
         }
     }
 
@@ -61,7 +59,6 @@ public class Profile extends NamedObject {
 
     public void setIsActive(boolean flag) {
         this.isActive = flag;
-        ProfileManager.getDefaultManager().setProfile(this);
     }
 
     public boolean getIsActive() { return this.isActive; }

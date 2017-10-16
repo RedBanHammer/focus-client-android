@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
+import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class NotificationBlockingService extends NotificationListenerService imp
 
     public Context context;
 
-    public void setApps(ArrayList<App> apps) {
+    public void setApps(@NonNull ArrayList<App> apps) {
         this.apps = apps;
     }
 
