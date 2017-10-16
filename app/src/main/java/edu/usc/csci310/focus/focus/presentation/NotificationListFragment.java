@@ -79,7 +79,7 @@ public class NotificationListFragment extends Fragment {
         metadata3.icon = "";
 
         this.notificationLogEntries.add(new LogEntry(
-                new App("Instagram", "com.google.android.maps"),
+                new App("Instagram", "com.google.android.apps.maps"),
                 null,
                 metadata3,
                 LogEntry.LogEntryEventType.NOTIFICATION

@@ -32,6 +32,7 @@ import java.util.ArrayList;
 
 public class ProfileInterfaceController extends AppCompatActivity {
     private Profile profile;
+    private ArrayList<App> appList;
     Button deleteButton;
     Button editNameButton;
     String SAVE_NAME= "Save Changes";
@@ -42,6 +43,7 @@ public class ProfileInterfaceController extends AppCompatActivity {
     Dialog editNameDialog;
     Button posButton;
     TextView tv;
+    appViewAdapter appAdapter;
 
     public void setProfile(Profile profile) {
         this.profile = profile;
@@ -66,7 +68,8 @@ public class ProfileInterfaceController extends AppCompatActivity {
         Intent intent = getIntent();
         this.profile = (Profile) intent.getSerializableExtra("PROFILE");
 
-        appViewAdapter appAdapter = new appViewAdapter(this, profile.getApps());
+        appList = this.profile.getApps();
+        appAdapter = new appViewAdapter(this, appList);
 
         ListView listView = (ListView) findViewById(R.id.listviewprofile);
         listView.setAdapter(appAdapter);
@@ -74,7 +77,7 @@ public class ProfileInterfaceController extends AppCompatActivity {
         this.renderProfileInfo();
 
         //initialize delete profile button
-        deleteButton = (Button) findViewById(R.id.deleteButton);
+       /* deleteButton = (Button) findViewById(R.id.deleteButton);
 
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,7 +87,7 @@ public class ProfileInterfaceController extends AppCompatActivity {
                 Intent intent = new Intent(ProfileInterfaceController.this, MainActivity.class);
                 startActivity(intent);
             }
-        });
+        });*/
 
         //initialize edit profile name button
         editNameButton = (Button) findViewById(R.id.changeNameButton);
@@ -97,41 +100,6 @@ public class ProfileInterfaceController extends AppCompatActivity {
                 send.putExtra(PROFILE_TO_EDIT, profile);
                 startActivity(send);
 
-
-                //create a new dialog
-                /*
-                editNameDialog = new Dialog(ProfileInterfaceController.this);
-                editNameDialog.setContentView(R.layout.edit_profile_name);
-                editNameDialog.setTitle(TITLE);
-
-                text = (EditText) editNameDialog.findViewById(R.id.newNameText);
-                posButton = (Button) editNameDialog.findViewById(R.id.positiveButton);
-                posButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //send new name to profile manager
-                        String newName = text.getText().toString();
-                        profile.setName(newName);
-                        ProfileManager.getDefaultManager().setProfile(profile);
-
-                        //exit the dialog, reload the name
-                        tv.setText(newName);
-                        editNameDialog.dismiss();
-
-                    }
-                });
-
-                Button negButton = (Button) editNameDialog.findViewById(R.id.negativeButton);
-                negButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //dismiss dialog
-                        editNameDialog.dismiss();
-
-                    }
-                });
-
-                editNameDialog.show(); */
             }
 
         });
@@ -154,6 +122,7 @@ public class ProfileInterfaceController extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 // Delete the schedule
                                 ProfileManager.getDefaultManager().removeProfile(profile);
+
                                 // Close activity
                                 finish();
                             }
@@ -181,6 +150,10 @@ public class ProfileInterfaceController extends AppCompatActivity {
 
         Profile newProfile = ProfileManager.getDefaultManager().getProfileWithIdentifier(this.profile.getIdentifier());
         this.setProfile(newProfile);
+        appList.clear();
+        appList.addAll(newProfile.getApps());
+        renderProfileInfo();
+        appAdapter.notifyDataSetChanged();
     }
 
     /*
