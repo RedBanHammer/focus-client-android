@@ -10,6 +10,12 @@
     tools:layout_editor_absoluteX="8dp"
     tools:layout_editor_absoluteY="8dp">
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Choose apps to block. Tap on an app to remove." />
+
     <EditText
         android:id="@+id/profileName2"
         android:layout_width="match_parent"
@@ -23,7 +29,7 @@
         android:id="@+id/chooseAppButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Select APps" />
+        android:text="Add Apps" />
 
     <ListView
         android:id="@+id/createProfileListView"
@@ -35,7 +41,7 @@
         android:id="@+id/submitProfileButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Create" />
+        android:text="Done" />
 
 
 </LinearLayout>
