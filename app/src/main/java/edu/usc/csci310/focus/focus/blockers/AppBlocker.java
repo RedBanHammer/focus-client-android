@@ -36,6 +36,11 @@ public class AppBlocker extends IntentService implements Blocker, Logger {
         super(name);
     }
 
+    public AppBlocker() {
+        super("AppBlocker");
+    }
+
+
     @Override
     protected void onHandleIntent(Intent workIntent) {
         // Get data from the incoming Intent

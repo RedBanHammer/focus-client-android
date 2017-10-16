@@ -1,10 +1,23 @@
 package edu.usc.csci310.focus.focus;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.app.AppOpsManager;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -48,8 +61,9 @@ public class MainActivity extends AppCompatActivity {
         tabLayout = (TabLayout)findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-    }
 
+        this.requestPermissions();
+    }
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
         private int NUM_TABS = 3;
@@ -97,6 +111,85 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    private void requestPermissions() {
+        this.requestAppUsagePermissions();
+        this.requestNotificationListenerPermissions();
+    }
+
+    /**
+     * Go to settings if the app does not have sufficient permissions
+     * @source https://stackoverflow.com/a/40397196
+     */
+    private void requestNotificationListenerPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            boolean havePermission = false;
+
+            for (String service : NotificationManagerCompat.getEnabledListenerPackages(this)) {
+                if (service.equals(getPackageName())) {
+                    havePermission = true;
+                    break;
+                }
+            }
+
+            if (!havePermission) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Focus! Needs Notification Permissions")
+                        .setMessage("To block notifications from apps, you must give Focus! permissions to access your device notifications.")
+                        .setPositiveButton("Open Settings", new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Ask the user for notification listener permissions
+                                Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+                                startActivity(intent);
+                            }
+
+                        })
+                        .show();
+            }
+        }
+    }
+
+    private void requestAppUsagePermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            boolean havePermission = this.hasAppUsagePermissions();
+
+            if (!havePermission) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Focus! Needs Usage Permissions")
+                        .setMessage("To block apps from opening, you must give Focus! permissions to access your device usage.")
+                        .setPositiveButton("Open Settings", new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Ask the user for app usage permissions
+                                Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+                                startActivity(intent);
+                            }
+
+                        })
+                        .show();
+            }
+        }
+    }
+
+    /**
+     * Get whether the app has permissions to access app usage stats.
+     * @return True if the app has permissions, false otherwise or on error.
+     */
+    private boolean hasAppUsagePermissions() {
+        try {
+            Context context = this.getApplicationContext();
+            PackageManager packageManager = context.getPackageManager();
+            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), 0);
+            AppOpsManager appOpsManager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
+            int mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, applicationInfo.uid, applicationInfo.packageName);
+            return (mode == AppOpsManager.MODE_ALLOWED);
+
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
