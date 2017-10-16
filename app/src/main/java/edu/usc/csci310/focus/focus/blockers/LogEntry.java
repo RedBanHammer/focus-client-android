@@ -5,6 +5,7 @@ import android.os.Bundle;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
@@ -26,6 +27,7 @@ public class LogEntry implements Serializable {
     private Serializable metadata;
     private LogEntryEventType eventType;
     private Date timestamp;
+    private String identifier;
 
     public App getApp() {
         return this.app;
@@ -47,6 +49,10 @@ public class LogEntry implements Serializable {
         return this.timestamp;
     }
 
+    public String getIdentifier() {
+        return this.identifier;
+    }
+
     public LogEntry(App app, ArrayList<Profile> profiles, Serializable metadata, LogEntryEventType eventType) {
         this.app = app;
         this.profiles = profiles;
@@ -54,5 +60,20 @@ public class LogEntry implements Serializable {
         this.eventType = eventType;
 
         this.timestamp = new Date();
+        this.identifier = (UUID.randomUUID()).toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof LogEntry)) {
+            return false;
+        }
+
+        LogEntry other = (LogEntry)obj;
+        return (other.getIdentifier().equals(this.getIdentifier()));
     }
 }

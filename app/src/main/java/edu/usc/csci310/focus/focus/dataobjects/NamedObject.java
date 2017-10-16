@@ -86,4 +86,18 @@ public class NamedObject implements Serializable {
         this.name = no.getName();
         this.identifier = no.getIdentifier();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof NamedObject)) {
+            return false;
+        }
+
+        NamedObject other = (NamedObject)obj;
+        return (other.getIdentifier().equals(this.getIdentifier()));
+    }
 }
