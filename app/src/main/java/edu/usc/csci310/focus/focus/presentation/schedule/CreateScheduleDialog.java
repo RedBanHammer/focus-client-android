@@ -39,7 +39,7 @@ public class CreateScheduleDialog extends DialogFragment implements TextView.OnE
         return fragment;
     }
 
-    @Override
+    /*@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create_schedule_dialog, container, false);
@@ -48,20 +48,19 @@ public class CreateScheduleDialog extends DialogFragment implements TextView.OnE
         // set this instance as callback for editor action
         mEditText.setOnEditorActionListener(this);
         mEditText.requestFocus();
-        getDialog().getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        getDialog().setTitle("Provide a name for this schedule");
 
-        return view;
-    }
+        return inflater.inflate(R.layout.fragment_create_schedule_dialog, null);
+    } */
 
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
+        View view = inflater.inflate(R.layout.fragment_create_schedule_dialog, null);
+
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setView(inflater.inflate(R.layout.fragment_create_schedule_dialog, container, false))
+        builder.setView(view)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Positive response
@@ -76,7 +75,17 @@ public class CreateScheduleDialog extends DialogFragment implements TextView.OnE
                 });
 
         Dialog dialog = builder.create();
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        mEditText = (EditText) view.findViewById(R.id.schedule_name);
+
+        // set this instance as callback for editor action
+        mEditText.setOnEditorActionListener(this);
+        mEditText.requestFocus();
+
+        //dialog.getWindow().setSoftInputMode(
+          //      WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setTitle("Provide a name for this schedule");
         return dialog;
     }
 
