@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
+import edu.usc.csci310.focus.focus.managers.ScheduleManager;
 
 public class ScheduleList extends Fragment implements CreateScheduleDialog.EditNameDialogListener {
     public final static String SCHEDULE_LIST = "edu.usc.csci310.focus.focus.presentation.schedule_list";
@@ -102,8 +103,11 @@ public class ScheduleList extends Fragment implements CreateScheduleDialog.EditN
 
     // This is called when the dialog is completed and the results have been passed
     @Override
-    public void onFinishEditDialog(String data) {
-        schedules.add(new Schedule(null, data));
+    public void onFinishEditDialog(String name) {
+        Schedule createdSchedule = new Schedule(name);
+        schedules.add(createdSchedule);
+        ScheduleManager.getDefaultManager().setSchedule(createdSchedule);
+
         scheduleListViewAdapter.notifyDataSetChanged();
     }
 }

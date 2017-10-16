@@ -1,5 +1,8 @@
 package edu.usc.csci310.focus.focus.dataobjects;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -24,9 +27,14 @@ public class Schedule extends NamedObject {
      * @param profiles The initial profiles to populate the schedule with.
      * @param name The name of the schedule.
      */
-    public Schedule(ArrayList<Profile> profiles, String name) {
+    public Schedule(@NonNull ArrayList<Profile> profiles, @NonNull String name) {
         super(name);
         this.profiles = profiles;
+    }
+
+    public Schedule(@NonNull String name) {
+        super(name);
+        this.profiles = new ArrayList<Profile>();
     }
 
     /**
@@ -34,7 +42,7 @@ public class Schedule extends NamedObject {
      * @param profile The profile to include.
      * @param time The recurring times the profile should activate in the schedule.
      */
-    public void addProfile(Profile profile, RecurringTime time) {
+    public void addProfile(@NonNull Profile profile, @NonNull RecurringTime time) {
         this.profiles.add(profile);
         this.profileTimes.put(profile.getName(), time);
     }
@@ -43,13 +51,13 @@ public class Schedule extends NamedObject {
      * Remove a profile from the schedule and remove its recurring time entry
      * @param profile The profile to remove.
      */
-    public void removeProfile(Profile profile) {
+    public void removeProfile(@NonNull Profile profile) {
         int index = this.profiles.indexOf(profile);
         this.profiles.remove(index);
         this.profileTimes.remove(profile.getName());
     }
 
-    public ArrayList<Profile> getProfiles() {
+    public @NonNull ArrayList<Profile> getProfiles() {
         return this.profiles;
     }
 
@@ -57,7 +65,7 @@ public class Schedule extends NamedObject {
      * Get all profiles that are currently scheduled.
      * @return An ArrayList of active profiles.
      */
-    public ArrayList<Profile> getActiveProfiles() {
+    public @NonNull ArrayList<Profile> getActiveProfiles() {
         ArrayList<Profile> activeProfiles = new ArrayList<Profile>();
 
         for (Profile profile : this.getProfiles()) {
@@ -98,7 +106,7 @@ public class Schedule extends NamedObject {
      * Get all scheduled profile times.
      * @return A Map of profile identifiers to a scheduled RecurringTime.
      */
-    public Map<String, RecurringTime> getProfileTimes() {
+    public @NonNull Map<String, RecurringTime> getProfileTimes() {
         return this.profileTimes;
     }
 
@@ -107,7 +115,7 @@ public class Schedule extends NamedObject {
      * @param identifier The string identifier of a profile.
      * @return The RecurringTime if the profile is scheduled. Null if not scheduled.
      */
-    public RecurringTime getProfileTimeWithIdentifier(String identifier) {
+    public @Nullable RecurringTime getProfileTimeWithIdentifier(String identifier) {
         return this.profileTimes.get(identifier);
     }
 
