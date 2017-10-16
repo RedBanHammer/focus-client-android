@@ -101,17 +101,17 @@ public class AddProfileToScheduleDialog extends DialogFragment {
                 }
             }
         });
-        createButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-        mEditText = (EditText) view.findViewById(R.id.schedule_name);
-
-        // set this instance as callback for editor action
-        mEditText.setOnEditorActionListener(this);
-        mEditText.requestFocus();
+//        createButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//            }
+//        });
+//        mEditText = (EditText) view.findViewById(R.id.schedule_name);
+//
+//        // set this instance as callback for editor action
+//        mEditText.setOnEditorActionListener(this);
+//        mEditText.requestFocus();
         getDialog().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         getDialog().setTitle("Provide a name for this schedule");
