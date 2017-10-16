@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="@dimen/page_padding"
-        tools:context="edu.usc.csci310.focus.focus.presentation.schedule.AddProfileToScheduleDialog"
+        tools:context="edu.usc.csci310.focus.focus.presentation.schedule.AddProfileToSchedule"
         android:orientation="vertical">
         <RelativeLayout
             android:layout_width="match_parent"
@@ -96,17 +96,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/start_time"
-                android:paddingRight="@dimen/fab_margin"/>
+                android:paddingRight="@dimen/fab_margin"
+                android:layout_centerHorizontal="true"/>
             <Button
                 android:id="@+id/start_time_button"
                 android:layout_below="@id/start_time"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"/>
         </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/duration_layout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal">
             <TextView
@@ -114,25 +116,51 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/duration"
-                android:paddingRight="@dimen/fab_margin"/>
-            <Button
-                android:id="@+id/duration_button"
+                android:layout_centerHorizontal="true"/>
+            <TextView
+                android:id="@+id/hours"
                 android:layout_below="@id/duration_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <Button
-                android:id="@+id/add_profile"
-                android:layout_below="@id/duration_button"
+                android:layout_toStartOf="@id/duration_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/add_profiles"/>
+                android:text="hours"/>
+            <TextView
+                android:id="@+id/mins"
+                android:layout_below="@id/duration_text"
+                android:layout_toEndOf="@id/duration_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="mins"/>
+            <EditText
+                android:id="@+id/hours_field"
+                android:layout_below="@id/hours"
+                android:layout_alignLeft="@id/hours"
+                android:layout_width="@dimen/edit_text_width"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"/>
+            <EditText
+                android:id="@+id/mins_field"
+                android:layout_below="@id/mins"
+                android:layout_alignLeft="@id/mins"
+                android:layout_width="@dimen/edit_text_width"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"/>
+
         </RelativeLayout>
+        <Button
+            android:id="@+id/add_profile"
+            android:layout_below="@id/duration_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_profiles"
+            android:layout_gravity="center_horizontal"/>
 
     </LinearLayout>
     <Button android:layout_alignParentRight="true" android:text="X"
         android:textColor="#FFF" android:background="@drawable/cancel"
         android:gravity="center_vertical|center_horizontal"
         android:layout_margin="5dp" android:layout_height="25dp"
+        android:id="@+id/cancel_button"
         android:layout_width="25dp" android:textSize="12sp" android:textStyle="bold"
         android:onClick="cancelActivity" />
 </RelativeLayout>

@@ -4,6 +4,7 @@ package edu.usc.csci310.focus.focus.presentation.schedule;
  *
  * Activity that shows an edit ScheduleInterfaceController page
  */
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.RectF;
 import android.provider.ContactsContract;
@@ -85,6 +86,21 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         getMenuInflater().inflate(R.menu.schedule_main, menu);
         return true;
     }
+    //opens add ProfileToSchedule activity
+    private void openAddProfileActivity(){
+        Intent i = new Intent(ScheduleInterfaceController.this, AddProfileToSchedule.class);
+        startActivityForResult(i, 10);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data!=null){
+            if (requestCode ==10 && resultCode == Activity.RESULT_OK){
+
+            }
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -96,6 +112,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
                 return true;
             //adding a profile to the schedule
             case R.id.add_profile_button:
+                openAddProfileActivity();
                 return true;
             case R.id.action_day_view:
                 if (mWeekViewType != TYPE_DAY_VIEW) {

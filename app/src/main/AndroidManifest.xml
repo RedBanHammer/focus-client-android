@@ -50,7 +50,7 @@
         <activity android:name=".presentation.SelectApp" />
         <activity android:name=".presentation.CreateProfileInterfaceController" />
         <activity
-            android:name=".presentation.schedule.AddProfileToScheduleDialog"
+            android:name=".presentation.schedule.AddProfileToSchedule"
             android:label="@string/title_activity_schedule"/>
         <activity android:name=".presentation.SelectProfile"></activity>
         <activity android:name=".presentation.SplashScreen">
