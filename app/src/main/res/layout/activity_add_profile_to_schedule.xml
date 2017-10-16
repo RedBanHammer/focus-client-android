@@ -11,21 +11,24 @@
         android:orientation="vertical">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp">
             <TextView
                 android:id="@+id/profile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Profile" />
+                android:layout_centerVertical="true"
+                android:text="Profile"
+                android:textSize="18sp"/>
             <Spinner
                 android:id="@+id/profile_spinner"
-                android:layout_alignParentEnd="true"
                 android:layout_toEndOf="@id/profile"
                 android:layout_width="match_parent"
                 android:layout_marginLeft="@dimen/fab_margin"
-                android:layout_height="wrap_content"
-                android:text="@string/add_profiles"
-                android:layout_alignTop="@id/profile" />
+                android:layout_height="match_parent"
+                android:background="@color/toolbar"
+                android:text="@string/add_profiles" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -35,7 +38,8 @@
                 android:id="@+id/create_schedule_days"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/create_schedule_days" />
+                android:text="@string/create_schedule_days"
+                android:textSize="18sp" />
             <android.support.v7.widget.AppCompatCheckBox
                 android:id="@+id/sunday"
                 android:layout_width="wrap_content"
@@ -90,19 +94,24 @@
             android:id="@+id/start_time_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp">
             <TextView
                 android:id="@+id/start_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/start_time"
+                android:textSize="18sp"
                 android:paddingRight="@dimen/fab_margin"
+                android:layout_marginBottom="8dp"
                 android:layout_centerHorizontal="true"/>
             <Button
                 android:id="@+id/start_time_button"
                 android:layout_below="@id/start_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@color/toolbar"
                 android:layout_centerHorizontal="true"/>
         </RelativeLayout>
 
@@ -110,12 +119,16 @@
             android:id="@+id/duration_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp">
             <TextView
                 android:id="@+id/duration_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/duration"
+                android:textSize="18sp"
+                android:layout_marginBottom="8dp"
                 android:layout_centerHorizontal="true"/>
             <TextView
                 android:id="@+id/hours"
@@ -152,15 +165,11 @@
             android:layout_below="@id/duration_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
             android:text="@string/add_profiles"
             android:layout_gravity="center_horizontal"/>
 
     </LinearLayout>
-    <Button android:layout_alignParentRight="true" android:text="X"
-        android:textColor="#FFF" android:background="@drawable/cancel"
-        android:gravity="center_vertical|center_horizontal"
-        android:layout_margin="5dp" android:layout_height="25dp"
-        android:id="@+id/cancel_button"
-        android:layout_width="25dp" android:textSize="12sp" android:textStyle="bold"
-        android:onClick="cancelActivity" />
 </RelativeLayout>
