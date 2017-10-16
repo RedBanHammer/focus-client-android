@@ -10,11 +10,18 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import edu.usc.csci310.focus.focus.R;
+import edu.usc.csci310.focus.focus.dataobjects.App;
+import edu.usc.csci310.focus.focus.dataobjects.Profile;
+import edu.usc.csci310.focus.focus.dataobjects.Schedule;
+import edu.usc.csci310.focus.focus.managers.ScheduleManager;
+
+import java.util.ArrayList;
 import java.util.jar.Attributes;
 
 public class CreateScheduleDialog extends DialogFragment implements TextView.OnEditorActionListener {
@@ -46,6 +53,31 @@ public class CreateScheduleDialog extends DialogFragment implements TextView.OnE
         getDialog().setTitle("Provide a name for this schedule");
 
         return view;
+    }
+
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        // Get the layout inflater
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        // Use the Builder class for convenient dialog construction
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(inflater.inflate(R.layout.fragment_create_schedule_dialog, container, false))
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Positive response
+                        sendBackResult();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // negative response
+                        // do nothing
+                    }
+                });
+
+        Dialog dialog = builder.create();
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
     }
 
     @Override
