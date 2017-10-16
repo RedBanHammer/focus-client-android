@@ -4,7 +4,9 @@ package edu.usc.csci310.focus.focus.presentation.schedule;
  *
  * Activity that shows an edit ScheduleInterfaceController page
  */
+import android.content.Intent;
 import android.graphics.RectF;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -26,6 +28,8 @@ import java.util.List;
 import java.util.Locale;
 
 import edu.usc.csci310.focus.focus.R;
+import edu.usc.csci310.focus.focus.dataobjects.Profile;
+import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 import edu.usc.csci310.focus.focus.presentation.ProfileInterfaceController;
 
 public class ScheduleInterfaceController extends AppCompatActivity implements WeekView.EventClickListener, MonthLoader.MonthChangeListener, WeekView.EventLongPressListener, WeekView.EmptyViewLongPressListener {
@@ -35,6 +39,12 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
     private int mWeekViewType = TYPE_THREE_DAY_VIEW;
     private WeekView mWeekView;
     private TextView scheduleName;
+    private Schedule schedule;
+    private ArrayList<Profile> profiles;
+
+    private List<WeekViewEvent> events;
+    private WeekViewEvent newEvent;
+    boolean once = false;
 
     /*
      * renders a schedule page
@@ -44,11 +54,16 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schedule);
 
+        Intent i = getIntent();
+        schedule = (Schedule) i.getSerializableExtra(ScheduleList.SCHEDULE_LIST_ITEM);
+        profiles = (ArrayList<Profile>) i.getSerializableExtra(ScheduleList.PROFILES);
+
         // Get a reference for the week view in the layout.
         mWeekView = (WeekView) findViewById(R.id.weekView);
 
         // Get reference to schedule name.
         scheduleName = (TextView)findViewById(R.id.schedule_name);
+        scheduleName.setText(schedule.getName());
 
         // Show a toast message about the touched event.
         mWeekView.setOnEventClickListener(this);
@@ -65,7 +80,6 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         setupDateTimeInterpreter(false);
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.schedule_main, menu);
@@ -79,6 +93,9 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         switch (id){
             case R.id.action_today:
                 mWeekView.goToToday();
+                return true;
+            //adding a profile to the schedule
+            case R.id.add_profile_button:
                 return true;
             case R.id.action_day_view:
                 if (mWeekViewType != TYPE_DAY_VIEW) {
@@ -167,16 +184,6 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         Toast.makeText(this, "Empty view long pressed: " + getEventTitle(time), Toast.LENGTH_SHORT).show();
     }
 
-    public WeekView getWeekView() {
-        return mWeekView;
-    }
-    private List<WeekViewEvent> events;
-    private WeekViewEvent newEvent;
-    boolean once = false;
-
-    public ScheduleInterfaceController(){
-        getIntent().getSerializableExtra(ScheduleList.PROFILE_LIST);
-    }
 
 
     /*

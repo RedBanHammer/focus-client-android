@@ -11,18 +11,18 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"/>
     <Button
-        android:id="@+id/add_profile_button"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:text="+"
-        android:layout_alignTop="@id/schedule_name"
-        android:layout_alignParentEnd="true"/>
+        android:id="@+id/edit_schedule_name_button"
+        android:layout_width="@dimen/edit_schedule_name_button"
+        android:layout_height="@dimen/edit_schedule_name_button"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="@dimen/fab_margin"/>
     <LinearLayout
         android:id="@+id/toggle_weekly_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/schedule_name"
-        android:layout_alignParentEnd="true">
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="@dimen/fab_margin">
         <TextView
             android:id="@+id/repeat_weekly"
             android:layout_width="wrap_content"
@@ -32,6 +32,16 @@
             android:id="@+id/repeat_weekly_toggle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/delete_schedule"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="delete schedule"/>
+        <Button
+            android:id="@+id/delete_schedule_button"
+            android:layout_width="@dimen/del_schedule_button"
+            android:layout_height="@dimen/del_schedule_button"
+            android:text="-"/>
     </LinearLayout>
 
     <com.alamkanak.weekview.WeekView
@@ -52,6 +62,5 @@
         app:todayBackgroundColor="#1848adff"
         app:headerColumnBackground="#ffffffff"
         app:todayHeaderTextColor="@color/accent" />
-
 </RelativeLayout>
 

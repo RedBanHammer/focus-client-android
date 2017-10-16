@@ -23,7 +23,11 @@ import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 
 public class ScheduleList extends Fragment implements CreateScheduleDialog.EditNameDialogListener {
-    public final static String PROFILE_LIST = "edu.usc.csci310.focus.focus.presentation.schedule_list";
+    public final static String SCHEDULE_LIST = "edu.usc.csci310.focus.focus.presentation.schedule_list";
+    public final static String PROFILE_LIST = "edu.usc.csci310.focus.focus.presentation.profile_list";
+    public final static String SCHEDULE_LIST_ITEM = "edu.usc.csci310.focus.focus.presentation.schedule_list_item";
+    public final static String PROFILES = "edu.usc.csci310.focus.focus.presentation.profiles";
+
     private ListView listView;
     ArrayList<Schedule> schedules;
     ArrayList<Profile> profiles;
@@ -31,11 +35,13 @@ public class ScheduleList extends Fragment implements CreateScheduleDialog.EditN
     ScheduleListViewAdapter scheduleListViewAdapter;
     Intent intent;
     // newInstance constructor for creating fragment with arguments
-    public static ScheduleList newInstance(int page, String title) {
+    public static ScheduleList newInstance(int page, String title, ArrayList<Schedule> schedules, ArrayList<Profile> profiles) {
         ScheduleList scheduleListFragment = new ScheduleList();
         Bundle args = new Bundle();
 //        args.putInt("someInt", page);
 //        args.putString("someTitle", title);
+        args.putSerializable(SCHEDULE_LIST, schedules);
+        args.putSerializable(PROFILE_LIST, profiles);
         scheduleListFragment.setArguments(args);
         return scheduleListFragment;
     }
@@ -43,8 +49,8 @@ public class ScheduleList extends Fragment implements CreateScheduleDialog.EditN
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
+        schedules = (ArrayList<Schedule>) getArguments().getSerializable(SCHEDULE_LIST);
+        profiles = (ArrayList<Profile>) getArguments().getSerializable(PROFILE_LIST);
     }
 
     @Override
@@ -80,6 +86,8 @@ public class ScheduleList extends Fragment implements CreateScheduleDialog.EditN
             public void onItemClick(AdapterView<?> a, View v, int position,
                                     long id) {
                 intent = new Intent(getActivity(), ScheduleInterfaceController.class);
+                intent.putExtra(SCHEDULE_LIST_ITEM, schedules.get(position));
+                intent.putExtra(PROFILES, profiles);
                 startActivityForResult(intent, 0);
             }
         });
@@ -100,6 +108,4 @@ public class ScheduleList extends Fragment implements CreateScheduleDialog.EditN
         schedules.add(new Schedule(null, data));
         scheduleListViewAdapter.notifyDataSetChanged();
     }
-
-
 }

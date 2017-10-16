@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" android:layout_height="fill_parent">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/page_padding"
+        tools:context="edu.usc.csci310.focus.focus.presentation.schedule.AddProfileToScheduleDialog"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Profile" />
+            <Spinner
+                android:id="@+id/profile_spinner"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@id/profile"
+                android:layout_width="match_parent"
+                android:layout_marginLeft="@dimen/fab_margin"
+                android:layout_height="wrap_content"
+                android:text="@string/add_profiles"
+                android:layout_alignTop="@id/profile" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/create_schedule_days"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/create_schedule_days" />
+            <android.support.v7.widget.AppCompatCheckBox
+                android:id="@+id/sunday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/create_schedule_days"
+                android:text="@string/sunday"/>
+            <android.support.v7.widget.AppCompatCheckBox
+                android:id="@+id/monday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/sunday"
+                android:layout_alignBaseline="@id/sunday"
+                android:text="@string/monday"/>
+            <android.support.v7.widget.AppCompatCheckBox
+                android:id="@+id/tuesday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/monday"
+                android:layout_alignBaseline="@id/monday"
+                android:text="@string/tuesday"/>
+            <android.support.v7.widget.AppCompatCheckBox
+                android:id="@+id/wednesday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/tuesday"
+                android:layout_alignBaseline="@id/tuesday"
+                android:text="@string/wednesday"/>
+            <android.support.v7.widget.AppCompatCheckBox
+                android:id="@+id/thursday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/wednesday"
+                android:layout_alignBaseline="@id/wednesday"
+                android:text="@string/thursday"/>
+            <android.support.v7.widget.AppCompatCheckBox
+                android:id="@+id/friday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/thursday"
+                android:layout_alignBaseline="@id/thursday"
+                android:text="@string/friday"/>
+            <android.support.v7.widget.AppCompatCheckBox
+                android:id="@+id/saturday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/friday"
+                android:layout_alignBaseline="@id/friday"
+                android:text="@string/saturday"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/start_time_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+            <TextView
+                android:id="@+id/start_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/start_time"
+                android:paddingRight="@dimen/fab_margin"/>
+            <Button
+                android:id="@+id/start_time_button"
+                android:layout_below="@id/start_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/duration_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+            <TextView
+                android:id="@+id/duration_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/duration"
+                android:paddingRight="@dimen/fab_margin"/>
+            <Button
+                android:id="@+id/duration_button"
+                android:layout_below="@id/duration_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/add_profile"
+                android:layout_below="@id/duration_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_profiles"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+    <Button android:layout_alignParentRight="true" android:text="X"
+        android:textColor="#FFF" android:background="@drawable/cancel"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_margin="5dp" android:layout_height="25dp"
+        android:layout_width="25dp" android:textSize="12sp" android:textStyle="bold"
+        android:onClick="cancelActivity" />
+</RelativeLayout>

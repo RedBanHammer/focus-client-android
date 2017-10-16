@@ -27,8 +27,10 @@ import android.view.MenuItem;
 import java.util.ArrayList;
 
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
+import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 import edu.usc.csci310.focus.focus.managers.BlockingManager;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
+import edu.usc.csci310.focus.focus.managers.ScheduleManager;
 import edu.usc.csci310.focus.focus.presentation.NotificationListFragment;
 import edu.usc.csci310.focus.focus.presentation.ProfileList;
 import edu.usc.csci310.focus.focus.storage.StorageManager;
@@ -83,12 +85,13 @@ public class MainActivity extends AppCompatActivity {
         // Returns the fragment to display for that page
         @Override
         public Fragment getItem(int position) {
+            ArrayList<Profile> profiles = ProfileManager.getDefaultManager().getAllProfiles();
             switch (position) {
                 case 0: // Fragment # 0 - This will show FirstFragment
-                    ArrayList<Profile> profiles = ProfileManager.getDefaultManager().getAllProfiles();
                     return ProfileList.newInstance(0, tabs[0], profiles);
                 case 1: // Fragment # 0 - This will show FirstFragment different title
-                    return ScheduleList.newInstance(1, tabs[1]);
+                    ArrayList<Schedule> schedules = ScheduleManager.getDefaultManager().getAllSchedules();
+                    return ScheduleList.newInstance(1, tabs[1], schedules, profiles);
                 case 2: // Fragment # 1 - This will show SecondFragment
                     return NotificationListFragment.newInstance(2, tabs[2]);
                 default:
