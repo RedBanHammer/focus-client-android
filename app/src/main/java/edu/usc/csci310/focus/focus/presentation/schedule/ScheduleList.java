@@ -67,8 +67,7 @@ public class ScheduleList extends Fragment implements CreateScheduleDialog.EditN
         View v = inflater.inflate(R.layout.activity_schedule_list, container, false);
         // call the views with this layout
         listView = (ListView)v.findViewById(R.id.scheduleListView);
-        profiles = new ArrayList<Profile>();
-        schedules = new ArrayList<Schedule>();
+
         scheduleListViewAdapter = new ScheduleListViewAdapter(getActivity(), 0, schedules);
         listView.setAdapter(scheduleListViewAdapter);
         addScheduleButton = (FloatingActionButton) v.findViewById(R.id.addScheduleButton);
