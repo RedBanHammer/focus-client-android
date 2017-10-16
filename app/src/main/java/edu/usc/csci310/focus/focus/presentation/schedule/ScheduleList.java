@@ -64,6 +64,8 @@ public class ScheduleList extends Fragment implements CreateScheduleDialog.EditN
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+
         View v = inflater.inflate(R.layout.activity_schedule_list, container, false);
         // call the views with this layout
         listView = (ListView)v.findViewById(R.id.scheduleListView);
@@ -106,6 +108,13 @@ public class ScheduleList extends Fragment implements CreateScheduleDialog.EditN
         Schedule createdSchedule = new Schedule(name);
         schedules.add(createdSchedule);
         ScheduleManager.getDefaultManager().setSchedule(createdSchedule);
+
+        scheduleListViewAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
 
         scheduleListViewAdapter.notifyDataSetChanged();
     }

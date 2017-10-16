@@ -2,6 +2,7 @@ package edu.usc.csci310.focus.focus.presentation.schedule;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,14 @@ import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 public class ScheduleListViewAdapter extends ArrayAdapter<Schedule> {
     protected ArrayList<Schedule> schedules;
 
+    /**
+     * Update the data set and reload the view.
+     * @param schedules The new list of schedules to display.
+     */
+    public void setSchedules(@NonNull ArrayList<Schedule> schedules) {
+        this.schedules = schedules;
+        this.notifyDataSetChanged();
+    }
 
     public ScheduleListViewAdapter(Activity activity, int id, ArrayList<Schedule> objects) {
         super(activity, R.layout.schedule_list_item, objects);
