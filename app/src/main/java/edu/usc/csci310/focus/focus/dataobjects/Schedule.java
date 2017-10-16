@@ -47,6 +47,10 @@ public class Schedule extends NamedObject {
         this.profileTimes.put(profile.getName(), time);
     }
 
+    public void setProfiles(@NonNull ArrayList<Profile> profiles) {
+        this.profiles = profiles;
+    }
+
     /**
      * Remove a profile from the schedule and remove its recurring time entry
      * @param profile The profile to remove.
