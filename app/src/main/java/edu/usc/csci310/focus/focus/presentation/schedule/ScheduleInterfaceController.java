@@ -5,10 +5,13 @@ package edu.usc.csci310.focus.focus.presentation.schedule;
  * Activity that shows an edit ScheduleInterfaceController page
  */
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.RectF;
 import android.provider.ContactsContract;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -48,9 +51,9 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
     private WeekView mWeekView;
     private TextView scheduleName;
     private Schedule schedule;
-    private ArrayList<Profile> profiles;
     private Button editNameButton;
     private Dialog editNameDialog;
+    private Button deleteButton;
     private EditText text;
     private Button posButton;
     private Button negButton;
@@ -68,8 +71,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         setContentView(R.layout.activity_schedule);
 
         Intent i = getIntent();
-        schedule = (Schedule) i.getSerializableExtra(ScheduleList.SCHEDULE_LIST_ITEM);
-        profiles = ProfileManager.getDefaultManager().getAllProfiles();
+        this.schedule = (Schedule) i.getSerializableExtra(ScheduleList.SCHEDULE_LIST_ITEM);
 
         // Get a reference for the week view in the layout.
         mWeekView = (WeekView) findViewById(R.id.weekView);
@@ -92,9 +94,13 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         // the week view. This is optional.
         setupDateTimeInterpreter(false);
 
-        //hook up the edit name button
-        editNameButton = (Button) findViewById(R.id.edit_schedule_name_button);
-        editNameButton.setOnClickListener(new View.OnClickListener() {
+        this.initializeEditNameButton();
+        this.initializeDeleteButton();
+    }
+
+    private void initializeEditNameButton() {
+        this.editNameButton = (Button) findViewById(R.id.edit_schedule_name_button);
+        this.editNameButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -127,7 +133,37 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
 
                     }
                 });
-            editNameDialog.show();
+                editNameDialog.show();
+            }
+
+        });
+    }
+
+    private void initializeDeleteButton() {
+        this.deleteButton = (Button) findViewById(R.id.delete_schedule_button);
+        this.deleteButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(ScheduleInterfaceController.this)
+                        .setTitle("Confirm Delete")
+                        .setMessage("Are you sure you want to delete this schedule? This action cannot be undone.")
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Delete the schedule
+                                ScheduleManager.getDefaultManager().removeSchedule(schedule.getIdentifier());
+                                // Close activity
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // User canceled deleting
+                            }
+                        })
+                        .show();
             }
 
         });
