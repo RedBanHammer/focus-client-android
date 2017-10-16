@@ -5,9 +5,11 @@ package edu.usc.csci310.focus.focus.presentation.schedule;
 * Activity that allows user to create a new ScheduleInterfaceController
 */
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
@@ -42,6 +44,8 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
     public static final String MINS = "mins";
     public static final String START_HOUR = "start_hour";
     public static final String START_MIN = "start_mins";
+    public static final String SELECTED_PROFILE = "selected_profile";
+
 
     private CheckBox [] daysCB = new CheckBox[7];
     private Boolean [] didCheckBoxes = new Boolean[7];
@@ -51,7 +55,8 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
     private Button addProfileButton;
     private Button cancelButton;
 
-    private String selectedProfile;
+    private ArrayList<Profile> profiles;
+    private Profile selectedProfile;
     private int hours;
     private int mins;
     private int startHours;
@@ -60,7 +65,9 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_profile_to_schedule);
-
+        for (int i = 0; i < this.didCheckBoxes.length; i++){
+            this.didCheckBoxes[i] = false;
+        }
         startTimeButton = (Button)findViewById(R.id.start_time_button);
         profileSpinner = (Spinner)findViewById(R.id.profile_spinner);
         startTimeButton = (Button)findViewById(R.id.start_time_button);
@@ -76,7 +83,7 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
         daysCB[6] = (CheckBox)findViewById(R.id.saturday);
         addProfileButton =(Button)findViewById(R.id.add_profile);
         cancelButton = (Button)findViewById(R.id.cancel_button);
-        ArrayList<Profile> profiles = ProfileManager.getDefaultManager().getAllProfiles();
+        this.profiles = ProfileManager.getDefaultManager().getAllProfiles();
         String[] profileNames = new String[profiles.size()];
         for (int index=0; index<profiles.size(); index++){
             profileNames[index] = profiles.get(index).getName();
@@ -89,7 +96,7 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
         profileSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedProfile = adapterView.getItemAtPosition(i).toString();
+                selectedProfile = profiles.get(i);
             }
 
             @Override
@@ -167,6 +174,8 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked){
                     didCheckBoxes[0] = true;
+                }else{
+                    didCheckBoxes[0] = false;
                 }
             }
         });
@@ -175,6 +184,8 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked){
                     didCheckBoxes[1] = true;
+                }else{
+                    didCheckBoxes[1] = false;
                 }
             }
         });
@@ -183,6 +194,8 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked){
                     didCheckBoxes[2] = true;
+                }else{
+                    didCheckBoxes[2] = false;
                 }
             }
         });
@@ -191,6 +204,8 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked){
                     didCheckBoxes[3] = true;
+                }else{
+                    didCheckBoxes[3] = false;
                 }
             }
         });
@@ -199,6 +214,8 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked){
                     didCheckBoxes[4] = true;
+                }else{
+                    didCheckBoxes[4] = false;
                 }
             }
         });
@@ -207,6 +224,8 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked){
                     didCheckBoxes[5] = true;
+                }else{
+                    didCheckBoxes[5] = false;
                 }
             }
         });
@@ -216,6 +235,8 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 if (isChecked){
                     didCheckBoxes[6] = true;
+                }else{
+                    didCheckBoxes[6] = false;
                 }
             }
         });
@@ -239,22 +260,70 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
 
     //checks to see whether user has successfully added profile
     public void addProfile(){
-        hours = Integer.parseInt(hourText.getText().toString());
-        mins = Integer.parseInt(minText.getText().toString());
+        try {
+            hours = Integer.parseInt(hourText.getText().toString());
+            mins = Integer.parseInt(minText.getText().toString());
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            this.showNumberFormatError();
+            return;
+        }
 
-        if (didCompleteFields()){
+        if (!this.isDurationValid()) {
+            this.showNumberFormatError();
+            return;
+        }
+
+        if (this.didCompleteFields()){
             Intent i = new Intent();
             i.putExtra(DAYCB, didCheckBoxes);
             i.putExtra(HOURS, hours);
             i.putExtra(MINS, mins);
             i.putExtra(START_HOUR, startHours);
             i.putExtra(START_MIN, startMins);
+            i.putExtra(SELECTED_PROFILE, this.selectedProfile);
             setResult(Activity.RESULT_OK, i);
             finish();
+        } else {
+            this.showFormCompletionError();
         }
     }
-    public boolean didCompleteFields(){
-        return ((selectedProfile!="") && (hours>=0) && (hours<=10) && (mins>=0) && (mins<=59) &&(startHours!=0) && (startMins!=0));
+
+    private void showNumberFormatError() {
+        new AlertDialog.Builder(this)
+                .setTitle("Invalid Duration")
+                .setMessage("You entered an invalid duration for the profile.")
+                .setPositiveButton("Okay", new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+
+                })
+                .show();
+    }
+
+    private void showFormCompletionError() {
+        new AlertDialog.Builder(this)
+                .setTitle("Incomplete Form")
+                .setMessage("You did not complete setting up the profile.")
+                .setPositiveButton("Okay", new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+
+                })
+                .show();
+    }
+
+    private boolean isDurationValid() {
+        return (hours>=0) && (hours<=10) &&
+                (mins>=0) && (mins<=59);
+    }
+
+    public boolean didCompleteFields() {
+        return (selectedProfile!=null);
     }
     /*
      * Determines whether the user has completed the form to create a new ScheduleInterfaceController.
