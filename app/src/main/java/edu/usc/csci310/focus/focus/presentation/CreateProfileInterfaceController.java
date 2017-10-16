@@ -67,7 +67,8 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
                         .setPositiveButton("Remove", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 appList.remove(position);
-                                reloadAppList();
+                                appAdapter.notifyDataSetChanged();
+                                //reloadAppList();
                                 dialog.cancel();
                             }
                         })
@@ -86,8 +87,10 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
         if(profileIfEditing != null)
         {
             tv.setText(profileIfEditing.getName());
-            appList = profileIfEditing.getApps();
-            reloadAppList();
+            appList.addAll(profileIfEditing.getApps());
+            appAdapter.notifyDataSetChanged();
+
+            //reloadAppList();
         }
 
         //hook up the select app button to pull up the select app activity
@@ -141,7 +144,8 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
                     }
 
                     //String result = data.getStringExtra(SelectApp.SELECTED_APPS);
-                    reloadAppList();
+                    appAdapter.notifyDataSetChanged();
+                    //reloadAppList();
                 }
 
             }
