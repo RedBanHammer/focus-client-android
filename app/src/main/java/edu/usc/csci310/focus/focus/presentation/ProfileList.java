@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.managers.BlockingManager;
+import edu.usc.csci310.focus.focus.managers.ProfileManager;
 
 public class ProfileList extends Fragment {
     private ListView listView;
@@ -78,5 +79,12 @@ public class ProfileList extends Fragment {
             }
         });
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        profileListViewAdapter.setProfiles(ProfileManager.getDefaultManager().getAllProfiles());
     }
 }

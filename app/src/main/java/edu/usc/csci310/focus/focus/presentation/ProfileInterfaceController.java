@@ -31,7 +31,7 @@ import edu.usc.csci310.focus.focus.managers.ProfileManager;
 import java.util.ArrayList;
 
 public class ProfileInterfaceController extends AppCompatActivity {
-  private Profile profile;
+    private Profile profile;
     Button deleteButton;
     Button editNameButton;
     String SAVE_NAME= "Save Changes";
@@ -43,6 +43,10 @@ public class ProfileInterfaceController extends AppCompatActivity {
     Button posButton;
     TextView tv;
 
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+        this.renderProfileInfo();
+    }
 
     public void ProfileInterfaceController(Profile profile)
     {
@@ -67,8 +71,7 @@ public class ProfileInterfaceController extends AppCompatActivity {
         ListView listView = (ListView) findViewById(R.id.listviewprofile);
         listView.setAdapter(appAdapter);
 
-        tv = (TextView)findViewById(R.id.profileName);
-        tv.setText(profile.getName());
+        this.renderProfileInfo();
 
         //initialize delete profile button
         deleteButton = (Button) findViewById(R.id.deleteButton);
@@ -135,7 +138,18 @@ public class ProfileInterfaceController extends AppCompatActivity {
 
     }
 
+    private void renderProfileInfo() {
+        tv = (TextView)findViewById(R.id.profileName);
+        tv.setText(profile.getName());
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        Profile newProfile = ProfileManager.getDefaultManager().getProfileWithIdentifier(this.profile.getIdentifier());
+        this.setProfile(newProfile);
+    }
 
     /*
      * @param: name - new name of profile
