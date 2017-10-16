@@ -51,6 +51,7 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
         // Populate the data from the data object via the viewHolder object
         // into the template view.
         viewHolder.profileName.setText(profile.getName());
+
         // Return the completed view to render on screen
         return view;
     }
@@ -63,4 +64,6 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
             profileName = (TextView)v.findViewById(R.id.profile_list_name);
         }
     }
+
+
 }

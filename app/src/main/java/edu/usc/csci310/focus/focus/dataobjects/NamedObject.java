@@ -33,6 +33,8 @@ public class NamedObject implements Serializable {
         this.identifier = "" + id;
     }
 
+    public void setName(String name) {this.name =  name;}
+
     public String getName() {
         return this.name;
     }

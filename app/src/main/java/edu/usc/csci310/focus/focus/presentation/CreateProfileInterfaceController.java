@@ -5,11 +5,16 @@ package edu.usc.csci310.focus.focus.presentation;
 * Activity that allows user to create a new ProfileInterfaceController
 */
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -29,6 +34,11 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
     private ArrayList<App> appList;
     private appViewAdapter appAdapter;
     private Button button, done;
+    private Profile profileIfEditing;
+    String PROFILE_TO_EDIT="PROFILE_TO_EDIT";
+    EditText tv;
+    ListView listView;
+
     public CreateProfileInterfaceController(){
         //constructor....??
     };
@@ -37,6 +47,49 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_profile);
+        //initialize the profile name box
+        tv = (EditText) findViewById(R.id.profileName2);
+        //initialize the app displaying box
+        appList = new ArrayList<>();
+        appAdapter = new appViewAdapter(this, appList);
+        listView = (ListView) findViewById(R.id.createProfileListView);
+        listView.setAdapter(appAdapter);
+
+        //set onclick for the apps so that they can be deleted when tapped
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> a, View v, final int position,
+                                    long id) {
+                //delete the app selected
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CreateProfileInterfaceController.this)
+                        .setTitle("Remove App")
+                        .setMessage("Remove this app from list?")
+                        .setPositiveButton("Remove", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                appList.remove(position);
+                                reloadAppList();
+                                dialog.cancel();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+
+                AlertDialog alertDialog = alertDialogBuilder.show();
+
+            }
+        });
+
+        Intent in = getIntent();
+        profileIfEditing = (Profile) in.getSerializableExtra(PROFILE_TO_EDIT);
+        if(profileIfEditing != null)
+        {
+            tv.setText(profileIfEditing.getName());
+            appList = profileIfEditing.getApps();
+            reloadAppList();
+        }
 
         //hook up the select app button to pull up the select app activity
         button = (Button) findViewById(R.id.chooseAppButton);
@@ -56,13 +109,16 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                // PASS INFO TO THE PROFILEINTERFACECONTROLler
-                TextView tv = (TextView) findViewById(R.id.profileName2);
-                Profile profile = new Profile(tv.getText().toString());
-                profile.setApps(appList);
-
+                //if we are creating a new profile and not editing an old one
+                if(profileIfEditing == null)
+                {
+                    // PASS INFO TO THE PROFILEINTERFACECONTROLler
+                    profileIfEditing = new Profile(tv.getText().toString());
+                }
+                profileIfEditing.setName(tv.getText().toString());
+                profileIfEditing.setApps(appList);
                 //pass info to manager
-                ProfileManager.getDefaultManager().setProfile(profile);
+                ProfileManager.getDefaultManager().setProfile(profileIfEditing);
 
                 //notify profileList
 
@@ -72,6 +128,8 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
             }
         });
 
+
+
     }
 
     @Override
@@ -79,7 +137,16 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
         if (data!=null){
             if (requestCode == 10) {
                 if(resultCode == Activity.RESULT_OK){
-                    appList = (ArrayList<App>) data.getSerializableExtra(SelectApp.SELECTED_APPS);
+                    //Retrieve selected apps, add these to existing appLIst
+                    ArrayList<App> temp = (ArrayList<App>) data.getSerializableExtra(SelectApp.SELECTED_APPS);
+                    for(App a : temp)
+                    {
+                        if(!appList.contains(a))
+                        {
+                            appList.add(a);
+                        }
+                    }
+
                     //String result = data.getStringExtra(SelectApp.SELECTED_APPS);
                     reloadAppList();
                 }
@@ -99,10 +166,12 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
     }
 
     public void reloadAppList() {
-        //fill the applist when apps are checked and returned.
         appAdapter = new appViewAdapter(this, appList);
-        ListView listView = (ListView) findViewById(R.id.createProfileListView);
+        listView = (ListView) findViewById(R.id.createProfileListView);
         listView.setAdapter(appAdapter);
+
     }
+
+
 
 }
