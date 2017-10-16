@@ -25,6 +25,10 @@ public class NotificationBlocker extends IntentService implements Blocker, Logge
         super(name);
     }
 
+    public NotificationBlocker() {
+        super("NotificationBlocker");
+    }
+
     public void setContext(Context context){
         this.context = context;
     }
