@@ -90,8 +90,7 @@ public class MainActivity extends AppCompatActivity {
                 case 0: // Fragment # 0 - This will show FirstFragment
                     return ProfileList.newInstance(0, tabs[0], profiles);
                 case 1: // Fragment # 0 - This will show FirstFragment different title
-                    ArrayList<Schedule> schedules = ScheduleManager.getDefaultManager().getAllSchedules();
-                    return ScheduleList.newInstance(1, tabs[1], schedules, profiles);
+                    return ScheduleList.newInstance(1, tabs[1]);
                 case 2: // Fragment # 1 - This will show SecondFragment
                     return NotificationListFragment.newInstance(2, tabs[2]);
                 default:

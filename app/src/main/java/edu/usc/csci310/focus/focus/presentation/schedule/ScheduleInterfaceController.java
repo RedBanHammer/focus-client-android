@@ -31,6 +31,7 @@ import java.util.Locale;
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
+import edu.usc.csci310.focus.focus.managers.ProfileManager;
 import edu.usc.csci310.focus.focus.presentation.ProfileInterfaceController;
 
 public class ScheduleInterfaceController extends AppCompatActivity implements WeekView.EventClickListener, MonthLoader.MonthChangeListener, WeekView.EventLongPressListener, WeekView.EmptyViewLongPressListener {
@@ -57,7 +58,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
 
         Intent i = getIntent();
         schedule = (Schedule) i.getSerializableExtra(ScheduleList.SCHEDULE_LIST_ITEM);
-        profiles = (ArrayList<Profile>) i.getSerializableExtra(ScheduleList.PROFILES);
+        profiles = ProfileManager.getDefaultManager().getAllProfiles();
 
         // Get a reference for the week view in the layout.
         mWeekView = (WeekView) findViewById(R.id.weekView);

@@ -32,12 +32,11 @@ public class ProfileList extends Fragment {
     ProfileListViewAdapter profileListViewAdapter;
     public final static String PROFILE_ARRAYLIST = "profile_arraylist";
     // newInstance constructor for creating fragment with arguments
-    public static ProfileList newInstance(int page, String title, ArrayList<Profile> profiles) {
+    public static ProfileList newInstance(int page, String title) {
         ProfileList profileListFragment = new ProfileList();
         Bundle args = new Bundle();
 //        args.putInt("someInt", page);
 //        args.putString("someTitle", title);
-        args.putSerializable(PROFILE_ARRAYLIST, profiles);
         profileListFragment.setArguments(args);
         return profileListFragment;
     }
@@ -46,7 +45,7 @@ public class ProfileList extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        profiles = (ArrayList<Profile>)getArguments().getSerializable(PROFILE_ARRAYLIST);
+        profiles = ProfileManager.getDefaultManager().getAllProfiles();
     }
 
     //handle UI events
