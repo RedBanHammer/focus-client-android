@@ -1,6 +1,7 @@
 package edu.usc.csci310.focus.focus.managers;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -21,10 +22,10 @@ import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerDelegate {
     private static BlockingManager defaultManager = new BlockingManager();
 
-    public static BlockingManager getDefaultManager() {
+    public static @NonNull BlockingManager getDefaultManager() {
         return defaultManager;
     }
-    public static BlockingManager getDefaultManagerWithContext(Context context) {
+    public static @NonNull BlockingManager getDefaultManagerWithContext(Context context) {
         defaultManager.setContext(context);
         defaultManager.setContext(context);
 
@@ -58,7 +59,7 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
      * Return the notification log entries captured by the NotificationBlocker module.
      * @return An ArrayList of LogEntries with the NOTFICIATION type.
      */
-    public ArrayList<LogEntry> getNotificationLogEntries() {
+    public @NonNull ArrayList<LogEntry> getNotificationLogEntries() {
         return this.notificationBlocker.getLogEntries();
     }
 

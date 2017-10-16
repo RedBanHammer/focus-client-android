@@ -1,5 +1,8 @@
 package edu.usc.csci310.focus.focus.managers;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -17,7 +20,7 @@ import edu.usc.csci310.focus.focus.storage.StorageManager;
 public class ScheduleManager {
     private static ScheduleManager defaultManager = new ScheduleManager();
 
-    public static ScheduleManager getDefaultManager() {
+    public static @NonNull ScheduleManager getDefaultManager() {
         return defaultManager;
     }
 
@@ -58,7 +61,7 @@ public class ScheduleManager {
      * Get all schedules that are active.
      * @return An ArrayList of active schedules.
      */
-    public ArrayList<Schedule> getActiveSchedules() {
+    public @NonNull ArrayList<Schedule> getActiveSchedules() {
         ArrayList<Schedule> activeSchedules = new ArrayList<Schedule>();
 
         for (Schedule schedule : this.getAllSchedules()) {
@@ -74,13 +77,15 @@ public class ScheduleManager {
     * getScheduleWithName() method. Takes in a string with schedule name,
     * returns the corresponding Schedule object.
     */
-    public Schedule getScheduleWithName(String name)
+    public @Nullable Schedule getScheduleWithName(String name)
     {
         ArrayList<Serializable> serials = storage.getObjectsWithPrefix("Schedules");
         ArrayList<Schedule> schedules = new ArrayList<Schedule>();
 
-        for (Serializable o : serials) {
-            schedules.add((Schedule) o);
+        for (Serializable obj : serials) {
+            if (obj != null) {
+                schedules.add((Schedule) obj);
+            }
         }
 
         Schedule s = null;
@@ -95,7 +100,7 @@ public class ScheduleManager {
     /*
    * getSchedule method, takes in a Schedule object
    * */
-    public ArrayList<Schedule> getScheduleWithIdentifier(String identifier)
+    public @Nullable ArrayList<Schedule> getScheduleWithIdentifier(String identifier)
     {
         return storage.getObject("Schedules", identifier);
     }
@@ -103,17 +108,17 @@ public class ScheduleManager {
     /*
     * getAllSchedules method, returns an array of all Schedule objects
     * */
-    public ArrayList<Schedule> getAllSchedules()
+    public @NonNull ArrayList<Schedule> getAllSchedules()
     {
         ArrayList<Serializable> serials = storage.getObjectsWithPrefix("Schedules");
         ArrayList<Schedule> schedules = new ArrayList<Schedule>();
 
-        for (Serializable o : serials) {
-            schedules.add((Schedule) o);
+        for (Serializable obj : serials) {
+            if (obj != null) {
+                schedules.add((Schedule) obj);
+            }
         }
 
         return schedules;
     }
-
-
 }

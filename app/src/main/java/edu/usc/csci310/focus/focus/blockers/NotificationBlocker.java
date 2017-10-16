@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
+import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 
@@ -45,7 +46,7 @@ public class NotificationBlocker extends IntentService implements Blocker, Logge
         }
     }
 
-    public void setApps(ArrayList<App> apps) {
+    public void setApps(@NonNull ArrayList<App> apps) {
         this.blockingService.setApps(apps);
     }
 
@@ -58,7 +59,7 @@ public class NotificationBlocker extends IntentService implements Blocker, Logge
     }
 
     /** Logger interface impl. **/
-    public ArrayList<LogEntry> getLogEntries() {
+    public @NonNull ArrayList<LogEntry> getLogEntries() {
         return this.blockingService.getLogEntries();
     }
 }

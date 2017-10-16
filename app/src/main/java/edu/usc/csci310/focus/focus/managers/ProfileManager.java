@@ -1,5 +1,8 @@
 package edu.usc.csci310.focus.focus.managers;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -15,7 +18,7 @@ import edu.usc.csci310.focus.focus.storage.StorageManager;
 public class ProfileManager {
     private static ProfileManager defaultManager = new ProfileManager();
 
-    public static ProfileManager getDefaultManager() {
+    public static @NonNull ProfileManager getDefaultManager() {
         return defaultManager;
     }
 
@@ -60,13 +63,15 @@ public class ProfileManager {
     * getProfileWithName() method. Takes in a string with profile name,
     * returns the corresponding Profile object.
     */
-    public Profile getProfileWithName(String name)
+    public @Nullable Profile getProfileWithName(String name)
     {
         ArrayList<Serializable> serials = storage.getObjectsWithPrefix("Profiles");
         ArrayList<Profile> profiles = new ArrayList<Profile>();
 
-        for (Serializable o : serials) {
-            profiles.add((Profile) o);
+        for (Serializable obj : serials) {
+            if (obj != null) {
+                profiles.add((Profile) obj);
+            }
         }
 
         Profile p = null;
@@ -82,7 +87,7 @@ public class ProfileManager {
     * getProfileWithIdentifier() method. Takes in a string with identifier,
     * returns the corresponding Profile object.
     */
-    public Profile getProfileWithIdentifier(String identifier)
+    public @Nullable Profile getProfileWithIdentifier(String identifier)
     {
         return storage.getObject("Profiles", identifier);
     }
@@ -91,13 +96,15 @@ public class ProfileManager {
     * getProfilesWithNames() method. Takes in a string with profile name,
     * returns the corresponding Profile objects in an array.
     */
-    public ArrayList<Profile> getProfilesWithNames(String appName)
+    public @NonNull ArrayList<Profile> getProfilesWithNames(String appName)
     {
         ArrayList<Serializable> serials = storage.getObjectsWithPrefix("Profiles");
         ArrayList<Profile> profiles = new ArrayList<Profile>();
 
-        for (Serializable o : serials) {
-            profiles.add((Profile) o);
+        for (Serializable obj : serials) {
+            if (obj != null) {
+                profiles.add((Profile) obj);
+            }
         }
 
         ArrayList<App> apps = new ArrayList<App>();
@@ -119,13 +126,15 @@ public class ProfileManager {
     * getProfileWithIdentifiers() method. Takes in a string with profile name,
     * returns the corresponding Profile objects in an array.
     */
-    public ArrayList<Profile> getProfileWithIdentifiers(String appBundleID)
+    public @NonNull ArrayList<Profile> getProfileWithIdentifiers(String appBundleID)
     {
         ArrayList<Serializable> serials = storage.getObjectsWithPrefix("Profiles");
         ArrayList<Profile> profiles = new ArrayList<Profile>();
 
-        for (Serializable o : serials) {
-            profiles.add((Profile) o);
+        for (Serializable obj : serials) {
+            if (obj != null) {
+                profiles.add((Profile) obj);
+            }
         }
 
         ArrayList<App> apps = new ArrayList<App>();
@@ -145,13 +154,15 @@ public class ProfileManager {
     /*
     * getAllProfiles() method. Returns every Profile object in a Profile array
     */
-    public ArrayList<Profile> getAllProfiles()
+    public @NonNull ArrayList<Profile> getAllProfiles()
     {
         ArrayList<Serializable> serials = storage.getObjectsWithPrefix("Profiles");
         ArrayList<Profile> profiles = new ArrayList<Profile>();
 
-        for (Serializable o : serials) {
-            profiles.add((Profile) o);
+        for (Serializable obj : serials) {
+            if (obj != null) {
+                profiles.add((Profile) obj);
+            }
         }
 
         return profiles;

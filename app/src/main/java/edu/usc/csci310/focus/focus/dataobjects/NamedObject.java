@@ -8,6 +8,8 @@ import java.util.UUID;
  */
 
 public class NamedObject implements Serializable {
+    private static final long serialVersionUID = 2L;
+
     private String name = null;
     private String identifier = null;
 
