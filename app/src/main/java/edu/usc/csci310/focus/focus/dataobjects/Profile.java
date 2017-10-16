@@ -12,7 +12,6 @@ public class Profile extends NamedObject {
     private static final long serialVersionUID = 1L;
 
     private ArrayList<App> apps = new ArrayList<App>();
-    private boolean isActive;
 
     /**
      * Create a new profile with a specific name.
@@ -56,10 +55,4 @@ public class Profile extends NamedObject {
     }
 
     public ArrayList<App> getApps() { return this.apps; }
-
-    public void setIsActive(boolean flag) {
-        this.isActive = flag;
-    }
-
-    public boolean getIsActive() { return this.isActive; }
 }

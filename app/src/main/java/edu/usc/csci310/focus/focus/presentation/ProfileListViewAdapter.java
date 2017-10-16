@@ -29,7 +29,8 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
      * @param profiles The new list of profiles to display.
      */
     public void setProfiles(@NonNull ArrayList<Profile> profiles) {
-        this.profiles = profiles;
+        this.profiles.clear();
+        this.profiles.addAll(profiles);
         this.notifyDataSetChanged();
     }
 
