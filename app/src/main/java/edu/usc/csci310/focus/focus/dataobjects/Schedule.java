@@ -16,11 +16,11 @@ import edu.usc.csci310.focus.focus.managers.ScheduleManager;
  */
 
 public class Schedule extends NamedObject {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private ArrayList<Profile> profiles = new ArrayList<Profile>();
     private Map<String, RecurringTime> profileTimes = new HashMap<String, RecurringTime>();
-    private boolean isActive = false;
+    private Boolean isActive = false;
 
     /**
      * Create a new Schedule object with a list of profiles.
@@ -58,7 +58,7 @@ public class Schedule extends NamedObject {
     }
 
     public @NonNull ArrayList<Profile> getProfiles() {
-        return this.profiles;
+        return this.profiles != null ? this.profiles : new ArrayList<Profile>();
     }
 
     /**

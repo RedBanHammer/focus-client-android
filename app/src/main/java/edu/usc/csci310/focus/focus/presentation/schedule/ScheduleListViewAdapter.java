@@ -7,13 +7,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
+import edu.usc.csci310.focus.focus.managers.ScheduleManager;
 
 /**
  * Created by Briana on 10/6/17.
@@ -27,7 +30,8 @@ public class ScheduleListViewAdapter extends ArrayAdapter<Schedule> {
      * @param schedules The new list of schedules to display.
      */
     public void setSchedules(@NonNull ArrayList<Schedule> schedules) {
-        this.schedules = schedules;
+        this.schedules.clear();
+        this.schedules.addAll(schedules);
         this.notifyDataSetChanged();
     }
 
@@ -58,6 +62,21 @@ public class ScheduleListViewAdapter extends ArrayAdapter<Schedule> {
         // Populate the data from the data object via the viewHolder object
         // into the template view.
         viewHolder.scheduleName.setText(schedule.getName());
+
+        //set the toggle button listener
+        ToggleButton toggle = (ToggleButton) view.findViewById(R.id.toggle_schedule_button);
+        toggle.setOnCheckedChangeListener(null);
+        toggle.setChecked(schedule.getIsActive());
+
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Schedule schedule = schedules.get(position);
+                schedule.setIsActive(isChecked);
+                ScheduleManager.getDefaultManager().setSchedule(schedule);
+            }
+        });
+
         // Return the completed view to render on screen
         return view;
     }
