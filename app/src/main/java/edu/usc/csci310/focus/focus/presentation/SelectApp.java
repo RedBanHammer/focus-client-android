@@ -50,7 +50,7 @@ public class SelectApp extends AppCompatActivity implements SelectAppInterface {
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }
-            if(!identifier.startsWith("com.android"))
+            if(!identifier.startsWith("com.android") && !identifier.startsWith("edu.usc.csci310.focus"))
             {
                 //create the app object
                 App app = new App(name, identifier);
