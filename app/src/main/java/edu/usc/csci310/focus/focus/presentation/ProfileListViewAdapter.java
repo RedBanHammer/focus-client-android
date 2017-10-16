@@ -2,6 +2,7 @@ package edu.usc.csci310.focus.focus.presentation;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,10 +24,18 @@ import edu.usc.csci310.focus.focus.dataobjects.Profile;
 public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
     protected ArrayList<Profile> profiles;
 
+    /**
+     * Update the data set and reload the view.
+     * @param profiles The new list of profiles to display.
+     */
+    public void setProfiles(@NonNull ArrayList<Profile> profiles) {
+        this.profiles = profiles;
+        this.notifyDataSetChanged();
+    }
 
     public ProfileListViewAdapter(Activity activity, int id, ArrayList<Profile> objects){
         super(activity, 0, objects);
-        profiles= objects;
+        this.profiles = objects;
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -64,6 +73,4 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
             profileName = (TextView)v.findViewById(R.id.profile_list_name);
         }
     }
-
-
 }

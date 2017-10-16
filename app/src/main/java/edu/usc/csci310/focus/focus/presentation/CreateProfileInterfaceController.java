@@ -120,11 +120,7 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
                 //pass info to manager
                 ProfileManager.getDefaultManager().setProfile(profileIfEditing);
 
-                //notify profileList
-
-                Intent intent = new Intent(CreateProfileInterfaceController.this, MainActivity.class);
-               // intent.putExtra("PROFILE", (Serializable) profile);
-                startActivity(intent);
+                finish();
             }
         });
 
