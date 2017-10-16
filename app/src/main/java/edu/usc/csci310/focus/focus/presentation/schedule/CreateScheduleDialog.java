@@ -10,11 +10,18 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import edu.usc.csci310.focus.focus.R;
+import edu.usc.csci310.focus.focus.dataobjects.App;
+import edu.usc.csci310.focus.focus.dataobjects.Profile;
+import edu.usc.csci310.focus.focus.dataobjects.Schedule;
+import edu.usc.csci310.focus.focus.managers.ScheduleManager;
+
+import java.util.ArrayList;
 import java.util.jar.Attributes;
 
 public class CreateScheduleDialog extends DialogFragment implements TextView.OnEditorActionListener {
@@ -32,7 +39,7 @@ public class CreateScheduleDialog extends DialogFragment implements TextView.OnE
         return fragment;
     }
 
-    @Override
+    /*@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create_schedule_dialog, container, false);
@@ -41,11 +48,45 @@ public class CreateScheduleDialog extends DialogFragment implements TextView.OnE
         // set this instance as callback for editor action
         mEditText.setOnEditorActionListener(this);
         mEditText.requestFocus();
-        getDialog().getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        getDialog().setTitle("Provide a name for this schedule");
 
-        return view;
+        return inflater.inflate(R.layout.fragment_create_schedule_dialog, null);
+    } */
+
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        // Get the layout inflater
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        View view = inflater.inflate(R.layout.fragment_create_schedule_dialog, null);
+
+        // Use the Builder class for convenient dialog construction
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setView(view)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Positive response
+                        sendBackResult();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // negative response
+                        // do nothing
+                    }
+                });
+
+        Dialog dialog = builder.create();
+
+        mEditText = (EditText) view.findViewById(R.id.schedule_name);
+
+        // set this instance as callback for editor action
+        mEditText.setOnEditorActionListener(this);
+        mEditText.requestFocus();
+
+        //dialog.getWindow().setSoftInputMode(
+          //      WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setTitle("Provide a name for this schedule");
+        return dialog;
     }
 
     @Override
