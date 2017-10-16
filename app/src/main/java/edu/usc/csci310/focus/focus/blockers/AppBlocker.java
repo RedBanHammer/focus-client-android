@@ -78,7 +78,7 @@ public class AppBlocker extends IntentService implements Blocker, Logger {
                             this.loggingService.logEntry(logEntry);
 
                             // Block the app by bringing Focus into the foreground with info.
-                            this.bringToForeground();
+                            this.bringToForeground(app);
 
                             break;
                         }
@@ -90,14 +90,14 @@ public class AppBlocker extends IntentService implements Blocker, Logger {
         }
     }
 
-    public void bringToForeground() {
-        // TODO: App blocked info screen class
+    public void bringToForeground(App app) {
         Intent intent = new Intent(this.context, SplashScreen.class);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // You need this if starting
         //  the activity from a service
         intent.setAction(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        intent.putExtra("appName", app.getName());
 
         this.context.startActivity(intent);
     }
