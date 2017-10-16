@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
@@ -72,6 +73,7 @@ public class ProfileList extends Fragment {
             public void onItemClick(AdapterView<?> a, View v, int position,
                                     long id) {
                 Intent intent = new Intent(getActivity(), ProfileInterfaceController.class);
+                intent.putExtra("PROFILE", (Serializable) profiles.get(position));
                 startActivityForResult(intent, 0);
             }
         });
