@@ -79,8 +79,12 @@ public class NotificationBlockingService extends NotificationListenerService imp
 
 
     /** Logger interface impl. **/
-    public ArrayList<LogEntry> getLogEntries() {
+    public @NonNull ArrayList<LogEntry> getLogEntries() {
         return this.loggingService.getLogEntries();
+    }
+
+    public void removeAllLogEntries() {
+        this.loggingService.removeAllLogEntries();
     }
 
 

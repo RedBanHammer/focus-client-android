@@ -27,6 +27,7 @@ public class NotificationListFragment extends Fragment {
     private ListView listView;
     ArrayList<LogEntry> notificationLogEntries = new ArrayList<LogEntry>();
     NotificationListViewAdapter notificationListViewAdapter;
+    FloatingActionButton clearNotificationsButton;
 
     // newInstance constructor for creating fragment with arguments
     public static NotificationListFragment newInstance(int page, String title) {
@@ -41,6 +42,7 @@ public class NotificationListFragment extends Fragment {
         BlockingManager manager = BlockingManager.getDefaultManager();
 
         this.notificationLogEntries = manager.getNotificationLogEntries();
+
 
         // DEBUG TMP DATA
         NotificationMetadata metadata1 = new NotificationMetadata(null);
@@ -81,6 +83,7 @@ public class NotificationListFragment extends Fragment {
                 LogEntry.LogEntryEventType.NOTIFICATION
         ));
 
+
         //setContentView(R.layout.activity_notification);
     }
 
@@ -94,6 +97,20 @@ public class NotificationListFragment extends Fragment {
 
         notificationListViewAdapter = new NotificationListViewAdapter(getActivity(), 0, notificationLogEntries);
         listView.setAdapter(notificationListViewAdapter);
+
+        clearNotificationsButton = (FloatingActionButton) v.findViewById(R.id.addProfileButton);
+        clearNotificationsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //clear notifications in storage
+                BlockingManager.getDefaultManager().clearAllNotificationLogEntries();
+
+                //clear notifications on the view
+                notificationLogEntries.clear();
+                notificationListViewAdapter.notifyDataSetChanged();
+            }
+        });
+
 
 //        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override

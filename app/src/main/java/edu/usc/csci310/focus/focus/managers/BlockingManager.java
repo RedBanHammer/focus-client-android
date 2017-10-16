@@ -14,6 +14,7 @@ import edu.usc.csci310.focus.focus.blockers.NotificationBlocker;
 import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
+import edu.usc.csci310.focus.focus.storage.StorageManager;
 
 /**
  * Handles blocking apps and notifications.
@@ -63,6 +64,9 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
         return this.notificationBlocker.getLogEntries();
     }
 
+    public void clearAllNotificationLogEntries() {
+        this.notificationBlocker.removeAllLogEntries();
+    }
 
     /** Manage the blocking modules **/
 

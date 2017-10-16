@@ -2,6 +2,7 @@ package edu.usc.csci310.focus.focus.storage;
 import android.content.Context;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import edu.usc.csci310.focus.focus.dataobjects.*;
 
@@ -183,5 +184,6 @@ public class StorageManager {
         }
 
         dir.delete();
+
     }
 }
