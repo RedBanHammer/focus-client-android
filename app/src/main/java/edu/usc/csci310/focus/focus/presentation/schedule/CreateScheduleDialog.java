@@ -35,7 +35,7 @@ public class CreateScheduleDialog extends DialogFragment implements TextView.OnE
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_create_schedule_dialog, container);
+        View view = inflater.inflate(R.layout.fragment_create_schedule_dialog, container, false);
         mEditText = (EditText) view.findViewById(R.id.schedule_name);
 
         // set this instance as callback for editor action

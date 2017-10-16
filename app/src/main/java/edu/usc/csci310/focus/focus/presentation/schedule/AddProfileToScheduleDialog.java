@@ -1,51 +1,57 @@
 package edu.usc.csci310.focus.focus.presentation.schedule;
 /*
-* CreateScheduleInterfaceController Class
+* AddProfileToScheduleDialog Class
 *
 * Activity that allows user to create a new ScheduleInterfaceController
 */
-import android.app.Activity;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import edu.usc.csci310.focus.focus.R;
 
-public class CreateScheduleInterfaceController extends AppCompatActivity {
-    private EditText name;
-    private Button createButton;
+public class AddProfileToScheduleDialog extends DialogFragment {
     private CheckBox [] daysCB = new CheckBox[7];
-    private CheckBox repeatWeekly;
     private Boolean [] didCheckBoxes = new Boolean[7];
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_schedule);
+    private Spinner profileSpinner;
+    private Button startTimeButton;
+    private Button durationButton;
+    private Button addProfileButton;
 
-        name = (EditText)findViewById(R.id.create_schedule_text_name);
-        createButton =(Button)findViewById(R.id.create_schedule_profiles_button);
-        daysCB[0] = (CheckBox)findViewById(R.id.sunday);
-        daysCB[1] = (CheckBox)findViewById(R.id.monday);
-        daysCB[2] = (CheckBox)findViewById(R.id.tuesday);
-        daysCB[3] = (CheckBox)findViewById(R.id.wednesday);
-        daysCB[4] = (CheckBox)findViewById(R.id.thursday);
-        daysCB[5] = (CheckBox)findViewById(R.id.friday);
-        daysCB[6] = (CheckBox)findViewById(R.id.saturday);
 
-            daysCB[0].setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                    if (isChecked){
-                        didCheckBoxes[0] = true;
-                    }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_add_profile_to_schedule_dialog, container, false);
+        startTimeButton = (Button)view.findViewById(R.id.start_time_button);
+        profileSpinner = (Spinner)view.findViewById(R.id.profile_spinner);
+        startTimeButton = (Button)view.findViewById(R.id.start_time_button);
+        durationButton = (Button)view.findViewById(R.id.duration_button);
+
+        daysCB[0] = (CheckBox)view.findViewById(R.id.sunday);
+        daysCB[1] = (CheckBox)view.findViewById(R.id.monday);
+        daysCB[2] = (CheckBox)view.findViewById(R.id.tuesday);
+        daysCB[3] = (CheckBox)view.findViewById(R.id.wednesday);
+        daysCB[4] = (CheckBox)view.findViewById(R.id.thursday);
+        daysCB[5] = (CheckBox)view.findViewById(R.id.friday);
+        daysCB[6] = (CheckBox)view.findViewById(R.id.saturday);
+        addProfileButton =(Button)view.findViewById(R.id.add_profile);
+
+        daysCB[0].setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked){
+                    didCheckBoxes[0] = true;
                 }
-            });
+            }
+        });
         daysCB[1].setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
@@ -101,8 +107,18 @@ public class CreateScheduleInterfaceController extends AppCompatActivity {
 
             }
         });
+        mEditText = (EditText) view.findViewById(R.id.schedule_name);
 
+        // set this instance as callback for editor action
+        mEditText.setOnEditorActionListener(this);
+        mEditText.requestFocus();
+        getDialog().getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        getDialog().setTitle("Provide a name for this schedule");
+
+        return view;
     }
+
     /*
      * Determines whether the user has completed the form to create a new ScheduleInterfaceController.
      *
