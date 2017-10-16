@@ -84,6 +84,8 @@ public class ProfileList extends Fragment {
     public void onResume() {
         super.onResume();
 
-        profileListViewAdapter.setProfiles(ProfileManager.getDefaultManager().getAllProfiles());
+        ArrayList<Profile> newProfiles = ProfileManager.getDefaultManager().getAllProfiles();
+        this.profileListViewAdapter.setProfiles(newProfiles);
+        this.profiles = newProfiles;
     }
 }

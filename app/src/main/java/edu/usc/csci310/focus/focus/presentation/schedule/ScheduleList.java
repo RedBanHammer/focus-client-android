@@ -105,13 +105,15 @@ public class ScheduleList extends Fragment implements CreateScheduleDialog.EditN
         schedules.add(createdSchedule);
         ScheduleManager.getDefaultManager().setSchedule(createdSchedule);
 
-        scheduleListViewAdapter.notifyDataSetChanged();
+        scheduleListViewAdapter.setSchedules(schedules);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        scheduleListViewAdapter.notifyDataSetChanged();
+        ArrayList<Schedule> newSchedules = ScheduleManager.getDefaultManager().getAllSchedules();
+        scheduleListViewAdapter.setSchedules(newSchedules);
+        this.schedules = newSchedules;
     }
 }

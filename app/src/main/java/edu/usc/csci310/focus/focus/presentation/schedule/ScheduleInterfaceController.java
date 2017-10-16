@@ -5,6 +5,7 @@ package edu.usc.csci310.focus.focus.presentation.schedule;
  * Activity that shows an edit ScheduleInterfaceController page
  */
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.RectF;
 import android.provider.ContactsContract;
@@ -13,6 +14,9 @@ import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,17 +36,24 @@ import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
+import edu.usc.csci310.focus.focus.managers.ScheduleManager;
 import edu.usc.csci310.focus.focus.presentation.ProfileInterfaceController;
 
 public class ScheduleInterfaceController extends AppCompatActivity implements WeekView.EventClickListener, MonthLoader.MonthChangeListener, WeekView.EventLongPressListener, WeekView.EmptyViewLongPressListener {
     private static final int TYPE_DAY_VIEW = 1;
     private static final int TYPE_THREE_DAY_VIEW = 2;
     private static final int TYPE_WEEK_VIEW = 3;
+    private static final String TITLE="Edit Schedule Name";
     private int mWeekViewType = TYPE_THREE_DAY_VIEW;
     private WeekView mWeekView;
     private TextView scheduleName;
     private Schedule schedule;
     private ArrayList<Profile> profiles;
+    private Button editNameButton;
+    private Dialog editNameDialog;
+    private EditText text;
+    private Button posButton;
+    private Button negButton;
 
     private List<WeekViewEvent> events;
     private WeekViewEvent newEvent;
@@ -64,7 +75,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         mWeekView = (WeekView) findViewById(R.id.weekView);
 
         // Get reference to schedule name.
-        scheduleName = (TextView)findViewById(R.id.schedule_name);
+        scheduleName = (TextView) findViewById(R.id.schedule_name);
         scheduleName.setText(schedule.getName());
 
         // Show a toast message about the touched event.
@@ -80,6 +91,46 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         // Set up a date time interpreter to interpret how the date and time will be formatted in
         // the week view. This is optional.
         setupDateTimeInterpreter(false);
+
+        //hook up the edit name button
+        editNameButton = (Button) findViewById(R.id.edit_schedule_name_button);
+        editNameButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                editNameDialog = new Dialog(ScheduleInterfaceController.this);
+                editNameDialog.setContentView(R.layout.edit_profile_name);
+                editNameDialog.setTitle(TITLE);
+                text = (EditText) editNameDialog.findViewById(R.id.newNameText);
+                posButton = (Button) editNameDialog.findViewById(R.id.positiveButton);
+                posButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //send new name to schedule manager
+                        String newName = text.getText().toString();
+                        schedule.setName(newName);
+                        ScheduleManager.getDefaultManager().setSchedule(schedule);
+
+                        //exit the dialog, reload the name
+                        scheduleName.setText(newName);
+                        editNameDialog.dismiss();
+
+                    }
+                });
+
+                Button negButton = (Button) editNameDialog.findViewById(R.id.negativeButton);
+                negButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //dismiss dialog
+                        editNameDialog.dismiss();
+
+                    }
+                });
+            editNameDialog.show();
+            }
+
+        });
     }
 
     @Override

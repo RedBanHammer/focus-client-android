@@ -78,7 +78,6 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
                         });
 
                 AlertDialog alertDialog = alertDialogBuilder.show();
-
             }
         });
 
@@ -112,14 +111,12 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
                 //if we are creating a new profile and not editing an old one
                 if(profileIfEditing == null)
                 {
-                    // PASS INFO TO THE PROFILEINTERFACECONTROLler
                     profileIfEditing = new Profile(tv.getText().toString());
                 }
                 profileIfEditing.setName(tv.getText().toString());
                 profileIfEditing.setApps(appList);
                 //pass info to manager
                 ProfileManager.getDefaultManager().setProfile(profileIfEditing);
-
                 finish();
             }
         });
