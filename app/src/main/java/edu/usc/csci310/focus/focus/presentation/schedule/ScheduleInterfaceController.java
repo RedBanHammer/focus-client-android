@@ -10,8 +10,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.RectF;
-import android.provider.ContactsContract;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -21,8 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
-import android.widget.CheckBox;
 
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,7 +31,6 @@ import com.alamkanak.weekview.WeekViewEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -44,8 +39,6 @@ import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.RecurringTime;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
-import edu.usc.csci310.focus.focus.managers.BlockingManager;
-import edu.usc.csci310.focus.focus.managers.ProfileManager;
 import edu.usc.csci310.focus.focus.managers.ScheduleManager;
 import edu.usc.csci310.focus.focus.presentation.ProfileInterfaceController;
 
@@ -105,7 +98,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         this.initializeDeleteButton();
         //populate events list with WeekViewEvents to be displayed in the calender
 
-        populateEventsList(schedule);
+        this.populateEventsList(schedule);
     }
 
     private void initializeEditNameButton() {
@@ -200,50 +193,30 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         if (data!=null){
             if (requestCode ==10 && resultCode == Activity.RESULT_OK){
                 Boolean dayCB [] = (Boolean[]) data.getSerializableExtra(AddProfileToSchedule.DAYCB);
+
                 int hours = data.getIntExtra(AddProfileToSchedule.HOURS, 0);
                 int mins = data.getIntExtra(AddProfileToSchedule.MINS, 0);
+
                 int startHours = data.getIntExtra(AddProfileToSchedule.START_HOUR, 0);
                 int startMins = data.getIntExtra(AddProfileToSchedule.START_MIN, 0);
 
-                WeekViewEvent event;
+                Long minIndex = new Long(startHours*60+startMins);
+                Long duration = new Long(hours*60+mins);
+
                 RecurringTime rt = new RecurringTime();
+
                 for (int i=0; i<dayCB.length; i++){
                     if (dayCB[i]){
-                        Calendar startTime = Calendar.getInstance();
-                        startTime.set(Calendar.HOUR_OF_DAY, startHours);
-                        startTime.set(Calendar.MINUTE, startMins);
-                        Calendar endTime = (Calendar) startTime.clone();
-                        endTime.add(Calendar.HOUR, hours);
-                        endTime.add(Calendar.MINUTE, mins);
-
-                        startTime.set(Calendar.DAY_OF_WEEK, i+1);
-                        endTime.set(Calendar.DAY_OF_WEEK, i+1);
-//                        event = new WeekViewEvent(events.size(), getEventTitle(startTime), startTime, endTime);
-//                        event.setColor(getResources().getColor(R.color.event_color_03));
-//                        events.add(event);
-                        Long minIndex = new Long(startHours*60+startMins);
-                        Long duration = new Long(hours*60+mins);
                         rt.addTime(i, minIndex, duration);
                         dayChecked = true;
                     }
                 }
-                //if none of the days were checked schedule it for today
+
+                // If none of the days were checked, schedule the profile for the current day of the week
                 if (!dayChecked){
                     Calendar startTime = Calendar.getInstance();
-                    startTime.set(Calendar.HOUR_OF_DAY, startHours);
-                    startTime.set(Calendar.MINUTE, startMins);
-                    Calendar endTime = (Calendar) startTime.clone();
-                    endTime.add(Calendar.HOUR, hours);
-                    endTime.add(Calendar.MINUTE, mins);
-
-//                    event = new WeekViewEvent(events.size(), getEventTitle(startTime), startTime, endTime);
-//                    event.setColor(getResources().getColor(R.color.event_color_03));
-                    Long minIndex = new Long(startHours*60+startMins);
-                    Long duration = new Long(hours*60+mins);
                     rt.addTime(startTime.get(Calendar.DAY_OF_WEEK), minIndex, duration);
-//                    events.add(event);
                 }
-                this.mWeekView.notifyDatasetChanged();
 
                 //add profile with recurring time to schedule
                 Profile profile = (Profile) data.getSerializableExtra(AddProfileToSchedule.SELECTED_PROFILE);
@@ -398,50 +371,95 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
                 getResources().getColor(R.color.event_color_01),
                 getResources().getColor(R.color.event_color_02),
                 getResources().getColor(R.color.event_color_03),
-                getResources().getColor(R.color.event_color_04)};
+                getResources().getColor(R.color.event_color_04)
+        };
 
-        int index = 0;
+
+        ArrayList<Profile> profiles = schedule.getProfiles();
+        int profileIndex = 0;
+
         for (Map.Entry<String, RecurringTime> entry : map.entrySet()) {
-            Profile p = schedule.getProfiles().get(index);
-            RecurringTime profileTime = schedule.getProfileTimeWithIdentifier(p.getIdentifier());
-            ArrayList<Map<Long, Long>> times = profileTime.getTimes();
-            for (int i=0; i<times.size(); i++){
+            Profile profile = profiles.get(profileIndex);
+            RecurringTime profileTime = schedule.getProfileTimeWithIdentifier(profile.getIdentifier());
+
+            if (profileTime == null) { // Profile is not in schedule
+                continue;
+            }
+
+            ArrayList<Map<Long, Long>> timesInWeek = profileTime.getTimes();
+            for (int i = 0; i< timesInWeek.size(); i++){
                 //sun/mon/tues/wed/thurs/fri/sat/
-                Map<Long, Long> time = times.get(i);
+                Map<Long, Long> time = timesInWeek.get(i);
                 for (Map.Entry<Long, Long> t : time.entrySet()){
                     //t.getKey() : minuteIndex The time in minutes when the time block starts.
                     //t.getValue() : duration The duration of the time block.
                     Long minuteIndex = t.getKey();
-                    int hourOfDay = (int)(minuteIndex/60);
-                    int minuteOfDay = (int)(minuteIndex%60);
+                    int startHourOfDay = (int)(minuteIndex/60);
+                    int startMinuteOfHour = (int)(minuteIndex%60);
+
                     Long duration = t.getValue();
                     int hours = (int)(duration/60);
                     int minutes = (int)(duration%60);
+
                     Calendar startTime = Calendar.getInstance();
-                    startTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                    startTime.set(Calendar.MINUTE, minuteOfDay);
-                    startTime.set(Calendar.DAY_OF_WEEK, i);
+                    startTime.set(Calendar.HOUR_OF_DAY, startHourOfDay);
+                    startTime.set(Calendar.MINUTE, startMinuteOfHour);
+                    startTime.set(Calendar.SECOND, 0);
+                    startTime.set(Calendar.MILLISECOND, 0);
+                    startTime.set(Calendar.DAY_OF_WEEK, i+1);
+
                     Calendar endTime = (Calendar) startTime.clone();
-                    endTime.add(Calendar.HOUR, hours);
-                    endTime.add(Calendar.MINUTE, minutes);
-                    startTime.set(Calendar.DAY_OF_WEEK, i);
-                    WeekViewEvent event = new WeekViewEvent(events.size(), getEventTitle(startTime), startTime, endTime);
-                    event.setColor(colors[index % colors.length]);
-                    events.add(event);
+                    endTime.add(Calendar.HOUR, hours); // Add duration hours to startTime
+                    endTime.add(Calendar.MINUTE, minutes); // Add duration minutes to startTime
+
+                    WeekViewEvent event = new WeekViewEvent(
+                            this.events.size(),
+                            profile.getName(),
+                            startTime,
+                            endTime
+                    );
+                    event.setColor(colors[profileIndex % colors.length]);
+
+                    this.events.add(event);
                 }
             }
-            index++;
+            profileIndex++;
         }
+
         this.mWeekView.notifyDatasetChanged();
     }
 
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
         List<WeekViewEvent> weekviewEvents = new ArrayList<WeekViewEvent>();
-        for (WeekViewEvent event : events) {
-            if(event.getStartTime().get(Calendar.MONTH)+1 == newMonth && event.getStartTime().get(Calendar.YEAR) == newYear){
-                weekviewEvents.add(event);
-            }
+
+        for (WeekViewEvent event : this.events) {
+            // Clone the event
+            WeekViewEvent newEvent = new WeekViewEvent(
+                    event.getId(),
+                    event.getName(),
+                    event.getStartTime(),
+                    event.getEndTime());
+            newEvent.setColor(event.getColor());
+
+            Calendar newStartTime = (Calendar) newEvent.getStartTime().clone();
+            newStartTime.set(Calendar.YEAR, newYear);
+            newStartTime.set(Calendar.MONTH, newMonth);
+            newStartTime.set(Calendar.HOUR_OF_DAY, newEvent.getStartTime().get(Calendar.HOUR_OF_DAY));
+            newStartTime.set(Calendar.MINUTE, newEvent.getStartTime().get(Calendar.MINUTE));
+            newEvent.setStartTime(newStartTime);
+
+            Calendar newEndTime = (Calendar) newEvent.getEndTime().clone();
+            newEndTime.set(Calendar.YEAR, newYear);
+            newEndTime.set(Calendar.MONTH, newMonth);
+            newEndTime.set(Calendar.HOUR_OF_DAY, newEvent.getEndTime().get(Calendar.HOUR_OF_DAY));
+            newEndTime.set(Calendar.MINUTE, newEvent.getEndTime().get(Calendar.MINUTE));
+            newEvent.setEndTime(newEndTime);
+
+            weekviewEvents.add(newEvent);
+//            if(event.getStartTime().get(Calendar.MONTH)+1 == newMonth && event.getStartTime().get(Calendar.YEAR) == newYear){
+//                weekviewEvents.add(event);
+//            }
         }
 
         return weekviewEvents;
