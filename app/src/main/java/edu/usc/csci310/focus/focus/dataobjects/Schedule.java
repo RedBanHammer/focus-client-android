@@ -16,64 +16,88 @@ import edu.usc.csci310.focus.focus.managers.ScheduleManager;
  */
 
 public class Schedule extends NamedObject {
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 3L;
 
-    private ArrayList<Profile> profiles = new ArrayList<Profile>();
+    private ArrayList<String> profileIdentifiers = new ArrayList<String>();
     private Map<String, RecurringTime> profileTimes = new HashMap<String, RecurringTime>();
     private Boolean isActive = false;
 
     /**
      * Create a new Schedule object with a list of profiles.
-     * @param profiles The initial profiles to populate the schedule with.
+     * @param profileIdentifiers The initial profile identifiers to populate the schedule with.
      * @param name The name of the schedule.
      */
-    public Schedule(@NonNull ArrayList<Profile> profiles, @NonNull String name) {
+    public Schedule(@NonNull ArrayList<String> profileIdentifiers, @NonNull String name) {
         super(name);
-        this.profiles = profiles;
+        this.profileIdentifiers = profileIdentifiers;
     }
 
     public Schedule(@NonNull String name) {
         super(name);
-        this.profiles = new ArrayList<Profile>();
+        this.profileIdentifiers = new ArrayList<String>();
     }
 
     /**
      * Add a profile to the schedule along with a recurring time entry.
-     * @param profile The profile to include.
+     * @param profileIdentifier The identifier of the profile to include.
      * @param time The recurring times the profile should activate in the schedule.
      */
-    public void addProfile(@NonNull Profile profile, @NonNull RecurringTime time) {
-        this.profiles.add(profile);
-        this.profileTimes.put(profile.getIdentifier(), time);
-    }
-
-    public void setProfiles(@NonNull ArrayList<Profile> profiles) {
-        this.profiles = profiles;
+    public void addProfile(@NonNull String profileIdentifier, @NonNull RecurringTime time) {
+        if (!this.profileIdentifiers.contains(profileIdentifier)) {
+            this.profileIdentifiers.add(profileIdentifier);
+            this.profileTimes.put(profileIdentifier, time);
+        } else {
+            RecurringTime previousTime = this.profileTimes.get(profileIdentifier);
+            previousTime.combineWith(time);
+        }
     }
 
     /**
-     * Remove a profile from the schedule and remove its recurring time entry
+     * Set all profiles contained within the schedule.
+     * @param profileIdentifiers An ArrayList of profile identifiers to set in the schedule.
+     */
+    public void setProfileIdentifiers(@NonNull ArrayList<String> profileIdentifiers) {
+        this.profileIdentifiers = profileIdentifiers;
+    }
+
+    /**
+     * Remove a profile from the schedule and remove its recurring time entry.
      * @param profile The profile to remove.
      */
     public void removeProfile(@NonNull Profile profile) {
-        int index = this.profiles.indexOf(profile);
-        this.profiles.remove(index);
-        this.profileTimes.remove(profile.getIdentifier());
-    }
-
-    public @NonNull ArrayList<Profile> getProfiles() {
-        return this.profiles != null ? this.profiles : new ArrayList<Profile>();
+        this.removeProfileWithIdentifier(profile.getIdentifier());
     }
 
     /**
-     * Get all profiles that are currently scheduled.
-     * @return An ArrayList of active profiles.
+     * Remove a profile from the schedule given its identifier.
+     * @param profileIdentifier The string identifier of the profile to remove.
      */
-    public @NonNull ArrayList<Profile> getActiveProfiles() {
-        ArrayList<Profile> activeProfiles = new ArrayList<Profile>();
+    public void removeProfileWithIdentifier(@NonNull String profileIdentifier) {
+        int index = this.profileIdentifiers.indexOf(profileIdentifier);
 
-        for (Profile profile : this.getProfiles()) {
-            RecurringTime profileTime = this.getProfileTimeWithIdentifier(profile.getIdentifier());
+        if (index >= 0) {
+            this.profileIdentifiers.remove(index);
+            this.profileTimes.remove(profileIdentifier);
+        }
+    }
+
+    /**
+     * Get all profile identifiers tracked by the schedule.
+     * @return An ArrayList of profile string identifiers.
+     */
+    public @NonNull ArrayList<String> getProfileIdentifiers() {
+        return this.profileIdentifiers != null ? this.profileIdentifiers : new ArrayList<String>();
+    }
+
+    /**
+     * Get all profile identifiers that are currently scheduled.
+     * @return An ArrayList of active profile identifier strings.
+     */
+    public @NonNull ArrayList<String> getActiveProfileIdentifiers() {
+        ArrayList<String> activeProfileIdentifiers = new ArrayList<String>();
+
+        for (String profileIdentifier : this.getProfileIdentifiers()) {
+            RecurringTime profileTime = this.getProfileTimeWithIdentifier(profileIdentifier);
 
             if (profileTime == null) {
                 continue;
@@ -97,13 +121,13 @@ public class Schedule extends NamedObject {
 
                 // Check if contained within the start and start+duration
                 if (minutesPassed >= key && minutesPassed <= key+duration) {
-                    activeProfiles.add(profile);
+                    activeProfileIdentifiers.add(profileIdentifier);
                     break;
                 }
             }
         }
 
-        return activeProfiles;
+        return activeProfileIdentifiers;
     }
 
     /**

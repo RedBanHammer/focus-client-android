@@ -40,19 +40,36 @@ public class ScheduleManager {
     * */
     public void setSchedule(Schedule schedule)
     {
+        storage.setObject(schedule, "Schedules", schedule.getIdentifier());
+
         ScheduleManagerDelegate delegateRef = this.delegate.get();
         delegateRef.managerDidUpdateSchedule(this, schedule);
-        storage.setObject(schedule, "Schedules", schedule.getIdentifier());
     }
 
-    /*
-   * removeSchedule method, takes in a string.
-   * */
-    public void removeSchedule(String scheduleidentifier)
-    {
-        //((ScheduleManagerDelegate) delegate).managerDidRemoveSchedule(this, schedule);
-        storage.removeObject("Schedules", scheduleidentifier);
+    /**
+     * Remove a schedule object.
+     * @param schedule The schedule object to remove.
+     */
+    public void removeSchedule(Schedule schedule) {
+        this.removeScheduleWithIdentifier(schedule.getIdentifier());
     }
+
+    /**
+     * Remove a schedule given its identifier.
+     * @param scheduleIdentifier The string identifier of the schedule to remove.
+     */
+    public void removeScheduleWithIdentifier(String scheduleIdentifier)
+    {
+        Schedule removedSchedule = this.getScheduleWithIdentifier(scheduleIdentifier);
+
+        if (removedSchedule != null) {
+            storage.removeObject("Schedules", scheduleIdentifier);
+
+            ScheduleManagerDelegate delegateRef = this.delegate.get();
+            delegateRef.managerDidRemoveSchedule(this, removedSchedule);
+        }
+    }
+
     /*
     * -------------------GETTERS-------------------------------
     */
@@ -63,8 +80,9 @@ public class ScheduleManager {
      */
     public @NonNull ArrayList<Schedule> getActiveSchedules() {
         ArrayList<Schedule> activeSchedules = new ArrayList<Schedule>();
+        ArrayList<Schedule> allSchedules = this.getAllSchedules();
 
-        for (Schedule schedule : this.getAllSchedules()) {
+        for (Schedule schedule : allSchedules) {
             if (schedule.getIsActive()) {
                 activeSchedules.add(schedule);
             }
@@ -100,7 +118,7 @@ public class ScheduleManager {
     /*
    * getSchedule method, takes in a Schedule object
    * */
-    public @Nullable ArrayList<Schedule> getScheduleWithIdentifier(String identifier)
+    public @Nullable Schedule getScheduleWithIdentifier(String identifier)
     {
         return storage.getObject("Schedules", identifier);
     }
