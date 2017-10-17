@@ -31,6 +31,7 @@ import com.alamkanak.weekview.WeekViewEvent;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -44,6 +45,10 @@ import edu.usc.csci310.focus.focus.managers.ScheduleManager;
 import edu.usc.csci310.focus.focus.presentation.ProfileInterfaceController;
 
 public class ScheduleInterfaceController extends AppCompatActivity implements WeekView.EventClickListener, MonthLoader.MonthChangeListener, WeekView.EventLongPressListener, WeekView.EmptyViewLongPressListener {
+    public static final String PROFILE_TIME = "profile_time";
+    public static final String PROFILE_NAME = "profile_name";
+    public static final String START_TIME = "start_time";
+    public static final String PROFILE_ID = "PROFILE_ID";
     private static final int TYPE_DAY_VIEW = 1;
     private static final int TYPE_THREE_DAY_VIEW = 2;
     private static final int TYPE_WEEK_VIEW = 3;
@@ -60,6 +65,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
     private Button negButton;
 
     private List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
+    private Map<Integer, String> mapID = new HashMap<Integer, String>();
 
     /*
      * renders a schedule page
@@ -225,9 +231,75 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
 
                 this.populateEventsList(this.schedule);
             }
+            //Edit profile/event in schedule
+            else if (requestCode ==11){
+                Boolean didDelete = data.getBooleanExtra(EditProfileInSchedule.DID_DELETE_PROFILE, false);
+                if (didDelete){
+                    deleteProfileFromSchedule(data);
+                }else{ //updated profile
+                    updateProfileInSchedule(data);
+                }
+            }
         }
     }
+    private void deleteProfileFromSchedule(Intent data){
+        String profID = data.getStringExtra(EditProfileInSchedule.PROFILE_ID);
+        //schedule.removeProfileWithIdentifer(profID);
+        for (int i=0; i<events.size(); i++){
+            if (mapID.get(events.get(i).getId()).equals(profID)){
+                events.remove(i);
+            }
+        }
+        this.mWeekView.notifyDatasetChanged();
+    }
+    private void updateProfileInSchedule(Intent data){
+        String profID = data.getStringExtra(EditProfileInSchedule.PROFILE_ID);
+        Map<String, RecurringTime> times = schedule.getProfileTimes();
+        Boolean dayCB [] = (Boolean[]) data.getSerializableExtra(AddProfileToSchedule.DAYCB);
+        int hours = data.getIntExtra(EditProfileInSchedule.HOURS_EDIT, 0);
+        int mins = data.getIntExtra(EditProfileInSchedule.MINS_EDIT, 0);
 
+        int startHours = data.getIntExtra(EditProfileInSchedule.START_HOUR_EDIT, 0);
+        int startMins = data.getIntExtra(EditProfileInSchedule.START_MIN_EDIT, 0);
+
+        Long minIndex = new Long(startHours*60+startMins);
+        Long duration = new Long(hours*60+mins);
+        for (Map.Entry<String, RecurringTime> index: times.entrySet()){
+            if (profID.equals(index.getKey())){
+                boolean dayChecked = false;
+                times.remove(index.getValue());
+                RecurringTime rt = new RecurringTime();
+                for (int i=0; i<dayCB.length; i++){
+                    if (dayCB[i]){
+                        rt.addTime(i, minIndex, duration);
+                        dayChecked = true;
+                    }
+                }
+                if (!dayChecked){
+                    Calendar startTime = Calendar.getInstance();
+                    rt.addTime(startTime.get(Calendar.DAY_OF_WEEK), minIndex, duration);
+                }
+                times.put(profID, rt);
+            }
+        }
+        for (int i=0; i<events.size(); i++){
+            if (mapID.get(events.get(i).getId()).equals(profID)){
+                Calendar startTime = Calendar.getInstance();
+                startTime.set(Calendar.HOUR_OF_DAY, startHours);
+                startTime.set(Calendar.MINUTE, startMins);
+                startTime.set(Calendar.SECOND, 0);
+                startTime.set(Calendar.MILLISECOND, 0);
+
+                Calendar endTime = (Calendar) startTime.clone();
+                endTime.add(Calendar.HOUR, hours); // Add duration hours to startTime
+                endTime.add(Calendar.MINUTE, mins); // Add duration minutes to startTime
+
+                events.get(i).setStartTime(startTime);
+                events.get(i).setEndTime(endTime);
+            }
+        }
+        this.mWeekView.notifyDatasetChanged();
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -313,16 +385,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH)+1, time.get(Calendar.DAY_OF_MONTH));
     }
 
-    //when event is clicked
-    @Override
-    public void onEventClick(WeekViewEvent event, RectF eventRect) {
-        Toast.makeText(this, "Clicked " + event.getName(), Toast.LENGTH_SHORT).show();
-    }
 
-    @Override
-    public void onEventLongPress(WeekViewEvent event, RectF eventRect) {
-        Toast.makeText(this, "Long pressed event: " + event.getName(), Toast.LENGTH_SHORT).show();
-    }
     @Override
     public void onEmptyViewLongPress(Calendar time) {
         Toast.makeText(this, "Empty view long pressed: " + getEventTitle(time), Toast.LENGTH_SHORT).show();
@@ -422,6 +485,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
                             startTime,
                             endTime
                     );
+                    mapID.put(this.events.size(), profile.getIdentifier());
                     event.setColor(colors[profileIndex % colors.length]);
 
                     this.events.add(event);
@@ -434,7 +498,29 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
 
         this.mWeekView.notifyDatasetChanged();
     }
+    //when event is clicked
+    @Override
+    public void onEventClick(WeekViewEvent event, RectF eventRect) {
+        String id = mapID.get(event.getId());
+        String name = ((WeekViewEvent)event).getName();
+        Calendar startTime = ((WeekViewEvent)event).getStartTime();
+        Intent i = new Intent(ScheduleInterfaceController.this, EditProfileInSchedule.class);
+        RecurringTime rt = schedule.getProfileTimeWithIdentifier(id);
 
+        if (rt != null) {
+            ArrayList<Map<Long, Long>> times = rt.getTimes();
+            i.putExtra(PROFILE_TIME, times);
+            i.putExtra(PROFILE_NAME, name);
+            i.putExtra(START_TIME, startTime);
+            i.putExtra(PROFILE_ID, id);
+            startActivityForResult(i, 11);
+        }
+    }
+
+    @Override
+    public void onEventLongPress(WeekViewEvent event, RectF eventRect) {
+        Toast.makeText(this, "Long pressed event: " + event.getName(), Toast.LENGTH_SHORT).show();
+    }
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
         List<WeekViewEvent> weekviewEvents = new ArrayList<WeekViewEvent>();
@@ -472,6 +558,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
 
         return weekviewEvents;
     }
+
 
     /**
      * Triggered when the users clicks on a empty space of the calendar.
