@@ -81,6 +81,14 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
         this.notificationBlocker.removeAllLogEntries();
     }
 
+    public @NonNull ArrayList<LogEntry> getAppOpenLogEntries() {
+        return this.appBlocker.getLogEntries();
+    }
+
+    public void clearAllAppOpenLogEntries() {
+        this.appBlocker.removeAllLogEntries();
+    }
+
     /** Manage the blocking modules **/
 
     private void updateBlockingModuleApps() {
