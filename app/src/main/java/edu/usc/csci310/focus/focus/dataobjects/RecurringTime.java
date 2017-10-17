@@ -21,6 +21,50 @@ public class RecurringTime implements Serializable {
         }
     }
 
+    public void combineWith(RecurringTime other) {
+        ArrayList<Map<Long, Long>> otherTimes = other.getTimes();
+
+        for (int i = 0; i < Math.min(this.times.size(), otherTimes.size()); i++) {
+            HashMap<Long, Long> otherTimesDaily = (HashMap) otherTimes.get(i);
+            HashMap<Long, Long> ourTimesDaily = (HashMap) this.times.get(i);
+
+            // Need to check for overlaps
+            for (Long otherStartTime : otherTimesDaily.keySet()) {
+                Long otherDuration = otherTimesDaily.get(otherStartTime);
+                Long otherEndTime = otherStartTime + otherDuration;
+
+                boolean hasOverlap = false;
+                for (Long ourStartTime : ourTimesDaily.keySet()) {
+                    Long ourEndTime = ourStartTime + ourTimesDaily.get(ourStartTime);
+
+                    if (otherStartTime >= ourStartTime && otherStartTime <= ourEndTime) {
+                        // Other starts somewhere in our time block
+                        ourTimesDaily.put(ourStartTime, Math.max(otherEndTime, ourEndTime) - ourStartTime);
+                        hasOverlap = true;
+                        break;
+                    } else if (otherEndTime >= ourStartTime && otherEndTime <= ourEndTime) {
+                        // Other ends somewhere in our time block
+                        // Remove previous start
+                        ourTimesDaily.remove(ourStartTime);
+
+                        Long combinedStartTime = Math.min(ourStartTime, otherStartTime);
+                        ourTimesDaily.put(combinedStartTime, Math.max(otherEndTime, ourEndTime) - combinedStartTime);
+                        hasOverlap = true;
+                        break;
+                    }
+                }
+
+                if (!hasOverlap) {
+                    // Add in normally, no overlap
+                    ourTimesDaily.put(otherStartTime, otherDuration);
+                }
+            }
+
+            // Push to times array
+            this.times.set(i, ourTimesDaily);
+        }
+    }
+
     /**
      * Add a time block to a day in the week.
      * @param dayIndex The day of the week to add the time to.
