@@ -6,19 +6,10 @@ package edu.usc.csci310.focus.focus.presentation.schedule;
 */
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.text.format.DateFormat;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,49 +20,46 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
-import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Map;
 
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
-import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
 
-public class AddProfileToSchedule extends AppCompatActivity implements TimePickerFragment.OnCompleteListener{
-    public static final String DAYCB = "daycb";
-    public static final String HOURS = "hours";
-    public static final String MINS = "mins";
-    public static final String START_HOUR = "start_hour";
-    public static final String START_MIN = "start_mins";
-    public static final String SELECTED_PROFILE = "selected_profile";
+public class EditProfileInSchedule extends AppCompatActivity implements TimePickerFragment.OnCompleteListener{
+    public static final String DAYCB_EDIT = "daycbe";
+    public static final String HOURS_EDIT = "hourse";
+    public static final String MINS_EDIT = "minse";
+    public static final String START_HOUR_EDIT = "start_houre";
+    public static final String START_MIN_EDIT = "start_minse";
+    public static final String DID_DELETE_PROFILE = "did_delete";
+    public static final String PROFILE_ID = "profile_id";
 
 
     private CheckBox [] daysCB = new CheckBox[7];
     private Boolean [] didCheckBoxes = new Boolean[7];
-    private Spinner profileSpinner;
+    private TextView profileName;
     private Button startTimeButton;
     private EditText hourText, minText;
-    private Button addProfileButton;
+    private Button updateProfileButton, deleteProfileButton;
 
     private ArrayList<Profile> profiles;
-    private Profile selectedProfile;
     private int hours;
     private int mins;
     private int startHours;
     private int startMins;
-
+    private String profileID;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_profile_to_schedule);
-        for (int i = 0; i < this.didCheckBoxes.length; i++){
-            this.didCheckBoxes[i] = false;
-        }
+        setContentView(R.layout.activity_edit_profile_in_schedule);
+
         startTimeButton = (Button)findViewById(R.id.start_time_button);
-        profileSpinner = (Spinner)findViewById(R.id.profile_spinner);
-        startTimeButton = (Button)findViewById(R.id.start_time_button);
+        profileName = (TextView) findViewById(R.id.profile_name);
         hourText = (EditText) findViewById(R.id.hours_field);
         minText = (EditText) findViewById(R.id.mins_field);
 
@@ -82,50 +70,41 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
         daysCB[4] = (CheckBox)findViewById(R.id.thursday);
         daysCB[5] = (CheckBox)findViewById(R.id.friday);
         daysCB[6] = (CheckBox)findViewById(R.id.saturday);
-        addProfileButton =(Button)findViewById(R.id.add_profile);
+        updateProfileButton =(Button)findViewById(R.id.update_profile);
+        deleteProfileButton =(Button)findViewById(R.id.delete_profile);
 
-        this.profiles = ProfileManager.getDefaultManager().getAllProfiles();
         Intent i = getIntent();
-        Schedule schedule = (Schedule) i.getSerializableExtra(ScheduleInterfaceController.SCHEDULE);
-        ArrayList<String> profileIDs = schedule.getProfileIdentifiers();
-        String[] profileNames = new String[profiles.size()];
-        for (int index=0; index<profiles.size(); index++) {
-            profileNames[index] = profiles.get(index).getName();
+        ArrayList<Map<Long, Long>> times = (ArrayList<Map<Long, Long>>) i.getSerializableExtra(ScheduleInterfaceController.PROFILE_TIME);
+        String name = i.getStringExtra(ScheduleInterfaceController.PROFILE_NAME);
+        profileName.setText(name);
+        Calendar startTime = (Calendar) i.getSerializableExtra(ScheduleInterfaceController.START_TIME);
+        long durationhr = 0;
+        long durationmin = 0;
+        Long duration= new Long(0);
+        int hr = startTime.HOUR_OF_DAY;
+        int min = startTime.MINUTE;
+
+        for (int dayOfWeek = 0; dayOfWeek < this.didCheckBoxes.length; dayOfWeek++){
+            // if not checked
+            if (times.get(dayOfWeek).size()==0){
+                daysCB[dayOfWeek].setChecked(false);
+                didCheckBoxes[dayOfWeek] = false;
+            }else{
+                daysCB[dayOfWeek].setChecked(true);
+                didCheckBoxes[dayOfWeek] = true;
+//                duration = times.get(dayOfWeek).get(new Long(hr*60+min));
+            }
         }
-//
-//        ArrayList<Profile> profileList = new ArrayList<Profile>();
-//        for (int p=0; p<profiles.size(); p++){
-//            profileList.add(profiles.get(p));
-//        }
-//        for (int index=0; index<profileIDs.size(); index++){
-//            boolean filter = false;
-//            for (int j =0; j<profileList.size(); j++){
-//                //filter
-//                if (profileList.get(j).getIdentifier().equals(profileIDs.get(index))){
-//                    profileList.remove(j);
-//                }
-//            }
-//        }
-//        String[] profileNames = new String[profileList.size()];
-//
-//        for (int q=0; q<profileNames.length; q++){
-//            profileNames[q] = profileList.get(q).getName();
-//        }
-        ArrayAdapter adapter = new ArrayAdapter(AddProfileToSchedule.this, android.R.layout.simple_spinner_item, profileNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        durationhr = duration/60;
+        durationmin = duration%60;
+        profileID = i.getStringExtra(ScheduleInterfaceController.PROFILE_ID);
 
-        profileSpinner.setAdapter(adapter);
+        String time = (hr%12 + ":" + min + " " + ((hr>=12) ? "PM" : "AM"));
+        startTimeButton.setText(time);
+//        hourText.setText(String.valueOf(durationhr));
+//        minText.setText(String.valueOf(durationmin));
+        this.profiles = ProfileManager.getDefaultManager().getAllProfiles();
 
-        profileSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedProfile = profiles.get(i);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        });
         startTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -140,25 +119,6 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
                 return true;
             }
         });
-//        hourText.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//                // TODO Auto-generated method stub
-//            }
-//
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//                // TODO Auto-generated method stub
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//                hours = Integer.parseInt(hourText.getText().toString());
-//            }
-//        });
         minText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
@@ -166,25 +126,6 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
                 return true;
             }
         });
-//        minText.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//                // TODO Auto-generated method stub
-//            }
-//
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//                // TODO Auto-generated method stub
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//                mins = Integer.parseInt(minText.getText().toString());
-//            }
-//        });
         minText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
@@ -265,16 +206,29 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
         });
 
         //add profile and return to activity
-        addProfileButton.setOnClickListener(new View.OnClickListener() {
+        updateProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addProfile();
+                updateProfile();
+            }
+        });
+        //delete the event
+        deleteProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                deleteProfile();
             }
         });
     }
-
-    //checks to see whether user has successfully added profile
-    public void addProfile(){
+    public void deleteProfile(){
+        Intent i = new Intent();
+        i.putExtra(DID_DELETE_PROFILE, true);
+        i.putExtra(PROFILE_ID, profileID);
+        setResult(Activity.RESULT_OK, i);
+        finish();
+    }
+    //checks to see whether user has successfully updated profile
+    public void updateProfile(){
         try {
             hours = Integer.parseInt(hourText.getText().toString());
             mins = Integer.parseInt(minText.getText().toString());
@@ -289,19 +243,16 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
             return;
         }
 
-        if (this.didCompleteFields()){
-            Intent i = new Intent();
-            i.putExtra(DAYCB, didCheckBoxes);
-            i.putExtra(HOURS, hours);
-            i.putExtra(MINS, mins);
-            i.putExtra(START_HOUR, startHours);
-            i.putExtra(START_MIN, startMins);
-            i.putExtra(SELECTED_PROFILE, this.selectedProfile);
-            setResult(Activity.RESULT_OK, i);
-            finish();
-        } else {
-            this.showFormCompletionError();
-        }
+        Intent i = new Intent();
+        i.putExtra(DAYCB_EDIT, didCheckBoxes);
+        i.putExtra(HOURS_EDIT, hours);
+        i.putExtra(MINS_EDIT, mins);
+        i.putExtra(START_HOUR_EDIT, startHours);
+        i.putExtra(START_MIN_EDIT, startMins);
+        i.putExtra(DID_DELETE_PROFILE, false);
+        i.putExtra(PROFILE_ID, profileID);
+        setResult(Activity.RESULT_OK, i);
+        finish();
     }
 
     private void showNumberFormatError() {
@@ -334,12 +285,9 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
 
     private boolean isDurationValid() {
         return (hours>=0) && (hours<=10) &&
-                ((mins==0) || (mins<=59));
+                (mins>=0) && (mins<=59);
     }
 
-    public boolean didCompleteFields() {
-        return (selectedProfile!=null);
-    }
     /*
      * Determines whether the user has completed the form to create a new ScheduleInterfaceController.
      *
