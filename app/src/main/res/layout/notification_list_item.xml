@@ -12,7 +12,7 @@
         android:id="@+id/notification_icon"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="0dp"
         />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
