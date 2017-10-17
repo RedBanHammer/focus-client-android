@@ -387,9 +387,11 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
             }
 
             ArrayList<Map<Long, Long>> timesInWeek = profileTime.getTimes();
-            for (int i = 0; i< timesInWeek.size(); i++){
+            int weekIndex = 0;
+
+            for (Map<Long, Long> time : timesInWeek){
                 //sun/mon/tues/wed/thurs/fri/sat/
-                Map<Long, Long> time = timesInWeek.get(i);
+
                 for (Map.Entry<Long, Long> t : time.entrySet()){
                     //t.getKey() : minuteIndex The time in minutes when the time block starts.
                     //t.getValue() : duration The duration of the time block.
@@ -406,7 +408,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
                     startTime.set(Calendar.MINUTE, startMinuteOfHour);
                     startTime.set(Calendar.SECOND, 0);
                     startTime.set(Calendar.MILLISECOND, 0);
-                    startTime.set(Calendar.DAY_OF_WEEK, i+1);
+                    startTime.set(Calendar.DAY_OF_WEEK, weekIndex+1);
 
                     Calendar endTime = (Calendar) startTime.clone();
                     endTime.add(Calendar.HOUR, hours); // Add duration hours to startTime
@@ -422,6 +424,8 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
 
                     this.events.add(event);
                 }
+
+                weekIndex++;
             }
             profileIndex++;
         }
@@ -445,6 +449,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
             Calendar newStartTime = (Calendar) newEvent.getStartTime().clone();
             newStartTime.set(Calendar.YEAR, newYear);
             newStartTime.set(Calendar.MONTH, newMonth);
+            newStartTime.set(Calendar.DAY_OF_WEEK, newEvent.getStartTime().get(Calendar.DAY_OF_WEEK));
             newStartTime.set(Calendar.HOUR_OF_DAY, newEvent.getStartTime().get(Calendar.HOUR_OF_DAY));
             newStartTime.set(Calendar.MINUTE, newEvent.getStartTime().get(Calendar.MINUTE));
             newEvent.setStartTime(newStartTime);
@@ -452,6 +457,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
             Calendar newEndTime = (Calendar) newEvent.getEndTime().clone();
             newEndTime.set(Calendar.YEAR, newYear);
             newEndTime.set(Calendar.MONTH, newMonth);
+            newEndTime.set(Calendar.DAY_OF_WEEK, newEvent.getEndTime().get(Calendar.DAY_OF_WEEK));
             newEndTime.set(Calendar.HOUR_OF_DAY, newEvent.getEndTime().get(Calendar.HOUR_OF_DAY));
             newEndTime.set(Calendar.MINUTE, newEvent.getEndTime().get(Calendar.MINUTE));
             newEvent.setEndTime(newEndTime);

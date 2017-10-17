@@ -33,7 +33,7 @@ public class RecurringTime implements Serializable {
             data = new HashMap<Long, Long>();
         }
         data.put(minuteIndex, duration);
-        this.times.add(dayIndex, data);
+        this.times.set(dayIndex, data);
     }
 
     /**
