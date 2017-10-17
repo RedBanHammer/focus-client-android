@@ -59,7 +59,7 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
         setContentView(R.layout.activity_edit_profile_in_schedule);
 
         startTimeButton = (Button)findViewById(R.id.start_time_button);
-        profileName = (TextView) findViewById(R.id.profileName);
+        profileName = (TextView) findViewById(R.id.profile_name);
         hourText = (EditText) findViewById(R.id.hours_field);
         minText = (EditText) findViewById(R.id.mins_field);
 
@@ -75,21 +75,34 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
 
         Intent i = getIntent();
         ArrayList<Map<Long, Long>> times = (ArrayList<Map<Long, Long>>) i.getSerializableExtra(ScheduleInterfaceController.PROFILE_TIME);
-        profileName.setText(i.getStringExtra(ScheduleInterfaceController.PROFILE_NAME));
+        String name = i.getStringExtra(ScheduleInterfaceController.PROFILE_NAME);
+        profileName.setText(name);
         Calendar startTime = (Calendar) i.getSerializableExtra(ScheduleInterfaceController.START_TIME);
+        long durationhr = 0;
+        long durationmin = 0;
+        Long duration= new Long(0);
+        int hr = startTime.HOUR_OF_DAY;
+        int min = startTime.MINUTE;
+
         for (int dayOfWeek = 0; dayOfWeek < this.didCheckBoxes.length; dayOfWeek++){
             // if not checked
             if (times.get(dayOfWeek).size()==0){
                 daysCB[dayOfWeek].setChecked(false);
+                didCheckBoxes[dayOfWeek] = false;
             }else{
                 daysCB[dayOfWeek].setChecked(true);
+                didCheckBoxes[dayOfWeek] = true;
+//                duration = times.get(dayOfWeek).get(new Long(hr*60+min));
             }
         }
+        durationhr = duration/60;
+        durationmin = duration%60;
         profileID = i.getStringExtra(ScheduleInterfaceController.PROFILE_ID);
-        int hr = startTime.HOUR_OF_DAY;
-        int min = startTime.MINUTE;
+
         String time = (hr%12 + ":" + min + " " + ((hr>=12) ? "PM" : "AM"));
         startTimeButton.setText(time);
+//        hourText.setText(String.valueOf(durationhr));
+//        minText.setText(String.valueOf(durationmin));
         this.profiles = ProfileManager.getDefaultManager().getAllProfiles();
 
         startTimeButton.setOnClickListener(new View.OnClickListener() {

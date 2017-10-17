@@ -129,6 +129,9 @@ public class StorageManager {
     public @NonNull ArrayList<Serializable> getObjectsWithPrefix(@NonNull String group) {
         ArrayList<Serializable> objects = new ArrayList<Serializable>();
 
+        if (this.context == null) {
+            System.out.println("wtf");
+        }
         String fullPath = this.context.getFilesDir().getAbsolutePath() + "/" + group;
 
         File dir = new File(fullPath);

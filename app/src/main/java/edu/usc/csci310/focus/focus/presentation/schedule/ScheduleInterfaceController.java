@@ -53,6 +53,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
     private static final int TYPE_THREE_DAY_VIEW = 2;
     private static final int TYPE_WEEK_VIEW = 3;
     private static final String TITLE="Edit Schedule Name";
+    public static final String SCHEDULE = "scheduleddd";
     private int mWeekViewType = TYPE_THREE_DAY_VIEW;
     private WeekView mWeekView;
     private TextView scheduleName;
@@ -65,7 +66,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
     private Button negButton;
 
     private List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
-    private Map<Integer, String> mapID = new HashMap<Integer, String>();
+    private Map<Long, String> mapID = new HashMap<Long, String>();
 
     /*
      * renders a schedule page
@@ -186,6 +187,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
     //opens add ProfileToSchedule activity
     private void openAddProfileActivity(){
         Intent i = new Intent(ScheduleInterfaceController.this, AddProfileToSchedule.class);
+        i.putExtra(SCHEDULE, schedule);
         startActivityForResult(i, 10);
     }
 
@@ -244,7 +246,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
     }
     private void deleteProfileFromSchedule(Intent data){
         String profID = data.getStringExtra(EditProfileInSchedule.PROFILE_ID);
-        //schedule.removeProfileWithIdentifer(profID);
+        schedule.removeProfileWithIdentifier(profID);
         for (int i=0; i<events.size(); i++){
             if (mapID.get(events.get(i).getId()).equals(profID)){
                 events.remove(i);
@@ -255,7 +257,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
     private void updateProfileInSchedule(Intent data){
         String profID = data.getStringExtra(EditProfileInSchedule.PROFILE_ID);
         Map<String, RecurringTime> times = schedule.getProfileTimes();
-        Boolean dayCB [] = (Boolean[]) data.getSerializableExtra(AddProfileToSchedule.DAYCB);
+        Boolean dayCB [] = (Boolean[]) data.getSerializableExtra(EditProfileInSchedule.DAYCB_EDIT);
         int hours = data.getIntExtra(EditProfileInSchedule.HOURS_EDIT, 0);
         int mins = data.getIntExtra(EditProfileInSchedule.MINS_EDIT, 0);
 
@@ -485,7 +487,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
                             startTime,
                             endTime
                     );
-                    mapID.put(this.events.size(), profile.getIdentifier());
+                    mapID.put(new Long(this.events.size()), profile.getIdentifier());
                     event.setColor(colors[profileIndex % colors.length]);
 
                     this.events.add(event);
@@ -501,9 +503,9 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
     //when event is clicked
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
-        String id = mapID.get(event.getId());
-        String name = ((WeekViewEvent)event).getName();
-        Calendar startTime = ((WeekViewEvent)event).getStartTime();
+        String id = mapID.get(new Long(event.getId()));
+        String name = event.getName();
+        Calendar startTime = event.getStartTime();
         Intent i = new Intent(ScheduleInterfaceController.this, EditProfileInSchedule.class);
         RecurringTime rt = schedule.getProfileTimeWithIdentifier(id);
 

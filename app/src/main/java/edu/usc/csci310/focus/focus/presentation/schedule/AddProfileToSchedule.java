@@ -31,11 +31,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
+import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
 
 public class AddProfileToSchedule extends AppCompatActivity implements TimePickerFragment.OnCompleteListener{
@@ -83,10 +85,32 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
         addProfileButton =(Button)findViewById(R.id.add_profile);
 
         this.profiles = ProfileManager.getDefaultManager().getAllProfiles();
+        Intent i = getIntent();
+        Schedule schedule = (Schedule) i.getSerializableExtra(ScheduleInterfaceController.SCHEDULE);
+        ArrayList<String> profileIDs = schedule.getProfileIdentifiers();
         String[] profileNames = new String[profiles.size()];
-        for (int index=0; index<profiles.size(); index++){
+        for (int index=0; index<profiles.size(); index++) {
             profileNames[index] = profiles.get(index).getName();
         }
+//
+//        ArrayList<Profile> profileList = new ArrayList<Profile>();
+//        for (int p=0; p<profiles.size(); p++){
+//            profileList.add(profiles.get(p));
+//        }
+//        for (int index=0; index<profileIDs.size(); index++){
+//            boolean filter = false;
+//            for (int j =0; j<profileList.size(); j++){
+//                //filter
+//                if (profileList.get(j).getIdentifier().equals(profileIDs.get(index))){
+//                    profileList.remove(j);
+//                }
+//            }
+//        }
+//        String[] profileNames = new String[profileList.size()];
+//
+//        for (int q=0; q<profileNames.length; q++){
+//            profileNames[q] = profileList.get(q).getName();
+//        }
         ArrayAdapter adapter = new ArrayAdapter(AddProfileToSchedule.this, android.R.layout.simple_spinner_item, profileNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -310,7 +334,7 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
 
     private boolean isDurationValid() {
         return (hours>=0) && (hours<=10) &&
-                (mins>=0) && (mins<=59);
+                ((mins==0) || (mins<=59));
     }
 
     public boolean didCompleteFields() {
