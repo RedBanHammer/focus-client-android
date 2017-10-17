@@ -54,6 +54,9 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
 
         this.scheduleManager.delegate = new WeakReference<ScheduleManagerDelegate>(this);
         this.profileManager.delegate = new WeakReference<ProfileManagerDelegate>(this);
+
+        this.appBlocker.startBlocking();
+        this.notificationBlocker.startBlocking();
     }
 
     /**
