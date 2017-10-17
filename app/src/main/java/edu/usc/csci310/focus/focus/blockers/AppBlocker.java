@@ -15,7 +15,9 @@ import java.util.List;
 
 import edu.usc.csci310.focus.focus.MainActivity;
 import edu.usc.csci310.focus.focus.dataobjects.App;
+import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.managers.BlockingManager;
+import edu.usc.csci310.focus.focus.managers.ProfileManager;
 import edu.usc.csci310.focus.focus.presentation.SplashScreen;
 
 /**
@@ -81,6 +83,24 @@ public class AppBlocker extends IntentService implements Blocker {
 
                             break;
                         }
+                    }
+
+                    ArrayList<Profile> profiles = ProfileManager.getDefaultManager().getAllProfiles();
+                    for (Profile p : profiles) {
+                        if (p.getIsActive()) {
+                            for (App a : p.getApps()) {
+                                if (packageName.equals(a.getIdentifier())) {
+                                    LogEntry logEntry = new LogEntry(a, null, null, LogEntry.LogEntryEventType.OPEN);
+                                    this.loggingService.logEntry(logEntry);
+
+                                    // Block the app by bringing Focus into the foreground with info.
+                                    this.bringToForeground(a);
+
+                                    break;
+                                }
+                            }
+                        }
+                        break;
                     }
 //                }
 //            }
