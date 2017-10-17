@@ -61,7 +61,7 @@ public class NotificationBlocker extends IntentService implements Blocker, Logge
     /** Logger interface impl. **/
     public @NonNull ArrayList<LogEntry> getLogEntries() {
 //        return this.blockingService.getLogEntries();
-        return null;
+        return new ArrayList<LogEntry>();
     }
 
     public void removeAllLogEntries() {
