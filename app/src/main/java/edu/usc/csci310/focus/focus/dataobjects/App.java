@@ -13,5 +13,4 @@ public class App extends NamedObject {
     public App(String name, String identifier) {
         super(name, identifier);
     }
-
 }

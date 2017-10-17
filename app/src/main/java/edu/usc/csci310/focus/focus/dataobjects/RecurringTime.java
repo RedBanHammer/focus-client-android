@@ -1,5 +1,6 @@
 package edu.usc.csci310.focus.focus.dataobjects;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
@@ -8,11 +9,16 @@ import java.util.HashMap;
  * An object holding a recurring set of times during the week.
  */
 
-public class RecurringTime {
+public class RecurringTime implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private ArrayList<Map<Long, Long>> times;
 
     public RecurringTime() {
         this.times = new ArrayList<Map<Long, Long>>();
+        for (int i = 0; i < 7; i++) {
+            this.times.add(new HashMap<Long, Long>());
+        }
     }
 
     /**
@@ -22,9 +28,12 @@ public class RecurringTime {
      * @param duration The duration of the time block.
      */
     public void addTime(Integer dayIndex, Long minuteIndex, Long duration) {
-        Map<Long, Long> data = new HashMap<Long, Long>();
+        Map<Long, Long> data = this.times.get(dayIndex);
+        if (data == null) {
+            data = new HashMap<Long, Long>();
+        }
         data.put(minuteIndex, duration);
-        this.times.add(dayIndex, data);
+        this.times.set(dayIndex, data);
     }
 
     /**
@@ -40,8 +49,7 @@ public class RecurringTime {
      * @param dayIndex The day of the week to remove times at.
      */
     public void removeTimes(Integer dayIndex) {
-        int index = dayIndex;
-        this.times.remove(index);
+        this.times.set(dayIndex, new HashMap<Long, Long>());
     }
 
     /**

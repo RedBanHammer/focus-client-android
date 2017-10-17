@@ -53,7 +53,6 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
     private Button startTimeButton;
     private EditText hourText, minText;
     private Button addProfileButton;
-    private Button cancelButton;
 
     private ArrayList<Profile> profiles;
     private Profile selectedProfile;
@@ -82,7 +81,7 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
         daysCB[5] = (CheckBox)findViewById(R.id.friday);
         daysCB[6] = (CheckBox)findViewById(R.id.saturday);
         addProfileButton =(Button)findViewById(R.id.add_profile);
-        cancelButton = (Button)findViewById(R.id.cancel_button);
+
         this.profiles = ProfileManager.getDefaultManager().getAllProfiles();
         String[] profileNames = new String[profiles.size()];
         for (int index=0; index<profiles.size(); index++){
@@ -240,15 +239,7 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
                 }
             }
         });
-        //cancel activity
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent();
-                setResult(Activity.RESULT_CANCELED, i);
-                finish();
-            }
-        });
+
         //add profile and return to activity
         addProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override

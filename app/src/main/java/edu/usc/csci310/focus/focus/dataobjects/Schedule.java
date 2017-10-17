@@ -44,7 +44,7 @@ public class Schedule extends NamedObject {
      */
     public void addProfile(@NonNull Profile profile, @NonNull RecurringTime time) {
         this.profiles.add(profile);
-        this.profileTimes.put(profile.getName(), time);
+        this.profileTimes.put(profile.getIdentifier(), time);
     }
 
     public void setProfiles(@NonNull ArrayList<Profile> profiles) {
@@ -58,7 +58,7 @@ public class Schedule extends NamedObject {
     public void removeProfile(@NonNull Profile profile) {
         int index = this.profiles.indexOf(profile);
         this.profiles.remove(index);
-        this.profileTimes.remove(profile.getName());
+        this.profileTimes.remove(profile.getIdentifier());
     }
 
     public @NonNull ArrayList<Profile> getProfiles() {

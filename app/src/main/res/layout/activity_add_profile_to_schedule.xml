@@ -136,14 +136,16 @@
                 android:layout_toStartOf="@id/duration_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="hours"/>
+                android:text="Hours"
+                android:inputType="number"/>
             <TextView
                 android:id="@+id/mins"
                 android:layout_below="@id/duration_text"
                 android:layout_toEndOf="@id/duration_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="mins"/>
+                android:text="Mins"
+                android:inputType="number"/>
             <EditText
                 android:id="@+id/hours_field"
                 android:layout_below="@id/hours"
