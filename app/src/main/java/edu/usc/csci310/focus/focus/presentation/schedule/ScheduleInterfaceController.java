@@ -39,6 +39,7 @@ import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.RecurringTime;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
+import edu.usc.csci310.focus.focus.managers.ProfileManager;
 import edu.usc.csci310.focus.focus.managers.ScheduleManager;
 import edu.usc.csci310.focus.focus.presentation.ProfileInterfaceController;
 
@@ -123,7 +124,6 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
                         //exit the dialog, reload the name
                         scheduleName.setText(newName);
                         editNameDialog.dismiss();
-
                     }
                 });
 
@@ -155,7 +155,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
                         {
                             public void onClick(DialogInterface dialog, int which) {
                                 // Delete the schedule
-                                ScheduleManager.getDefaultManager().removeSchedule(schedule.getIdentifier());
+                                ScheduleManager.getDefaultManager().removeSchedule(schedule);
                                 // Close activity
                                 finish();
                             }
@@ -220,7 +220,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
 
                 //add profile with recurring time to schedule
                 Profile profile = (Profile) data.getSerializableExtra(AddProfileToSchedule.SELECTED_PROFILE);
-                this.schedule.addProfile(profile, rt);
+                this.schedule.addProfile(profile.getIdentifier(), rt);
                 ScheduleManager.getDefaultManager().setSchedule(this.schedule);
 
                 this.populateEventsList(this.schedule);
@@ -365,6 +365,8 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
     }
 
     private void populateEventsList(Schedule schedule){
+        this.events.clear(); // Cleanup
+
         Map<String, RecurringTime> map = schedule.getProfileTimes();
 
         int[] colors = {
@@ -375,11 +377,11 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         };
 
 
-        ArrayList<Profile> profiles = schedule.getProfiles();
+        ArrayList<String> profileIdentifiers = schedule.getProfileIdentifiers();
         int profileIndex = 0;
 
         for (Map.Entry<String, RecurringTime> entry : map.entrySet()) {
-            Profile profile = profiles.get(profileIndex);
+            Profile profile = ProfileManager.getDefaultManager().getProfileWithIdentifier(profileIdentifiers.get(profileIndex));
             RecurringTime profileTime = schedule.getProfileTimeWithIdentifier(profile.getIdentifier());
 
             if (profileTime == null) { // Profile is not in schedule

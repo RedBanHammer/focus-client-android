@@ -10,7 +10,9 @@ import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 
+import edu.usc.csci310.focus.focus.MainActivity;
 import edu.usc.csci310.focus.focus.dataobjects.App;
+import edu.usc.csci310.focus.focus.managers.BlockingManager;
 
 /**
  * Block notifications from a set of apps.
@@ -18,9 +20,7 @@ import edu.usc.csci310.focus.focus.dataobjects.App;
 
 public class NotificationBlocker extends IntentService implements Blocker, Logger {
     private LoggingService loggingService = new LoggingService();
-    private NotificationBlockingService blockingService = new NotificationBlockingService();
-
-    private Context context;
+//    private NotificationBlockingService blockingService = new NotificationBlockingService();
 
     public NotificationBlocker(String name) {
         super(name);
@@ -30,40 +30,41 @@ public class NotificationBlocker extends IntentService implements Blocker, Logge
         super("NotificationBlocker");
     }
 
-    public void setContext(Context context){
-        this.context = context;
-    }
-
     @Override
     protected void onHandleIntent(Intent workIntent) {
-        // Get data from the incoming Intent
-        String dataString = workIntent.getDataString();
+        // Set the blocking manager
+        BlockingManager.getDefaultManager().setNotificationBlocker(this);
 
-        this.blockingService.startBlocking();
+//        this.blockingService.startBlocking();
 
         while (true) {
-            Thread.yield();
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void setApps(@NonNull ArrayList<App> apps) {
-        this.blockingService.setApps(apps);
+//        this.blockingService.setApps(apps);
     }
 
     public void startBlocking() {
-        this.blockingService.stopBlocking();
+//        this.blockingService.stopBlocking();
     }
 
     public void stopBlocking() {
-        this.blockingService.startBlocking();
+//        this.blockingService.startBlocking();
     }
 
     /** Logger interface impl. **/
     public @NonNull ArrayList<LogEntry> getLogEntries() {
-        return this.blockingService.getLogEntries();
+//        return this.blockingService.getLogEntries();
+        return new ArrayList<LogEntry>();
     }
 
     public void removeAllLogEntries() {
-        this.blockingService.removeAllLogEntries();
+//        this.blockingService.removeAllLogEntries();
     }
 }

@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <service android:name=".blockers.NotificationBlockingService"
+        <service android:name="edu.usc.csci310.focus.focus.blockers.NotificationBlockingService"
             android:label="@string/notification_service_label"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
@@ -25,6 +25,9 @@
             android:name=".blockers.AppBlocker"
             android:exported="false"/>
 
+        <service
+            android:name=".blockers.NotificationBlocker"
+            android:exported="false"/>
 
         <activity
             android:name=".MainActivity"

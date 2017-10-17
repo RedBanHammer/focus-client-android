@@ -1,7 +1,6 @@
 package edu.usc.csci310.focus.focus.blockers;
 
 import android.app.ActivityManager;
-import android.app.DialogFragment;
 import android.app.IntentService;
 import android.app.usage.UsageEvents;
 import android.app.usage.UsageStatsManager;
@@ -14,8 +13,9 @@ import android.text.TextUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.usc.csci310.focus.focus.MainActivity;
 import edu.usc.csci310.focus.focus.dataobjects.App;
-import edu.usc.csci310.focus.focus.presentation.AppBlockedPopup;
+import edu.usc.csci310.focus.focus.managers.BlockingManager;
 import edu.usc.csci310.focus.focus.presentation.SplashScreen;
 
 /**
@@ -30,8 +30,6 @@ public class AppBlocker extends IntentService implements Blocker, Logger {
 
     private LoggingService loggingService = new LoggingService();
 
-    private Context context = null;
-
     public AppBlocker(String name) {
         super(name);
     }
@@ -43,8 +41,8 @@ public class AppBlocker extends IntentService implements Blocker, Logger {
 
     @Override
     protected void onHandleIntent(Intent workIntent) {
-        // Get data from the incoming Intent
-        String dataString = workIntent.getDataString();
+        // Set the blocking manager
+        BlockingManager.getDefaultManager().setAppBlocker(this);
 
         this.run();
     }
@@ -53,13 +51,11 @@ public class AppBlocker extends IntentService implements Blocker, Logger {
         this.apps = apps;
     }
 
-    public void setContext(Context context){
-        this.context = context;
-    }
-
     public void startBlocking() {
+        System.out.println("Going to set blocking to true for app blocker");
         synchronized (this.isBlockingMutex) {
             this.isBlocking = true;
+            System.out.println("Set blocking to true for app blocker");
         }
     }
 
@@ -72,9 +68,9 @@ public class AppBlocker extends IntentService implements Blocker, Logger {
     public void run() {
         while (true) {
             // If blocking, monitor system apps
-            synchronized (this.isBlockingMutex) {
-                if (this.isBlocking) {
-                    String packageName = this.getRecentAppPackageName(this.context);
+//            synchronized (this.isBlockingMutex) {
+//                if (this.isBlocking) {
+                    String packageName = this.getRecentAppPackageName(this);
 
                     for (App app : this.apps) {
                         if (packageName.equals(app.getIdentifier())) {
@@ -88,15 +84,20 @@ public class AppBlocker extends IntentService implements Blocker, Logger {
                             break;
                         }
                     }
-                }
-            }
+//                }
+//            }
 
-            Thread.yield();
+//            Thread.yield();
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void bringToForeground(App app) {
-        Intent intent = new Intent(this.context, SplashScreen.class);
+        Intent intent = new Intent(MainActivity.mainActivityContext, SplashScreen.class);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // You need this if starting
         //  the activity from a service
@@ -104,12 +105,21 @@ public class AppBlocker extends IntentService implements Blocker, Logger {
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         intent.putExtra("appName", app.getName());
 
-        this.context.startActivity(intent);
+        MainActivity.mainActivityContext.startActivity(intent);
     }
 
     /** Logger interface impl. **/
     public ArrayList<LogEntry> getLogEntries() {
-        return this.loggingService.getLogEntries();
+        ArrayList<LogEntry> logEntries = this.loggingService.getLogEntries();
+        ArrayList<LogEntry> filteredLogEntries = new ArrayList<LogEntry>();
+
+        for (LogEntry entry : logEntries) {
+            if (entry.getEventType() == LogEntry.LogEntryEventType.OPEN) {
+                filteredLogEntries.add(entry);
+            }
+        }
+
+        return filteredLogEntries;
     }
 
     /** Utility **/

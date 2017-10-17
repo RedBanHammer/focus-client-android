@@ -1,7 +1,6 @@
 package edu.usc.csci310.focus.focus.blockers;
 
 import android.app.Notification;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -26,8 +25,6 @@ public class NotificationBlockingService extends NotificationListenerService imp
 
     private LoggingService loggingService = new LoggingService();
 
-    public Context context;
-
     public void setApps(@NonNull ArrayList<App> apps) {
         this.apps = apps;
     }
@@ -50,16 +47,29 @@ public class NotificationBlockingService extends NotificationListenerService imp
     }
 
     @Override
-    public void onNotificationPosted(StatusBarNotification notification) {
-        if (!this.isBlocking) {
-            return;
-        }
+    public void onCreate() {
+        super.onCreate();
+    }
 
-        String packageName = notification.getPackageName();
+    @Override
+    public void onListenerConnected() {
+        super.onListenerConnected();
+    }
+
+    @Override
+    public void onNotificationPosted(StatusBarNotification sbn) {
+        super.onNotificationPosted(sbn);
+//        if (!this.isBlocking) {
+//            return;
+//        }
+
+        System.out.println("ASDFASDFASDFASDF");
+
+        String packageName = sbn.getPackageName();
         App matchedApp = this.getAppWithPackageName(packageName);
 
         if (matchedApp != null) {
-            Notification mNotification = notification.getNotification();
+            Notification mNotification = sbn.getNotification();
             Bundle extras = mNotification.extras;
             NotificationMetadata metadata = new NotificationMetadata(extras);
 
@@ -68,19 +78,28 @@ public class NotificationBlockingService extends NotificationListenerService imp
             this.loggingService.logEntry(logEntry);
 
             // Remove the notification
-            this.cancelNotification(notification.getPackageName(), notification.getTag(), notification.getId());
+            this.cancelNotification(sbn.getPackageName(), sbn.getTag(), sbn.getId());
         }
     }
 
     @Override
-    public void onNotificationRemoved(StatusBarNotification notification){
+    public void onNotificationRemoved(StatusBarNotification sbn){
         // TODO: Confirm that the notification was successfully removed here.
     }
 
 
     /** Logger interface impl. **/
     public @NonNull ArrayList<LogEntry> getLogEntries() {
-        return this.loggingService.getLogEntries();
+        ArrayList<LogEntry> logEntries = this.loggingService.getLogEntries();
+        ArrayList<LogEntry> filteredLogEntries = new ArrayList<LogEntry>();
+
+        for (LogEntry entry : logEntries) {
+            if (entry.getEventType() == LogEntry.LogEntryEventType.NOTIFICATION) {
+                filteredLogEntries.add(entry);
+            }
+        }
+
+        return filteredLogEntries;
     }
 
     public void removeAllLogEntries() {

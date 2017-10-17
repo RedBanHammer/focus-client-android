@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
+import edu.usc.csci310.focus.focus.managers.ProfileManager;
 import edu.usc.csci310.focus.focus.managers.ScheduleManager;
 
 
@@ -29,9 +30,10 @@ public class AppBlockedPopup extends DialogFragment {
         ArrayList<String> blockingSchedules = new ArrayList<String>();
 
         for (Schedule s : schedules) {
-            for (Profile p : s.getActiveProfiles()) {
+            for (String pIdentifier : s.getActiveProfileIdentifiers()) {
+                Profile p = ProfileManager.getDefaultManager().getProfileWithIdentifier(pIdentifier);
                 for (App a : p.getApps()) {
-                    if (a.getName().equals(appName)) {
+                    if (a.getName().equals(appName) && !blockingSchedules.contains(s.getName())) {
                         blockingSchedules.add(s.getName());
                         continue;
                     }
@@ -40,16 +42,18 @@ public class AppBlockedPopup extends DialogFragment {
             }
         }
 
-        String message = appName + " is currently being blocked by the following schedule(s) in Focus!\n\n";
+        String message = appName + " is currently being blocked by the following schedule" +
+                (blockingSchedules.size() != 1 ? "s" : "") + ":\n\n";
 
         for (String s : blockingSchedules) {
-            message = message + "- " + s + "\n";
+            message = message + "• " + s + "\n";
         }
 
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(message)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setTitle("Blocked " + appName)
+                .setMessage(message)
+                .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Positive response
                         getActivity().finish();

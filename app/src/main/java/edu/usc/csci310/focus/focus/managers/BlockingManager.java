@@ -1,20 +1,20 @@
 package edu.usc.csci310.focus.focus.managers;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import edu.usc.csci310.focus.focus.blockers.AppBlocker;
 import edu.usc.csci310.focus.focus.blockers.LogEntry;
 import edu.usc.csci310.focus.focus.blockers.NotificationBlocker;
+import edu.usc.csci310.focus.focus.blockers.NotificationBlockingService;
 import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
-import edu.usc.csci310.focus.focus.storage.StorageManager;
 
 /**
  * Handles blocking apps and notifications.
@@ -28,7 +28,6 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
     }
     public static @NonNull BlockingManager getDefaultManagerWithContext(Context context) {
         defaultManager.setContext(context);
-        defaultManager.setContext(context);
 
         return defaultManager;
     }
@@ -37,15 +36,29 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
 
     public void setContext(Context context) {
         this.context = context;
-        this.appBlocker.setContext(context);
-        this.notificationBlocker.setContext(context);
     }
 
     private ScheduleManager scheduleManager;
     private ProfileManager profileManager;
 
-    private NotificationBlocker notificationBlocker = new NotificationBlocker("notification-blocker");
-    private AppBlocker appBlocker = new AppBlocker("app-blocker");
+    private NotificationBlocker notificationBlocker;
+    private AppBlocker appBlocker;
+
+    public void setAppBlocker(AppBlocker appBlocker) {
+        this.appBlocker = appBlocker;
+
+        if (this.notificationBlocker != null) {
+            this.updateBlockingModuleApps();
+        }
+    }
+
+    public void setNotificationBlocker(NotificationBlocker notificationBlocker) {
+        this.notificationBlocker = notificationBlocker;
+
+        if (this.appBlocker != null) {
+            this.updateBlockingModuleApps();
+        }
+    }
 
     private BlockingManager() {
         // Initialize manager singleton references
@@ -78,11 +91,12 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
 
         for (Schedule schedule : activeSchedules) {
             // Get active profiles in this schedule
-            ArrayList<Profile> activeProfiles = schedule.getActiveProfiles();
+            ArrayList<String> activeProfileIdentifiers = schedule.getActiveProfileIdentifiers();
 
-            for (Profile profile : activeProfiles) {
-                if (!uniqueActiveProfiles.containsKey(profile.getIdentifier())) {
-                    uniqueActiveProfiles.put(profile.getIdentifier(), profile);
+            for (String profileIdentifier : activeProfileIdentifiers) {
+                if (!uniqueActiveProfiles.containsKey(profileIdentifier)) {
+                    Profile profile = ProfileManager.getDefaultManager().getProfileWithIdentifier(profileIdentifier);
+                    uniqueActiveProfiles.put(profileIdentifier, profile);
                 }
             }
         }
@@ -106,6 +120,17 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
         // Update modules
         this.appBlocker.setApps(blockedApps);
         this.notificationBlocker.setApps(blockedApps);
+    }
+
+    public void startBlockingModules() {
+        Intent appBlockerIntent = new Intent(this.context, AppBlocker.class);
+        this.context.startService(appBlockerIntent);
+
+        Intent notificationBlockerIntent = new Intent(this.context, NotificationBlocker.class);
+        this.context.startService(notificationBlockerIntent);
+
+        Intent notificationBlockingServiceIntent = new Intent(this.context, NotificationBlockingService.class);
+        this.context.startService(notificationBlockingServiceIntent);
     }
 
     /** ProfileManagerDelegate implementation **/

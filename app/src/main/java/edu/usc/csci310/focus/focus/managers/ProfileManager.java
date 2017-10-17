@@ -50,9 +50,22 @@ public class ProfileManager {
     */
     public void removeProfile(Profile profile)
     {
-        ProfileManagerDelegate delegateRef = this.delegate.get();
-        delegateRef.managerDidRemoveProfile(this, profile);
-        storage.removeObject("Profiles", profile.getIdentifier());
+        this.removeProfileWithIdentifier(profile.getIdentifier());
+    }
+
+    /**
+     * Remove a profile given its string identifier.
+     * @param identifier The string identifier of the profile to remove.
+     */
+    public void removeProfileWithIdentifier(String identifier) {
+        Profile removedProfile = this.getProfileWithIdentifier(identifier);
+
+        if (removedProfile != null) {
+            storage.removeObject("Profiles", identifier);
+
+            ProfileManagerDelegate delegateRef = this.delegate.get();
+            delegateRef.managerDidRemoveProfile(this, removedProfile);
+        }
     }
 
     /*

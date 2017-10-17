@@ -37,6 +37,8 @@ import edu.usc.csci310.focus.focus.storage.StorageManager;
 import edu.usc.csci310.focus.focus.presentation.schedule.ScheduleList;
 
 public class MainActivity extends AppCompatActivity {
+    public static Context mainActivityContext;
+
     MyPagerAdapter viewPagerAdapter;
 
     ViewPager mViewPager;
@@ -48,9 +50,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        MainActivity.mainActivityContext = this;
+
         // Set up managers
         StorageManager.getDefaultManagerWithContext(getApplicationContext());
         BlockingManager.getDefaultManagerWithContext(getApplicationContext());
+
+        BlockingManager.getDefaultManager().startBlockingModules();
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
