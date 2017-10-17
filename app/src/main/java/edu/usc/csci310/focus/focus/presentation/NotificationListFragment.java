@@ -43,47 +43,47 @@ public class NotificationListFragment extends Fragment {
 
         BlockingManager manager = BlockingManager.getDefaultManager();
 
-        this.notificationLogEntries = manager.getNotificationLogEntries();
+        this.notificationLogEntries = manager.getAppOpenLogEntries();
 
 
         // DEBUG TMP DATA
-        NotificationMetadata metadata1 = new NotificationMetadata(null);
-        metadata1.title = "You have a new friend request";
-        metadata1.text = "Shawn sent you a friend request lol";
-        metadata1.icon = "";
-
-        this.notificationLogEntries.add(new LogEntry(
-                new App("Facebook", "com.google.android.youtube"),
-                null,
-                metadata1,
-                LogEntry.LogEntryEventType.NOTIFICATION
-        ));
-
-
-        NotificationMetadata metadata2 = new NotificationMetadata(null);
-        metadata2.title = "Shawn updated his story";
-        metadata2.text = "He's out frolicking his friends on this balmy Saturday evening";
-        metadata2.icon = "";
-
-        this.notificationLogEntries.add(new LogEntry(
-                new App("Focus", "com.android.chrome"),
-                null,
-                metadata2,
-                LogEntry.LogEntryEventType.NOTIFICATION
-        ));
-
-
-        NotificationMetadata metadata3 = new NotificationMetadata(null);
-        metadata3.title = "Shawn favorited your image";
-        metadata3.text = "He really liked the picture of his group working on the group project inside of SAL";
-        metadata3.icon = "";
-
-        this.notificationLogEntries.add(new LogEntry(
-                new App("Instagram", "com.google.android.apps.maps"),
-                null,
-                metadata3,
-                LogEntry.LogEntryEventType.NOTIFICATION
-        ));
+//        NotificationMetadata metadata1 = new NotificationMetadata(null);
+//        metadata1.title = "You have a new friend request";
+//        metadata1.text = "Shawn sent you a friend request lol";
+//        metadata1.icon = "";
+//
+//        this.notificationLogEntries.add(new LogEntry(
+//                new App("Facebook", "com.google.android.youtube"),
+//                null,
+//                metadata1,
+//                LogEntry.LogEntryEventType.NOTIFICATION
+//        ));
+//
+//
+//        NotificationMetadata metadata2 = new NotificationMetadata(null);
+//        metadata2.title = "Shawn updated his story";
+//        metadata2.text = "He's out frolicking his friends on this balmy Saturday evening";
+//        metadata2.icon = "";
+//
+//        this.notificationLogEntries.add(new LogEntry(
+//                new App("Focus", "com.android.chrome"),
+//                null,
+//                metadata2,
+//                LogEntry.LogEntryEventType.NOTIFICATION
+//        ));
+//
+//
+//        NotificationMetadata metadata3 = new NotificationMetadata(null);
+//        metadata3.title = "Shawn favorited your image";
+//        metadata3.text = "He really liked the picture of his group working on the group project inside of SAL";
+//        metadata3.icon = "";
+//
+//        this.notificationLogEntries.add(new LogEntry(
+//                new App("Instagram", "com.google.android.apps.maps"),
+//                null,
+//                metadata3,
+//                LogEntry.LogEntryEventType.NOTIFICATION
+//        ));
 
 
         //setContentView(R.layout.activity_notification);

@@ -3,6 +3,7 @@ package edu.usc.csci310.focus.focus;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.AppOpsManager;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -123,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
     private void requestPermissions() {
         this.requestAppUsagePermissions();
         this.requestNotificationListenerPermissions();
+        this.requestNotificationPermissions();
     }
 
     /**
@@ -171,6 +173,29 @@ public class MainActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 // Ask the user for app usage permissions
                                 Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+                                startActivity(intent);
+                            }
+
+                        })
+                        .show();
+            }
+        }
+    }
+
+    private void requestNotificationPermissions() {
+        NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // Check if the notification policy access has been granted for the app.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!mNotificationManager.isNotificationPolicyAccessGranted()) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Focus! Needs Notification Permissions")
+                        .setMessage("To send notifications when schedules activate, you must give Focus! permissions to control your notifications.")
+                        .setPositiveButton("Open Settings", new DialogInterface.OnClickListener()
+                        {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Ask the user for app usage permissions
+                                Intent intent = new Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
                                 startActivity(intent);
                             }
 

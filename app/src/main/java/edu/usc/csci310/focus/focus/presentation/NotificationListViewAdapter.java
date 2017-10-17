@@ -56,9 +56,15 @@ class NotificationListViewAdapter extends ArrayAdapter<LogEntry> {
         // into the template view.
         NotificationMetadata metadata = (NotificationMetadata)logEntry.getMetadata();
 
-        viewHolder.notificationTime.setText(logEntry.getTimestamp().toString() + " (" + logEntry.getApp().getName() + ")");
-        viewHolder.notificationTitle.setText(metadata.title);
-        viewHolder.notificationText.setText(metadata.text);
+        if (metadata != null) {
+            viewHolder.notificationTime.setText(logEntry.getTimestamp().toString() + " (" + logEntry.getApp().getName() + ")");
+            viewHolder.notificationTitle.setText(metadata.title);
+            viewHolder.notificationText.setText(metadata.text);
+        } else {
+            viewHolder.notificationTime.setText(logEntry.getTimestamp().toString());
+            viewHolder.notificationTitle.setText("Blocked " + logEntry.getApp().getName());
+            viewHolder.notificationText.setText(logEntry.getApp().getName() + " was blocked.");
+        }
         //get icon from android system
         Drawable appIcon = null;
         try {

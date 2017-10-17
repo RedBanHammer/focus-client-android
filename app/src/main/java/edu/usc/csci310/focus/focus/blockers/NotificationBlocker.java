@@ -1,8 +1,10 @@
 package edu.usc.csci310.focus.focus.blockers;
 
 import android.app.IntentService;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
@@ -37,8 +39,24 @@ public class NotificationBlocker extends IntentService implements Blocker, Logge
 
 //        this.blockingService.startBlocking();
 
+        this.run();
+    }
+
+    private void run() {
         while (true) {
             try {
+                if (this.apps.size() > 0) {
+                    NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE);
+                    }
+                } else {
+                    NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
+                    }
+                }
+
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -46,7 +64,9 @@ public class NotificationBlocker extends IntentService implements Blocker, Logge
         }
     }
 
+    private ArrayList<App> apps = new ArrayList<App>();
     public void setApps(@NonNull ArrayList<App> apps) {
+        this.apps = apps;
 //        this.blockingService.setApps(apps);
     }
 

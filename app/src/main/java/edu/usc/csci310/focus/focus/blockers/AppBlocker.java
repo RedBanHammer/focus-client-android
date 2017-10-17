@@ -122,6 +122,10 @@ public class AppBlocker extends IntentService implements Blocker, Logger {
         return filteredLogEntries;
     }
 
+    public void removeAllLogEntries() {
+        this.loggingService.removeAllLogEntries();
+    }
+
     /** Utility **/
     public String getRecentAppPackageName(Context context) {
         String topPackageName = "";
