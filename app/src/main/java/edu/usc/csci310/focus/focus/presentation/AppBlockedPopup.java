@@ -29,6 +29,9 @@ public class AppBlockedPopup extends DialogFragment {
         ArrayList<Schedule> schedules = ScheduleManager.getDefaultManager().getActiveSchedules();
         ArrayList<String> blockingSchedules = new ArrayList<String>();
 
+        ArrayList<Profile> profiles = ProfileManager.getDefaultManager().getAllProfiles();
+        ArrayList<String> blockingProfiles = new ArrayList<String>();
+
         for (Schedule s : schedules) {
             for (String pIdentifier : s.getActiveProfileIdentifiers()) {
                 Profile p = ProfileManager.getDefaultManager().getProfileWithIdentifier(pIdentifier);
@@ -42,11 +45,37 @@ public class AppBlockedPopup extends DialogFragment {
             }
         }
 
-        String message = appName + " is currently being blocked by the following schedule" +
-                (blockingSchedules.size() != 1 ? "s" : "") + ":\n\n";
+        for (Profile p : profiles) {
+            if (p.getIsActive()) {
+                for (App a : p.getApps()) {
+                        if (a.getName().equals(appName) && !blockingProfiles.contains(p.getName())) {
+                            blockingProfiles.add(p.getName());
+                            continue;
+                        }
+                }
+                continue;
+            }
+        }
 
-        for (String s : blockingSchedules) {
-            message = message + "• " + s + "\n";
+        String message = appName + " is currently being blocked by ";
+
+        if (blockingSchedules.size() > 0) {
+            message = message + "the following schedule" +
+                    (blockingSchedules.size() != 1 ? "s" : "") + ":\n\n";
+
+            for (String s : blockingSchedules) {
+                message = message + "• " + s + "\n";
+            }
+            if (blockingProfiles.size() > 0) {
+                message = message + "and ";
+            }
+        } else if (blockingProfiles.size() > 0) {
+            message = message + "the following profile" +
+                    (blockingProfiles.size() != 1 ? "s" : "") + ":\n\n";
+
+            for (String p : blockingProfiles) {
+                message = message + "• " + p + "\n";
+            }
         }
 
         // Use the Builder class for convenient dialog construction
