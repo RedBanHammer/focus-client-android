@@ -82,6 +82,7 @@ public class NotificationBlocker extends NotificationListenerService implements 
             // Remove the notification
             // DRAGON: Doesn't work
             this.cancelNotification(sbn.getPackageName(), sbn.getTag(), sbn.getId());
+            this.cancelNotification(sbn.getKey());
         }
     }
 
