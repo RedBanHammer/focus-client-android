@@ -38,11 +38,12 @@ public class ProfileManager {
     */
     public void setProfile(Profile profile)
     {
+        // update with storage manager
+        storage.setObject(profile, "Profiles", profile.getIdentifier());
+
         // notify delegate
         ProfileManagerDelegate delegateRef = this.delegate.get();
         delegateRef.managerDidUpdateProfile(this, profile);
-        // update with storage manager
-        storage.setObject(profile, "Profiles", profile.getIdentifier());
     }
 
     /*
