@@ -43,6 +43,8 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
     private WeakReference<NotificationBlocker> notificationBlocker;
     private WeakReference<AppBlocker> appBlocker;
 
+    public WeakReference<BlockingManagerLogEntryDelegate> logEntryDelegate;
+
     public void setAppBlocker(AppBlocker appBlocker) {
         this.appBlocker = new WeakReference<AppBlocker>(appBlocker);
 
@@ -56,6 +58,12 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
 
         if (this.appBlocker != null) {
             this.updateBlockingModuleApps();
+        }
+    }
+
+    public void didUpdateLogEntries() {
+        if (this.logEntryDelegate != null) {
+            this.logEntryDelegate.get().blockingManagerDidUpdateLogEntries(this);
         }
     }
 

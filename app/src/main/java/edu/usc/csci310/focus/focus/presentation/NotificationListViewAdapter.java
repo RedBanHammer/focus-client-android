@@ -33,6 +33,11 @@ class NotificationListViewAdapter extends ArrayAdapter<LogEntry> {
         this.logEntries = objects;
     }
 
+    public void updateLogEntries(ArrayList<LogEntry> logEntries) {
+        this.logEntries = logEntries;
+        this.notifyDataSetChanged();
+    }
+
     public View getView(final int position, View convertView, ViewGroup parent) {
         View view = convertView;
         // Get the data item for this position
