@@ -32,8 +32,12 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
@@ -88,29 +92,15 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
         Intent i = getIntent();
         Schedule schedule = (Schedule) i.getSerializableExtra(ScheduleInterfaceController.SCHEDULE);
         ArrayList<String> profileIDs = schedule.getProfileIdentifiers();
-        String[] profileNames = new String[profiles.size()];
-        for (int index=0; index<profiles.size(); index++) {
-            profileNames[index] = profiles.get(index).getName();
+        String[] profileNames = new String[profiles.size()-profileIDs.size()];
+        Set<String> set = new HashSet<String>(profileIDs);
+        int arrayIndex = 0;
+        for (int j =0; j<this.profiles.size(); j++){
+            if (!profileIDs.contains(this.profiles.get(j).getIdentifier())){
+                profileNames[arrayIndex] = profiles.get(j).getName();
+                arrayIndex++;
+            }
         }
-//
-//        ArrayList<Profile> profileList = new ArrayList<Profile>();
-//        for (int p=0; p<profiles.size(); p++){
-//            profileList.add(profiles.get(p));
-//        }
-//        for (int index=0; index<profileIDs.size(); index++){
-//            boolean filter = false;
-//            for (int j =0; j<profileList.size(); j++){
-//                //filter
-//                if (profileList.get(j).getIdentifier().equals(profileIDs.get(index))){
-//                    profileList.remove(j);
-//                }
-//            }
-//        }
-//        String[] profileNames = new String[profileList.size()];
-//
-//        for (int q=0; q<profileNames.length; q++){
-//            profileNames[q] = profileList.get(q).getName();
-//        }
         ArrayAdapter adapter = new ArrayAdapter(AddProfileToSchedule.this, android.R.layout.simple_spinner_item, profileNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -119,7 +109,11 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
         profileSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedProfile = profiles.get(i);
+                for (int index=0; index<profiles.size(); index++){
+                    if (profiles.get(index).getName().equals(adapterView.getItemAtPosition(i).toString())){
+                        selectedProfile = ProfileManager.getDefaultManager().getProfileWithIdentifier(profiles.get(index).getIdentifier());
+                    }
+                }
             }
 
             @Override
@@ -136,59 +130,12 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
         hourText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                hours = Integer.parseInt(hourText.getText().toString());
                 return true;
             }
         });
-//        hourText.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//                // TODO Auto-generated method stub
-//            }
-//
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//                // TODO Auto-generated method stub
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//                hours = Integer.parseInt(hourText.getText().toString());
-//            }
-//        });
         minText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                mins = Integer.parseInt(minText.getText().toString());
-                return true;
-            }
-        });
-//        minText.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//                // TODO Auto-generated method stub
-//            }
-//
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//                // TODO Auto-generated method stub
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//                mins = Integer.parseInt(minText.getText().toString());
-//            }
-//        });
-        minText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                mins = Integer.parseInt(minText.getText().toString());
                 return true;
             }
         });
@@ -275,13 +222,37 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
 
     //checks to see whether user has successfully added profile
     public void addProfile(){
-        try {
-            hours = Integer.parseInt(hourText.getText().toString());
-            mins = Integer.parseInt(minText.getText().toString());
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            this.showNumberFormatError();
+        if (hourText.getText().toString().equals("") && minText.getText().toString().equals("")){
+            this.showFormCompletionError();
             return;
+        }
+        if (hourText.getText().toString().equals("")){
+            hours = 0;
+            try {
+                mins = Integer.parseInt(minText.getText().toString());
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                this.showNumberFormatError();
+                return;
+            }
+        }else if (minText.getText().toString().equals("")){
+            mins = 0;
+            try {
+                hours = Integer.parseInt(hourText.getText().toString());
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                this.showNumberFormatError();
+                return;
+            }
+        }else{
+            try {
+                hours = Integer.parseInt(hourText.getText().toString());
+                mins = Integer.parseInt(minText.getText().toString());
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                this.showNumberFormatError();
+                return;
+            }
         }
 
         if (!this.isDurationValid()) {
@@ -333,8 +304,11 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
     }
 
     private boolean isDurationValid() {
-        return (hours>=0) && (hours<=10) &&
-                ((mins==0) || (mins<=59));
+        boolean interval =  (hours>=0) && (hours<=10) &&
+                            ((mins==0) || (mins<=59));
+        int maxMins = 10*60;
+        int totalMins = hours*60 + mins;
+        return ((totalMins <= maxMins) && totalMins >=10);
     }
 
     public boolean didCompleteFields() {
@@ -351,7 +325,9 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
 
     @Override
     public void onComplete(int hourOfDay, int minute) {
-        String time = (hourOfDay%12 + ":" + minute + " " + ((hourOfDay>=12) ? "PM" : "AM"));
+        java.text.DateFormat df = new SimpleDateFormat("h:mm a");
+        Date date = new Date(0, 0, 0, hourOfDay, minute);
+        String time = df.format(date);
         startHours = hourOfDay;
         startMins = minute;
         startTimeButton.setText(time);
