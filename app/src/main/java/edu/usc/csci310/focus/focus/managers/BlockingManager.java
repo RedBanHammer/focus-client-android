@@ -45,6 +45,10 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
 
     public WeakReference<BlockingManagerLogEntryDelegate> logEntryDelegate;
 
+    public void setLogEntryDelegate(BlockingManagerLogEntryDelegate delegate) {
+        this.logEntryDelegate = new WeakReference<BlockingManagerLogEntryDelegate>(delegate);
+    }
+
     public void setAppBlocker(AppBlocker appBlocker) {
         this.appBlocker = new WeakReference<AppBlocker>(appBlocker);
 
