@@ -42,6 +42,8 @@ public class NotificationListFragment extends Fragment implements BlockingManage
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        BlockingManager.getDefaultManager().setLogEntryDelegate(this);
     }
 
     private void updateLogEntries() {
