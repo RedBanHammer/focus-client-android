@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
+import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 import edu.usc.csci310.focus.focus.storage.StorageManager;
 
 /**
@@ -62,7 +63,13 @@ public class ProfileManager {
         Profile removedProfile = this.getProfileWithIdentifier(identifier);
 
         if (removedProfile != null) {
-            storage.removeObject("Profiles", identifier);
+            this.storage.removeObject("Profiles", identifier);
+
+            ArrayList<Schedule> schedules = ScheduleManager.getDefaultManager().getAllSchedules();
+            for (Schedule schedule : schedules) {
+                schedule.removeProfileWithIdentifier(identifier);
+                ScheduleManager.getDefaultManager().setSchedule(schedule);
+            }
 
             ProfileManagerDelegate delegateRef = this.delegate.get();
             delegateRef.managerDidRemoveProfile(this, removedProfile);
@@ -79,7 +86,7 @@ public class ProfileManager {
     */
     public @Nullable Profile getProfileWithName(String name)
     {
-        ArrayList<Serializable> serials = storage.getObjectsWithPrefix("Profiles");
+        ArrayList<Serializable> serials = this.storage.getObjectsWithPrefix("Profiles");
         ArrayList<Profile> profiles = new ArrayList<Profile>();
 
         for (Serializable obj : serials) {
