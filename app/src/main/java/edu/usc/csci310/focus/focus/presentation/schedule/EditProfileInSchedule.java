@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -78,12 +79,12 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
         String name = i.getStringExtra(ScheduleInterfaceController.PROFILE_NAME);
         profileName.setText(name);
         Calendar startTime = (Calendar) i.getSerializableExtra(ScheduleInterfaceController.START_TIME);
-        long durationhr = 0;
-        long durationmin = 0;
-        Long duration= new Long(0);
-        int hr = startTime.HOUR_OF_DAY;
-        int min = startTime.MINUTE;
+        Calendar endTime = (Calendar) i.getSerializableExtra(ScheduleInterfaceController.END_TIME);
 
+        startHours = startTime.get(Calendar.HOUR_OF_DAY);
+        startMins = startTime.get(Calendar.MINUTE);
+        int endHours = endTime.get(Calendar.HOUR_OF_DAY);
+        int endMins = endTime.get(Calendar.MINUTE);
         for (int dayOfWeek = 0; dayOfWeek < this.didCheckBoxes.length; dayOfWeek++){
             // if not checked
             if (times.get(dayOfWeek).size()==0){
@@ -92,17 +93,17 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
             }else{
                 daysCB[dayOfWeek].setChecked(true);
                 didCheckBoxes[dayOfWeek] = true;
-//                duration = times.get(dayOfWeek).get(new Long(hr*60+min));
             }
         }
-        durationhr = duration/60;
-        durationmin = duration%60;
+        hourText.setText(String.valueOf(endHours-startHours));
+        minText.setText(String.valueOf(endMins-startMins));
         profileID = i.getStringExtra(ScheduleInterfaceController.PROFILE_ID);
 
-        String time = (hr%12 + ":" + min + " " + ((hr>=12) ? "PM" : "AM"));
+        DateFormat df = new SimpleDateFormat("h:mm a");
+        Date date = new Date(0, 0, 0, startHours, startMins);
+        String time = df.format(date);
+
         startTimeButton.setText(time);
-//        hourText.setText(String.valueOf(durationhr));
-//        minText.setText(String.valueOf(durationmin));
         this.profiles = ProfileManager.getDefaultManager().getAllProfiles();
 
         startTimeButton.setOnClickListener(new View.OnClickListener() {
@@ -115,21 +116,12 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
         hourText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                hours = Integer.parseInt(hourText.getText().toString());
                 return true;
             }
         });
         minText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                mins = Integer.parseInt(minText.getText().toString());
-                return true;
-            }
-        });
-        minText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                mins = Integer.parseInt(minText.getText().toString());
                 return true;
             }
         });
@@ -229,13 +221,37 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
     }
     //checks to see whether user has successfully updated profile
     public void updateProfile(){
-        try {
-            hours = Integer.parseInt(hourText.getText().toString());
-            mins = Integer.parseInt(minText.getText().toString());
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            this.showNumberFormatError();
+        if (hourText.getText().toString().equals("") && minText.getText().toString().equals("")){
+            this.showFormCompletionError();
             return;
+        }
+        if (hourText.getText().toString().equals("")){
+            hours = 0;
+            try {
+                mins = Integer.parseInt(minText.getText().toString());
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                this.showNumberFormatError();
+                return;
+            }
+        }else if (minText.getText().toString().equals("")){
+            mins = 0;
+            try {
+                hours = Integer.parseInt(hourText.getText().toString());
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                this.showNumberFormatError();
+                return;
+            }
+        }else{
+            try {
+                hours = Integer.parseInt(hourText.getText().toString());
+                mins = Integer.parseInt(minText.getText().toString());
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                this.showNumberFormatError();
+                return;
+            }
         }
 
         if (!this.isDurationValid()) {
@@ -284,8 +300,9 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
     }
 
     private boolean isDurationValid() {
-        return (hours>=0) && (hours<=10) &&
-                (mins>=0) && (mins<=59);
+        int maxMins = 10*60;
+        int totalMins = hours*60 + mins;
+        return ((totalMins <= maxMins) && totalMins >=10);
     }
 
     /*
@@ -299,7 +316,9 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
 
     @Override
     public void onComplete(int hourOfDay, int minute) {
-        String time = (hourOfDay%12 + ":" + minute + " " + ((hourOfDay>=12) ? "PM" : "AM"));
+        DateFormat df = new SimpleDateFormat("h:mm a");
+        Date date = new Date(0, 0, 0, hourOfDay, minute);
+        String time = df.format(date);
         startHours = hourOfDay;
         startMins = minute;
         startTimeButton.setText(time);
