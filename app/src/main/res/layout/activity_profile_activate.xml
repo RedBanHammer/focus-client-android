@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="edu.usc.csci310.focus.focus.presentation.ProfileInterfaceController"
+
+        android:layout_width="368dp"
+        android:layout_height="495dp"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp">
+
+        <TextView
+            android:id="@+id/profileName"
+            android:layout_width="match_parent"
+            android:layout_height="112dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:padding="30dp"
+            android:textSize="24sp"
+            tools:ignore="LabelFor" />
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="112dp">
+
+                <NumberPicker
+                    android:id="@+id/hoursPicker"
+                    android:layout_width="112dp"
+                    android:layout_height="112dp"
+                    android:textSize="24sp"/>
+
+                <TextView
+                    android:id="@+id/hours"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="hours"
+                    android:padding="30dp"
+                    android:textSize="24sp"/>
+
+        </GridLayout>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="112dp">
+
+                <NumberPicker
+                    android:id="@+id/minutesPicker"
+                    android:layout_width="112dp"
+                    android:layout_height="112dp"
+                    android:textSize="24sp"/>
+
+                <TextView
+                    android:id="@+id/minutes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="30dp"
+                    android:text="minutes"
+                    android:textSize="24sp" />
+        </GridLayout>
+
+        <Button
+            android:id="@+id/startButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Start" />
+
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_height="40dp"
+            android:text="Cancel"
+            android:textColor="@android:color/white"
+            android:background="@android:color/holo_red_light"/>
+
+</LinearLayout>

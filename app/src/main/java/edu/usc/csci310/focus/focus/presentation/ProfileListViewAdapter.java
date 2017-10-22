@@ -2,6 +2,7 @@ package edu.usc.csci310.focus.focus.presentation;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +13,15 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
+
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by Briana on 10/6/17.
@@ -24,6 +29,8 @@ import edu.usc.csci310.focus.focus.managers.ProfileManager;
 
 public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
     protected ArrayList<Profile> profiles;
+    private View view;
+    private Profile profile;
 
     /**
      * Update the data set and reload the view.
@@ -41,9 +48,9 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
-        View view = convertView;
+        view = convertView;
         // Get the data item for this position
-        Profile profile = profiles.get(position);
+        profile = profiles.get(position);
 
         // Check if an existing view is being reused, otherwise inflate the view
         ViewHolder viewHolder = null; // view lookup cache stored in tag
@@ -65,15 +72,34 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
 
         //set the toggle button listener
         ToggleButton toggle = (ToggleButton) view.findViewById(R.id.toggle_profile_button);
-        toggle.setOnCheckedChangeListener(null);
-        //toggle.setChecked(profile.getIsActive());
 
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Profile profile = profiles.get(position);
-                profile.setIsActive(isChecked);
-                ProfileManager.getDefaultManager().setProfile(profile);
+                profile = ProfileManager.getDefaultManager().getProfileWithIdentifier(profile.getIdentifier());
+                if (isChecked) {
+                    // if turning on, bring up timer dialog
+                    Intent intent = new Intent(getContext(), ActivateProfileDialog.class);
+                    intent.putExtra("profile", (Serializable) profile);
+
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // You need this if starting
+                    // the activity from a service
+                    //intent.setAction(Intent.ACTION_MAIN);
+                    intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+                    ((Activity) getContext()).startActivityForResult(intent, 0);
+
+                    profile = ProfileManager.getDefaultManager().getProfileWithIdentifier(profile.getIdentifier());
+                    if (!profile.getIsActive()) {
+                        // if comes back negative, set toggle to off
+                        ToggleButton toggle = (ToggleButton) view.findViewById(R.id.toggle_profile_button);
+                        toggle.setChecked(false);
+                    }
+                } else {
+                    profile.setIsActive(isChecked);
+                    ProfileManager.getDefaultManager().setProfile(profile);
+                }
             }
         });
 

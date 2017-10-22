@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -24,6 +25,9 @@ import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.managers.BlockingManager;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
+
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 
 public class ProfileList extends Fragment {
     private ListView listView;
@@ -87,5 +91,21 @@ public class ProfileList extends Fragment {
         ArrayList<Profile> newProfiles = ProfileManager.getDefaultManager().getAllProfiles();
         this.profileListViewAdapter.setProfiles(newProfiles);
         this.profiles = newProfiles;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Profile profile = (Profile) data.getExtras().get("profile");
+        if (requestCode == 0) {
+            if(resultCode == RESULT_OK){
+                // all good
+                profile.setIsActive(true);
+                ProfileManager.getDefaultManager().setProfile(profile);
+            }
+            if (resultCode == RESULT_CANCELED) {
+                // if comes back negative, set toggle to off
+
+            }
+        }
     }
 }
