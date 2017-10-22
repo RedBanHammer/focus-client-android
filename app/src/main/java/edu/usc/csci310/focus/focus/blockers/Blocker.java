@@ -8,7 +8,7 @@ import edu.usc.csci310.focus.focus.dataobjects.App;
  * Base blocker interface that Blockers should conform to.
  */
 
-abstract interface Blocker {
+public abstract interface Blocker {
     /**
      * Set the list of apps to block by this blocker module.
      * @param apps An ArrayList of apps that should be blocked.

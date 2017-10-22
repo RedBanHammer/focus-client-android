@@ -43,7 +43,7 @@ public class NotificationListFragment extends Fragment {
 
         BlockingManager manager = BlockingManager.getDefaultManager();
 
-        this.notificationLogEntries = manager.getAppOpenLogEntries();
+        this.notificationLogEntries = manager.getNotificationLogEntries();
 
 
         // DEBUG TMP DATA
