@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import edu.usc.csci310.focus.focus.managers.BlockingManager;
 import edu.usc.csci310.focus.focus.storage.StorageManager;
 
 /**
@@ -28,6 +29,7 @@ public class LoggingService {
         UUID uuid = UUID.randomUUID();
 
         manager.setObject(entry, sLoggerGroupIdentifier, uuid.toString());
+        BlockingManager.getDefaultManager().didUpdateLogEntries();
     }
 
     /**
@@ -49,5 +51,6 @@ public class LoggingService {
 
     public static void removeAllLogEntries() {
         StorageManager.getDefaultManager().removeObjectsWithPrefix(sLoggerGroupIdentifier);
+        BlockingManager.getDefaultManager().didUpdateLogEntries();
     }
 }

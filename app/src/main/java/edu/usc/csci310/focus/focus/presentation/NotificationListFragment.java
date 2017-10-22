@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.logging.LogManager;
 
 import edu.usc.csci310.focus.focus.R;
@@ -22,10 +23,11 @@ import edu.usc.csci310.focus.focus.blockers.NotificationMetadata;
 import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.managers.BlockingManager;
+import edu.usc.csci310.focus.focus.managers.BlockingManagerLogEntryDelegate;
 
 import static android.R.drawable.ic_menu_delete;
 
-public class NotificationListFragment extends Fragment {
+public class NotificationListFragment extends Fragment implements BlockingManagerLogEntryDelegate {
     private ListView listView;
     ArrayList<LogEntry> notificationLogEntries = new ArrayList<LogEntry>();
     NotificationListViewAdapter notificationListViewAdapter;
@@ -40,53 +42,28 @@ public class NotificationListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
 
+    private void updateLogEntries() {
         BlockingManager manager = BlockingManager.getDefaultManager();
-
         this.notificationLogEntries = manager.getNotificationLogEntries();
+        Collections.reverse(this.notificationLogEntries); // Make reverse chronological
+    }
 
+    public void render() {
+        this.updateLogEntries();
+        this.notificationListViewAdapter.updateLogEntries(this.notificationLogEntries);
+    }
 
-        // DEBUG TMP DATA
-//        NotificationMetadata metadata1 = new NotificationMetadata(null);
-//        metadata1.title = "You have a new friend request";
-//        metadata1.text = "Shawn sent you a friend request lol";
-//        metadata1.icon = "";
-//
-//        this.notificationLogEntries.add(new LogEntry(
-//                new App("Facebook", "com.google.android.youtube"),
-//                null,
-//                metadata1,
-//                LogEntry.LogEntryEventType.NOTIFICATION
-//        ));
-//
-//
-//        NotificationMetadata metadata2 = new NotificationMetadata(null);
-//        metadata2.title = "Shawn updated his story";
-//        metadata2.text = "He's out frolicking his friends on this balmy Saturday evening";
-//        metadata2.icon = "";
-//
-//        this.notificationLogEntries.add(new LogEntry(
-//                new App("Focus", "com.android.chrome"),
-//                null,
-//                metadata2,
-//                LogEntry.LogEntryEventType.NOTIFICATION
-//        ));
-//
-//
-//        NotificationMetadata metadata3 = new NotificationMetadata(null);
-//        metadata3.title = "Shawn favorited your image";
-//        metadata3.text = "He really liked the picture of his group working on the group project inside of SAL";
-//        metadata3.icon = "";
-//
-//        this.notificationLogEntries.add(new LogEntry(
-//                new App("Instagram", "com.google.android.apps.maps"),
-//                null,
-//                metadata3,
-//                LogEntry.LogEntryEventType.NOTIFICATION
-//        ));
+    @Override
+    public void onResume() {
+        super.onResume();
 
+        this.render();
+    }
 
-        //setContentView(R.layout.activity_notification);
+    public void blockingManagerDidUpdateLogEntries(BlockingManager blockingManager) {
+        this.render();
     }
 
     //handle UI events
@@ -95,14 +72,16 @@ public class NotificationListFragment extends Fragment {
         View v = inflater.inflate(R.layout.activity_profile_list, container, false);
 
         // call the views with this layout
-        listView = (ListView) v.findViewById(R.id.profileListView);
+        this.listView = (ListView) v.findViewById(R.id.profileListView);
 
-        notificationListViewAdapter = new NotificationListViewAdapter(getActivity(), 0, notificationLogEntries);
-        listView.setAdapter(notificationListViewAdapter);
+        this.updateLogEntries();
 
-        clearNotificationsButton = (FloatingActionButton) v.findViewById(R.id.addProfileButton);
-        clearNotificationsButton.setImageResource(android.R.drawable.ic_menu_delete);
-        clearNotificationsButton.setOnClickListener(new View.OnClickListener() {
+        this.notificationListViewAdapter = new NotificationListViewAdapter(getActivity(), 0, this.notificationLogEntries);
+        this.listView.setAdapter(this.notificationListViewAdapter);
+
+        this.clearNotificationsButton = (FloatingActionButton) v.findViewById(R.id.addProfileButton);
+        this.clearNotificationsButton.setImageResource(android.R.drawable.ic_menu_delete);
+        this.clearNotificationsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //clear notifications in storage
