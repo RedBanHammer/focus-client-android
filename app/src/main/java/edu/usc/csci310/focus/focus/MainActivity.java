@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.app.AppOpsManager;
 import android.app.NotificationManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -44,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
 
     ViewPager mViewPager;
     TabLayout tabLayout;
+
+    private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
 
     // Tab titles
     private static String[] tabs = { "Profiles", "Schedules", "Notifications" };
@@ -72,6 +76,12 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         this.requestPermissions();
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+
+        System.out.println("MainActivity was destroyed...");
     }
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
@@ -124,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
     private void requestPermissions() {
         this.requestAppUsagePermissions();
         this.requestNotificationListenerPermissions();
-        this.requestNotificationPermissions();
+//        this.requestNotificationPermissions();
     }
 
     /**

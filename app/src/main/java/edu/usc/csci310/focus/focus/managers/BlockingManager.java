@@ -8,10 +8,9 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import edu.usc.csci310.focus.focus.blockers.NotificationBlocker;
 import edu.usc.csci310.focus.focus.blockers.AppBlocker;
 import edu.usc.csci310.focus.focus.blockers.LogEntry;
-import edu.usc.csci310.focus.focus.blockers.NotificationBlocker;
-import edu.usc.csci310.focus.focus.blockers.NotificationBlockingService;
 import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
@@ -41,11 +40,11 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
     private ScheduleManager scheduleManager;
     private ProfileManager profileManager;
 
-    private NotificationBlocker notificationBlocker;
-    private AppBlocker appBlocker;
+    private WeakReference<NotificationBlocker> notificationBlocker;
+    private WeakReference<AppBlocker> appBlocker;
 
     public void setAppBlocker(AppBlocker appBlocker) {
-        this.appBlocker = appBlocker;
+        this.appBlocker = new WeakReference<AppBlocker>(appBlocker);
 
         if (this.notificationBlocker != null) {
             this.updateBlockingModuleApps();
@@ -53,7 +52,7 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
     }
 
     public void setNotificationBlocker(NotificationBlocker notificationBlocker) {
-        this.notificationBlocker = notificationBlocker;
+        this.notificationBlocker = new WeakReference<NotificationBlocker>(notificationBlocker);
 
         if (this.appBlocker != null) {
             this.updateBlockingModuleApps();
@@ -74,19 +73,19 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
      * @return An ArrayList of LogEntries with the NOTFICIATION type.
      */
     public @NonNull ArrayList<LogEntry> getNotificationLogEntries() {
-        return this.notificationBlocker.getLogEntries();
+        return NotificationBlocker.getLogEntries();
     }
 
     public void clearAllNotificationLogEntries() {
-        this.notificationBlocker.removeAllLogEntries();
+        NotificationBlocker.removeAllLogEntries();
     }
 
     public @NonNull ArrayList<LogEntry> getAppOpenLogEntries() {
-        return this.appBlocker.getLogEntries();
+        return AppBlocker.getLogEntries();
     }
 
     public void clearAllAppOpenLogEntries() {
-        this.appBlocker.removeAllLogEntries();
+        AppBlocker.removeAllLogEntries();
     }
 
     /** Manage the blocking modules **/
@@ -126,19 +125,21 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
         }
 
         // Update modules
-        this.appBlocker.setApps(blockedApps);
-        this.notificationBlocker.setApps(blockedApps);
+        this.appBlocker.get().setApps(blockedApps);
+        if (this.notificationBlocker != null) {
+            this.notificationBlocker.get().setApps(blockedApps);
+        }
     }
 
     public void startBlockingModules() {
         Intent appBlockerIntent = new Intent(this.context, AppBlocker.class);
         this.context.startService(appBlockerIntent);
 
-        Intent notificationBlockerIntent = new Intent(this.context, NotificationBlocker.class);
-        this.context.startService(notificationBlockerIntent);
+//        Intent notificationBlockerIntent = new Intent(this.context, NotificationBlocker.class);
+//        this.context.startService(notificationBlockerIntent);
 
-        Intent notificationBlockingServiceIntent = new Intent(this.context, NotificationBlockingService.class);
-        this.context.startService(notificationBlockingServiceIntent);
+//        Intent notificationBlockingServiceIntent = new Intent(this.context, NotificationBlocker.class);
+//        this.context.startService(notificationBlockingServiceIntent);
     }
 
     /** ProfileManagerDelegate implementation **/

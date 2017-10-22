@@ -22,13 +22,11 @@ import edu.usc.csci310.focus.focus.presentation.SplashScreen;
  * Block a set of apps from opening.
  */
 
-public class AppBlocker extends IntentService implements Blocker, Logger {
+public class AppBlocker extends IntentService implements Blocker {
     private ArrayList<App> apps = new ArrayList<App>();
 
     private Object isBlockingMutex = new Object();
     private boolean isBlocking = false;
-
-    private LoggingService loggingService = new LoggingService();
 
     public AppBlocker(String name) {
         super(name);
@@ -76,7 +74,7 @@ public class AppBlocker extends IntentService implements Blocker, Logger {
                         if (packageName.equals(app.getIdentifier())) {
                             // Create a log entry
                             LogEntry logEntry = new LogEntry(app, null, null, LogEntry.LogEntryEventType.OPEN);
-                            this.loggingService.logEntry(logEntry);
+                            LoggingService.logEntry(logEntry);
 
                             // Block the app by bringing Focus into the foreground with info.
                             this.bringToForeground(app);
@@ -109,8 +107,8 @@ public class AppBlocker extends IntentService implements Blocker, Logger {
     }
 
     /** Logger interface impl. **/
-    public ArrayList<LogEntry> getLogEntries() {
-        ArrayList<LogEntry> logEntries = this.loggingService.getLogEntries();
+    public static ArrayList<LogEntry> getLogEntries() {
+        ArrayList<LogEntry> logEntries = LoggingService.getLogEntries();
         ArrayList<LogEntry> filteredLogEntries = new ArrayList<LogEntry>();
 
         for (LogEntry entry : logEntries) {
@@ -122,8 +120,8 @@ public class AppBlocker extends IntentService implements Blocker, Logger {
         return filteredLogEntries;
     }
 
-    public void removeAllLogEntries() {
-        this.loggingService.removeAllLogEntries();
+    public static void removeAllLogEntries() {
+        LoggingService.removeAllLogEntries();
     }
 
     /** Utility **/
