@@ -52,17 +52,13 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
     public void setAppBlocker(AppBlocker appBlocker) {
         this.appBlocker = new WeakReference<AppBlocker>(appBlocker);
 
-        if (this.notificationBlocker != null) {
-            this.updateBlockingModuleApps();
-        }
+        this.updateBlockingModuleApps();
     }
 
     public void setNotificationBlocker(NotificationBlocker notificationBlocker) {
         this.notificationBlocker = new WeakReference<NotificationBlocker>(notificationBlocker);
 
-        if (this.appBlocker != null) {
-            this.updateBlockingModuleApps();
-        }
+        this.updateBlockingModuleApps();
     }
 
     public void didUpdateLogEntries() {
@@ -137,7 +133,9 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
         }
 
         // Update modules
-        this.appBlocker.get().setApps(blockedApps);
+        if (this.appBlocker != null) {
+            this.appBlocker.get().setApps(blockedApps);
+        }
         if (this.notificationBlocker != null) {
             this.notificationBlocker.get().setApps(blockedApps);
         }
