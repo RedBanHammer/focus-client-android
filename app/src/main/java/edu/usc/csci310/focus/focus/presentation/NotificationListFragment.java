@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.logging.LogManager;
 
+import edu.usc.csci310.focus.focus.MainActivity;
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.blockers.LogEntry;
 import edu.usc.csci310.focus.focus.blockers.NotificationMetadata;
@@ -54,12 +55,16 @@ public class NotificationListFragment extends Fragment implements BlockingManage
 
     public void render() {
         this.updateLogEntries();
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                notificationListViewAdapter.updateLogEntries(notificationLogEntries);
-            }
-        });
+        if(getActivity() == null)
+            return;
+        if (getActivity()!=null){
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    notificationListViewAdapter.updateLogEntries(notificationLogEntries);
+                }
+            });
+        }
     }
 
     @Override
