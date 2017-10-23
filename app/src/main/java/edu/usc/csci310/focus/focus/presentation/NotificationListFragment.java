@@ -54,7 +54,12 @@ public class NotificationListFragment extends Fragment implements BlockingManage
 
     public void render() {
         this.updateLogEntries();
-        this.notificationListViewAdapter.updateLogEntries(this.notificationLogEntries);
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notificationListViewAdapter.updateLogEntries(notificationLogEntries);
+            }
+        });
     }
 
     @Override
