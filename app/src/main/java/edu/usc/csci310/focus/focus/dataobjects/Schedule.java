@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.usc.csci310.focus.focus.managers.ProfileManager;
 import edu.usc.csci310.focus.focus.managers.ScheduleManager;
 
 /**
@@ -98,6 +99,15 @@ public class Schedule extends NamedObject {
 
         for (String profileIdentifier : this.getProfileIdentifiers()) {
             RecurringTime profileTime = this.getProfileTimeWithIdentifier(profileIdentifier);
+            Profile profile = ProfileManager.getDefaultManager().getProfileWithIdentifier(profileIdentifier);
+
+            if (profile == null) {
+                continue;
+            }
+
+            if (!profile.getIsActive()) {
+                continue;
+            }
 
             if (profileTime == null) {
                 continue;

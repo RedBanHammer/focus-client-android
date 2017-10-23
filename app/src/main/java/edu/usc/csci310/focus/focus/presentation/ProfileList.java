@@ -95,6 +95,11 @@ public class ProfileList extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data == null) {
+            System.out.println("Activity result from creating a profile was null");
+            return;
+        }
+
         Profile profile = (Profile) data.getExtras().get("profile");
         if (requestCode == 0) {
             if(resultCode == RESULT_OK){

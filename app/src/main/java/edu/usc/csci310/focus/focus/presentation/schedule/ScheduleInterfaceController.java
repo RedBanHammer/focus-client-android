@@ -449,6 +449,11 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
 
         for (Map.Entry<String, RecurringTime> entry : map.entrySet()) {
             Profile profile = ProfileManager.getDefaultManager().getProfileWithIdentifier(profileIdentifiers.get(profileIndex));
+
+            if (profile == null) {
+                continue;
+            }
+
             RecurringTime profileTime = schedule.getProfileTimeWithIdentifier(profile.getIdentifier());
 
             if (profileTime == null) { // Profile is not in schedule

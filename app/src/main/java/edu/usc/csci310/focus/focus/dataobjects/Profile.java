@@ -9,7 +9,7 @@ import edu.usc.csci310.focus.focus.managers.ProfileManager;
  */
 
 public class Profile extends NamedObject {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private ArrayList<App> apps = new ArrayList<App>();
     private Boolean isActive = false;
@@ -57,11 +57,11 @@ public class Profile extends NamedObject {
 
     public ArrayList<App> getApps() { return this.apps; }
 
-    public void setIsActive(boolean flag) {
+    public void setIsActive(Boolean flag) {
         this.isActive = flag;
     }
 
-    public boolean getIsActive() {
+    public Boolean getIsActive() {
         return this.isActive;
     }
 }
