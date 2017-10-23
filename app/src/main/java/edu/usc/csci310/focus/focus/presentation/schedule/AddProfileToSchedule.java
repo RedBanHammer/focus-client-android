@@ -92,7 +92,7 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
         Intent i = getIntent();
         Schedule schedule = (Schedule) i.getSerializableExtra(ScheduleInterfaceController.SCHEDULE);
         ArrayList<String> profileIDs = schedule.getProfileIdentifiers();
-        String[] profileNames = new String[profiles.size()-profileIDs.size()];
+        String[] profileNames = new String[Math.max(0, this.profiles.size()-profileIDs.size())];
         Set<String> set = new HashSet<String>(profileIDs);
         int arrayIndex = 0;
         for (int j =0; j<this.profiles.size(); j++){
