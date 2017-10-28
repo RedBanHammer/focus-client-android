@@ -23,6 +23,12 @@ public class NotificationBlocker extends NotificationListenerService implements 
     private Object isBlockingMutex = new Object();
     private boolean isBlocking = false;
 
+    private static NotificationBlocker sharedNotificationBlocker = null;
+
+    public static NotificationBlocker getSharedNotificationBlocker() {
+        return sharedNotificationBlocker;
+    }
+
     public void setApps(@NonNull ArrayList<App> apps) {
         this.apps = apps;
     }
@@ -44,7 +50,11 @@ public class NotificationBlocker extends NotificationListenerService implements 
         System.out.println("Got onBind from intent");
 
         // Add to blocking manager
-        BlockingManager.getDefaultManager().setNotificationBlocker(this);
+        if (BlockingManager.getDefaultManager() != null) {
+            BlockingManager.getDefaultManager().setNotificationBlocker(this);
+        } else {
+            sharedNotificationBlocker = this;
+        }
 
         return super.onBind(intent);
     }

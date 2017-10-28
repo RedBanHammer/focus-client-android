@@ -3,6 +3,7 @@ package edu.usc.csci310.focus.focus.presentation;
  * NotificationListFragment Activity that displays list of apps blocked after a blocking period
  */
 import android.content.Intent;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -67,7 +68,7 @@ public class NotificationListFragment extends Fragment implements BlockingManage
     }
 
     public void blockingManagerDidUpdateLogEntries(BlockingManager blockingManager) {
-        getActivity().runOnUiThread(new Runnable() {
+        new Handler().post(new Runnable() {
             @Override
             public void run() {
                 render();
