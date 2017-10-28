@@ -1,5 +1,6 @@
 package edu.usc.csci310.focus.focus.managers;
 
+import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -19,22 +20,23 @@ import edu.usc.csci310.focus.focus.dataobjects.Schedule;
  * Handles blocking apps and notifications.
  */
 
-public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerDelegate {
-    private static BlockingManager defaultManager = new BlockingManager();
+public class BlockingManager extends IntentService implements ProfileManagerDelegate, ScheduleManagerDelegate, Runnable {
+    // How often in milliseconds to poll for changes in scheduled profiles.
+    private static int UPDATE_POLL_INTERVAL = 5 * 1000;
+
+    private static BlockingManager defaultManager = null;
 
     public static @NonNull BlockingManager getDefaultManager() {
         return defaultManager;
     }
-    public static @NonNull BlockingManager getDefaultManagerWithContext(Context context) {
-        defaultManager.setContext(context);
 
-        return defaultManager;
+    public static void createBlockingManagerWithContext(Context context) {
+        Intent blockingManagerIntent = new Intent(context, BlockingManager.class);
+        context.startService(blockingManagerIntent);
     }
 
-    private Context context = null;
-
-    public void setContext(Context context) {
-        this.context = context;
+    private void setDefaultManager(BlockingManager manager) {
+        defaultManager = manager;
     }
 
     private ScheduleManager scheduleManager;
@@ -67,13 +69,44 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
         }
     }
 
-    private BlockingManager() {
+    public BlockingManager(String name) {
+        super(name);
+    }
+
+    public BlockingManager() {
+        super("BlockingManager");
+    }
+
+    @Override
+    protected void onHandleIntent(Intent workIntent) {
+        setDefaultManager(this);
+
         // Initialize manager singleton references
         this.scheduleManager = ScheduleManager.getDefaultManager();
         this.profileManager = ProfileManager.getDefaultManager();
 
         this.scheduleManager.delegate = new WeakReference<ScheduleManagerDelegate>(this);
         this.profileManager.delegate = new WeakReference<ProfileManagerDelegate>(this);
+
+        this.startBlockingModules();
+
+        this.run();
+    }
+
+    /**
+     * Continuously poll for profile and schedule updates in the background and update
+     * blocked app lists in blocking modules.
+     */
+    public void run() {
+        while (true) {
+            this.updateBlockingModuleApps();
+
+            try {
+                Thread.sleep(UPDATE_POLL_INTERVAL);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -142,14 +175,14 @@ public class BlockingManager implements ProfileManagerDelegate, ScheduleManagerD
     }
 
     public void startBlockingModules() {
-        Intent appBlockerIntent = new Intent(this.context, AppBlocker.class);
-        this.context.startService(appBlockerIntent);
+        Intent appBlockerIntent = new Intent(this, AppBlocker.class);
+        this.startService(appBlockerIntent);
 
-//        Intent notificationBlockerIntent = new Intent(this.context, NotificationBlocker.class);
-//        this.context.startService(notificationBlockerIntent);
+//        Intent notificationBlockerIntent = new Intent(this, NotificationBlocker.class);
+//        this.startService(notificationBlockerIntent);
 
-//        Intent notificationBlockingServiceIntent = new Intent(this.context, NotificationBlocker.class);
-//        this.context.startService(notificationBlockingServiceIntent);
+//        Intent notificationBlockingServiceIntent = new Intent(this, NotificationBlocker.class);
+//        this.startService(notificationBlockingServiceIntent);
     }
 
     /** ProfileManagerDelegate implementation **/
