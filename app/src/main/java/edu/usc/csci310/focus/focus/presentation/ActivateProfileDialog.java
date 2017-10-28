@@ -31,13 +31,14 @@ public class ActivateProfileDialog extends AppCompatActivity {
 
     public void setProfile(Profile profile) {
         this.profile = profile;
+        this.timer = new Timer(this.profile);
         this.renderProfileInfo();
     }
 
     public void ActivateProfileDialog(Profile profile)
     {
-        this.profile = profile;
-        this.timer = new Timer(this.profile);
+        this.setProfile(profile);
+
     }
 
     /*

@@ -33,6 +33,12 @@ public class AppBlockedPopup extends DialogFragment {
         ArrayList<String> blockingProfiles = new ArrayList<String>();
 
         for (Schedule s : schedules) {
+            String profileName = s.getProfileIdentifiers().get(0);
+
+            if (s.getName().equals(profileName + Schedule.TIMER_SCHEDULE_POSTFIX)) {
+                continue;
+            }
+
             for (String pIdentifier : s.getActiveProfileIdentifiers()) {
                 Profile p = ProfileManager.getDefaultManager().getProfileWithIdentifier(pIdentifier);
                 for (App a : p.getApps()) {
@@ -46,14 +52,11 @@ public class AppBlockedPopup extends DialogFragment {
         }
 
         for (Profile p : profiles) {
-            if (p.getIsActive()) {
-                for (App a : p.getApps()) {
-                        if (a.getName().equals(appName) && !blockingProfiles.contains(p.getName())) {
-                            blockingProfiles.add(p.getName());
-                            continue;
-                        }
+            for (App a : p.getApps()) {
+                if (a.getName().equals(appName) && !blockingProfiles.contains(p.getName())) {
+                    blockingProfiles.add(p.getName());
+                    continue;
                 }
-                continue;
             }
         }
 

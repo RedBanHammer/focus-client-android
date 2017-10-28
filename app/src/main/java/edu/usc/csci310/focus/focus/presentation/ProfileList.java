@@ -35,6 +35,8 @@ import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 public class ProfileList extends Fragment {
+    public static ProfileList profileList = null;
+
     private ListView listView;
     ArrayList<Profile> profiles;
     FloatingActionButton addProfileButton;
@@ -55,6 +57,8 @@ public class ProfileList extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         profiles = ProfileManager.getDefaultManager().getAllProfiles();
+
+        profileList = this;
     }
 
     //handle UI events
@@ -115,5 +119,9 @@ public class ProfileList extends Fragment {
         // set toggle to whether the profile is active or not
         //ToggleButton toggle = (ToggleButton) view.findViewById(R.id.toggle_profile_button);
         //toggle.setChecked(profile.getIsActive());
+    }
+
+    public void render() {
+        this.profileListViewAdapter.notifyDataSetChanged();
     }
 }

@@ -33,6 +33,8 @@ import static android.app.Activity.RESULT_OK;
  */
 
 public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
+    private static final String PLACEHOLDER_TIMER_TEXT = "Not active";
+
     protected ArrayList<Profile> profiles;
     private View view;
     private Profile profile;
@@ -80,10 +82,21 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
         // into the template view.
         viewHolder.profileName.setText(profile.getName());
 
+        Schedule timerSchedule = ScheduleManager.getDefaultManager().getScheduleWithName(this.profile.getIdentifier() + Schedule.TIMER_SCHEDULE_POSTFIX);
+
+        if (timerSchedule != null) {
+            Long minutesRemaining = timerSchedule.getTimeRemainingWithProfileIdentifier(profile.getIdentifier());
+            viewHolder.profileTime.setText(
+                    minutesRemaining.toString() +
+                    " minute" + (minutesRemaining != 1 ? "s" : "") + " left");
+        } else {
+            viewHolder.profileTime.setText(PLACEHOLDER_TIMER_TEXT);
+        }
+
         //set the toggle button listener
         ToggleButton toggle = (ToggleButton) view.findViewById(R.id.toggle_profile_button);
 
-        boolean profileIsActive = ScheduleManager.getDefaultManager().getScheduleWithName(profile.getName() + " Timer") != null;
+        boolean profileIsActive = timerSchedule != null;
 
         toggle.setOnCheckedChangeListener(null);
         toggle.setChecked(profileIsActive);
@@ -111,9 +124,12 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
 
                     // find schedule with profile.name + " Timer"
                     Schedule s = ScheduleManager.getDefaultManager().
-                            getScheduleWithName(profile.getName() + " Timer");
+                            getScheduleWithName(profile.getIdentifier() + Schedule.TIMER_SCHEDULE_POSTFIX);
                     // delete it
+
                     ScheduleManager.getDefaultManager().removeSchedule(s);
+
+                    notifyDataSetChanged();
                 }
             }
         });
@@ -145,9 +161,12 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
     // View lookup cache that populates the listview
     public class ViewHolder {
         TextView profileName;
+        TextView profileTime;
+
         //ArrayList of ImageViews w/ app icons
         public ViewHolder (View v){
-            profileName = (TextView)v.findViewById(R.id.profile_list_name);
+            this.profileName = (TextView)v.findViewById(R.id.profile_list_name);
+            this.profileTime = (TextView)v.findViewById(R.id.profile_time_remaining);
         }
     }
 }
