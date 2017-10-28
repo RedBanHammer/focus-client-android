@@ -59,9 +59,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Set up managers
         StorageManager.getDefaultManagerWithContext(getApplicationContext());
-        BlockingManager.getDefaultManagerWithContext(getApplicationContext());
 
-        BlockingManager.getDefaultManager().startBlockingModules();
+        BlockingManager.createBlockingManagerWithContext(getApplicationContext());
+//        BlockingManager.getDefaultManagerWithContext(getApplicationContext());
+//        BlockingManager.getDefaultManager().startBlockingModules();
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

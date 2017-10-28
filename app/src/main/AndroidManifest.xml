@@ -28,6 +28,10 @@
             android:name=".blockers.AppBlocker"
             android:exported="false"/>
 
+        <service
+            android:name=".managers.BlockingManager"
+            android:exported="false"/>
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
