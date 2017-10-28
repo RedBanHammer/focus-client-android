@@ -110,17 +110,30 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //if we are creating a new profile and not editing an old one
-                if(profileIfEditing == null)
+                //first check if the name is empty
+                if(tv.getText().toString().matches(""))
                 {
-                    profileIfEditing = new Profile(tv.getText().toString());
+                    //they didn't enter a name
+                    errorDialog();
                 }
-                profileIfEditing.setName(tv.getText().toString());
-                profileIfEditing.setApps(appList);
-                //pass info to manager
-                ProfileManager.getDefaultManager().setProfile(profileIfEditing);
-                finish();
+                //now check if applist is empty
+                else if(appList.isEmpty())
+                {
+                    appErrorDialog();
+                }
+                else
+                {
+                    //if we are creating a new profile and not editing an old one
+                    if(profileIfEditing == null) {
+                        profileIfEditing = new Profile(tv.getText().toString());
+                    }
+                    profileIfEditing.setName(tv.getText().toString());
+                    profileIfEditing.setApps(appList);
+                    //pass info to manager
+                    ProfileManager.getDefaultManager().setProfile(profileIfEditing);
+                    finish();
+                }
+
             }
         });
 
@@ -152,6 +165,35 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
         }
 
     }//onActivityResult
+
+    private void errorDialog() {
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("Invalid name")
+                .setMessage("You entered an invalid name for the profile")
+                .setPositiveButton("Okay", new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+
+                })
+                .show();
+    }
+
+
+    private void appErrorDialog() {
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("Invalid Selection")
+                .setMessage("Please select at least one application")
+                .setPositiveButton("Okay", new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+
+                })
+                .show();
+    }
 
     /*
      * Determines whether the user has completed the form to create a new ProfileInterfaceController.

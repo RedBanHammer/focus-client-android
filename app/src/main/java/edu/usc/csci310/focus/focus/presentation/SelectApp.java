@@ -5,6 +5,7 @@ package edu.usc.csci310.focus.focus.presentation;
  * Activity that displays all of the user's Android apps
  */
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -73,9 +74,10 @@ public class SelectApp extends AppCompatActivity implements SelectAppInterface {
         selectAppButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //this pulls back up the createprofile interface class.... MAKE SURE IT'S THE SAME ONE AS BEFORE, NOT A BLANK ONE
-                Intent i = new Intent();
                 ArrayList<App> send = appAdapter.getAppList();
+
+                //this pulls back up the createprofile interface class....
+                Intent i = new Intent();
                 i.putExtra(SELECTED_APPS, send);
                 //i.putExtra(SELECTED_APPS, ";lskdjfl;k");
                 setResult(Activity.RESULT_OK, i);
@@ -85,6 +87,7 @@ public class SelectApp extends AppCompatActivity implements SelectAppInterface {
         });
 
     }
+
 
     /*
      * Returns whether the user selected an app
