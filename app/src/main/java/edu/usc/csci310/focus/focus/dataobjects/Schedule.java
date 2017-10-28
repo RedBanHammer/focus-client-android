@@ -105,9 +105,9 @@ public class Schedule extends NamedObject {
                 continue;
             }
 
-            if (!profile.getIsActive()) {
-                continue;
-            }
+//            if (!profile.getIsActive()) {
+//                continue;
+//            }
 
             if (profileTime == null) {
                 continue;
