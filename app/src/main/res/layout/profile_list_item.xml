@@ -17,8 +17,17 @@
             android:id="@+id/profile_list_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
             android:text="Name"
-            android:textSize="24sp" />
+            android:textSize="21sp" />
+
+        <TextView
+            android:id="@+id/profile_time_remaining"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:text="10 minutes"
+            android:textSize="13sp" />
 
         <ToggleButton
             android:id="@+id/toggle_profile_button"
