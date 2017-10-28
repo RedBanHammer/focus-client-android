@@ -43,7 +43,9 @@ public class ScheduleManager {
         storage.setObject(schedule, "Schedules", schedule.getIdentifier());
 
         ScheduleManagerDelegate delegateRef = this.delegate.get();
-        delegateRef.managerDidUpdateSchedule(this, schedule);
+        if (delegateRef != null) {
+            delegateRef.managerDidUpdateSchedule(this, schedule);
+        }
     }
 
     /**
@@ -66,7 +68,9 @@ public class ScheduleManager {
             storage.removeObject("Schedules", scheduleIdentifier);
 
             ScheduleManagerDelegate delegateRef = this.delegate.get();
-            delegateRef.managerDidRemoveSchedule(this, removedSchedule);
+            if (delegateRef != null) {
+                delegateRef.managerDidRemoveSchedule(this, removedSchedule);
+            }
         }
     }
 
