@@ -38,8 +38,12 @@ public class ScheduleManager {
     /*
     * setSchedule method, takes in a Schedule object
     * */
-    public void setSchedule(Schedule schedule)
+    public void setSchedule(@NonNull Schedule schedule)
     {
+        if (schedule == null) {
+            return;
+        }
+
         storage.setObject(schedule, "Schedules", schedule.getIdentifier());
 
         ScheduleManagerDelegate delegateRef = this.delegate.get();
@@ -52,17 +56,24 @@ public class ScheduleManager {
      * Remove a schedule object.
      * @param schedule The schedule object to remove.
      */
-    public void removeSchedule(Schedule schedule) {
-        if (schedule != null)
-            this.removeScheduleWithIdentifier(schedule.getIdentifier());
+    public void removeSchedule(@Nullable Schedule schedule) {
+        if (schedule == null) {
+            return;
+        }
+
+        this.removeScheduleWithIdentifier(schedule.getIdentifier());
     }
 
     /**
      * Remove a schedule given its identifier.
      * @param scheduleIdentifier The string identifier of the schedule to remove.
      */
-    public void removeScheduleWithIdentifier(String scheduleIdentifier)
+    public void removeScheduleWithIdentifier(@NonNull String scheduleIdentifier)
     {
+        if (scheduleIdentifier == null) {
+            return;
+        }
+
         Schedule removedSchedule = this.getScheduleWithIdentifier(scheduleIdentifier);
 
         if (removedSchedule != null) {
@@ -100,8 +111,12 @@ public class ScheduleManager {
     * getScheduleWithName() method. Takes in a string with schedule name,
     * returns the corresponding Schedule object.
     */
-    public @Nullable Schedule getScheduleWithName(String name)
+    public @Nullable Schedule getScheduleWithName(@NonNull String name)
     {
+        if (name == null) {
+            return null;
+        }
+
         ArrayList<Serializable> serials = storage.getObjectsWithPrefix("Schedules");
         ArrayList<Schedule> schedules = new ArrayList<Schedule>();
 
@@ -123,8 +138,12 @@ public class ScheduleManager {
     /*
    * getSchedule method, takes in a Schedule object
    * */
-    public @Nullable Schedule getScheduleWithIdentifier(String identifier)
+    public @Nullable Schedule getScheduleWithIdentifier(@NonNull String identifier)
     {
+        if (identifier == null) {
+            return null;
+        }
+
         return storage.getObject("Schedules", identifier);
     }
 
