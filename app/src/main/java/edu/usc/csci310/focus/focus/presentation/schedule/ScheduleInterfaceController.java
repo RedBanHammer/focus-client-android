@@ -217,18 +217,13 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
                 for (int i=0; i<dayCB.length; i++){
                     if (dayCB[i]){
                         // check if wraps to next day
-                        if (total > maxMinutes){
-                            //if on a saturday, add it to next week's sunday
-//                    if (i==6){
-//                        rt.addTime();
-//                    }else{
-                            Long timeRemainingInDay = maxMinutes-minIndex;
-                            rt.addTime(i, minIndex, timeRemainingInDay);
-                            rt.addTime(i+1, new Long(0), duration-timeRemainingInDay);
-//                    }
-                        }else{ // profile time block in same day
+//                        if (total > maxMinutes){
+//                            Long timeRemainingInDay = maxMinutes-minIndex;
+//                            rt.addTime(i, minIndex, timeRemainingInDay);
+//                            // rt.addTime(i+1, new Long(0), duration-timeRemainingInDay);
+//                        }else{ // profile time block in same day
                             rt.addTime(i, minIndex, duration);
-                        }
+//                        }
                         dayChecked = true;
                     }
                 }
@@ -291,18 +286,13 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         for (int i=0; i<dayCB.length; i++){
             if (dayCB[i]){
                 // check if wraps to next day
-                if (total > maxMinutes){
-                    //if on a saturday, add it to next week's sunday
-//                    if (i==6){
-//                        rt.addTime();
-//                    }else{
-                        Long timeRemainingInDay = maxMinutes-minIndex;
-                        rt.addTime(i, minIndex, timeRemainingInDay);
-                        rt.addTime(i+1, new Long(0), duration-timeRemainingInDay);
-//                    }
-                }else{ // profile time block in same day
+//                if (total > maxMinutes){
+//                    Long timeRemainingInDay = maxMinutes-minIndex;
+//                    rt.addTime(i, minIndex, timeRemainingInDay);
+//                    // rt.addTime(i+1, new Long(0), duration-timeRemainingInDay);
+//                }else{ // profile time block in same day
                     rt.addTime(i, minIndex, duration);
-                }
+//                }
                 dayChecked = true;
             }
         }

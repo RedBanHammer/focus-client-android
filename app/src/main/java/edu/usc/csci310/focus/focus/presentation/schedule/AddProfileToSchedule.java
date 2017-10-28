@@ -304,10 +304,15 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
     }
 
     private boolean isDurationValid() {
-        boolean interval =  (hours>=0) && (hours<=10) &&
-                            ((mins==0) || (mins<=59));
         int maxMins = 10*60;
         int totalMins = hours*60 + mins;
+        int maxMinutes = 1440;
+        int minIndex = startHours*60+startMins;
+        int duration = hours*60+mins;
+        int total = minIndex + duration;
+        if (total > maxMinutes) {
+            return false;
+        }
         return ((totalMins <= maxMins) && totalMins >=10);
     }
 
