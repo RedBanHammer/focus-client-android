@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 
 import edu.usc.csci310.focus.focus.MainActivity;
@@ -59,6 +60,7 @@ public class ProfileInterfaceController extends AppCompatActivity {
     /*
      * renders a profile edit page
      */
+    @RequiresApi(api = 26)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,9 +109,6 @@ public class ProfileInterfaceController extends AppCompatActivity {
 
         initializeDeleteButton();
 
-        //TEST NOTIFICATIONS
-        BlockingManager.getDefaultManager().setContext(this);
-        BlockingManager.getDefaultManagerWithContext(this).issueNotification("Test notification", "This is a test");
 
     }
 
