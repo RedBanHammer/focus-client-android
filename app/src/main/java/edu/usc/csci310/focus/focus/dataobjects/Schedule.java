@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.usc.csci310.focus.focus.managers.ProfileManager;
 import edu.usc.csci310.focus.focus.managers.ScheduleManager;
 
 /**
@@ -16,6 +17,8 @@ import edu.usc.csci310.focus.focus.managers.ScheduleManager;
  */
 
 public class Schedule extends NamedObject {
+    public static final String TIMER_SCHEDULE_POSTFIX = "-TIMER";
+
     private static final long serialVersionUID = 3L;
 
     private ArrayList<String> profileIdentifiers = new ArrayList<String>();
@@ -98,6 +101,15 @@ public class Schedule extends NamedObject {
 
         for (String profileIdentifier : this.getProfileIdentifiers()) {
             RecurringTime profileTime = this.getProfileTimeWithIdentifier(profileIdentifier);
+            Profile profile = ProfileManager.getDefaultManager().getProfileWithIdentifier(profileIdentifier);
+
+            if (profile == null) {
+                continue;
+            }
+
+//            if (!profile.getIsActive()) {
+//                continue;
+//            }
 
             if (profileTime == null) {
                 continue;
@@ -128,6 +140,48 @@ public class Schedule extends NamedObject {
         }
 
         return activeProfileIdentifiers;
+    }
+
+    /**
+     * Returns the amount of active time left for a currently scheduled profile.
+     * @param identifier The string identifier of the profile.
+     * @return The amount of active time in minutes left for a scheduled profile. 0 of not scheduled.
+     */
+    public @NonNull long getTimeRemainingWithProfileIdentifier(@NonNull String identifier) {
+        if (identifier == null) {
+            return 0;
+        }
+
+        RecurringTime profileTime = this.getProfileTimeWithIdentifier(identifier);
+        if (profileTime == null) {
+            return 0;
+        }
+
+        Calendar c = Calendar.getInstance();
+        long now = c.getTimeInMillis();
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        long passed = now - c.getTimeInMillis();
+        long minutesPassed = passed / 1000 / 60;
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 1; // Sun = 1 (index starting at 1)
+
+        // Check if the minutes index (minutesPassed) is in a recurring time block for today
+        Map<Long, Long> times = profileTime.getTimes().get(dayOfWeek);
+
+        for (Long key : times.keySet()) {
+            Long duration = times.get(key);
+
+            // Check if contained within the start and start+duration
+            if (minutesPassed >= key && minutesPassed <= key+duration) {
+                return key+duration - minutesPassed;
+            } else {
+                return 0;
+            }
+        }
+
+        return 0;
     }
 
     /**

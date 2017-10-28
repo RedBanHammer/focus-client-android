@@ -203,6 +203,10 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
         for (String key : uniqueActiveProfiles2.keySet()) {
             Profile profile = uniqueActiveProfiles2.get(key);
 
+            if (profile == null) {
+                continue;
+            }
+
             for (App app : profile.getApps()) {
                 if (!uniqueBlockedApps.containsKey(app.getIdentifier())) {
                     uniqueBlockedApps.put(app.getIdentifier(), app);

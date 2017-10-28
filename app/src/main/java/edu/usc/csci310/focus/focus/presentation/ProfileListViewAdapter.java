@@ -2,27 +2,47 @@ package edu.usc.csci310.focus.focus.presentation;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
-import org.w3c.dom.Text;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Calendar;
 
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
+import edu.usc.csci310.focus.focus.dataobjects.RecurringTime;
+import edu.usc.csci310.focus.focus.dataobjects.Schedule;
+import edu.usc.csci310.focus.focus.managers.ProfileManager;
+import edu.usc.csci310.focus.focus.managers.ScheduleManager;
+
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by Briana on 10/6/17.
  */
 
 public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
+    private static final String PLACEHOLDER_TIMER_TEXT = "Not active";
+
     protected ArrayList<Profile> profiles;
+    private View view;
+    private Profile profile;
+
+    private long duration;
+    private CountDownTimer countdown;
+    private ProfileManager profileManager = ProfileManager.getDefaultManager();
+    private ScheduleManager scheduleManager = ScheduleManager.getDefaultManager();
 
     /**
      * Update the data set and reload the view.
@@ -40,9 +60,9 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
-        View view = convertView;
+        view = convertView;
         // Get the data item for this position
-        Profile profile = profiles.get(position);
+        profile = profiles.get(position);
 
         // Check if an existing view is being reused, otherwise inflate the view
         ViewHolder viewHolder = null; // view lookup cache stored in tag
@@ -62,16 +82,91 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
         // into the template view.
         viewHolder.profileName.setText(profile.getName());
 
+        Schedule timerSchedule = ScheduleManager.getDefaultManager().getScheduleWithName(this.profile.getIdentifier() + Schedule.TIMER_SCHEDULE_POSTFIX);
+
+        if (timerSchedule != null) {
+            Long minutesRemaining = timerSchedule.getTimeRemainingWithProfileIdentifier(profile.getIdentifier());
+            viewHolder.profileTime.setText(
+                    minutesRemaining.toString() +
+                    " minute" + (minutesRemaining != 1 ? "s" : "") + " left");
+        } else {
+            viewHolder.profileTime.setText(PLACEHOLDER_TIMER_TEXT);
+        }
+
+        //set the toggle button listener
+        ToggleButton toggle = (ToggleButton) view.findViewById(R.id.toggle_profile_button);
+
+        boolean profileIsActive = timerSchedule != null;
+
+        toggle.setOnCheckedChangeListener(null);
+        toggle.setChecked(profileIsActive);
+
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(final CompoundButton buttonView, boolean isChecked) {
+                Profile profile = profiles.get(position);
+                profile = ProfileManager.getDefaultManager()
+                        .getProfileWithIdentifier(profile.getIdentifier());
+                if (isChecked) { // turning on
+                    // if turning on, bring up timer dialog
+                    Intent intent = new Intent(getContext(), ActivateProfileDialog.class);
+                    intent.putExtra("profile", (Serializable) profile);
+
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // You need this if starting
+                    // the activity from a service
+                    //intent.setAction(Intent.ACTION_MAIN);
+                    intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+                    ((Activity) getContext()).startActivityForResult(intent, 0);
+                } else { // turning off
+                    profile.setIsActive(false);
+                    ProfileManager.getDefaultManager().setProfile(profile);
+
+                    // find schedule with profile.name + " Timer"
+                    Schedule s = ScheduleManager.getDefaultManager().
+                            getScheduleWithName(profile.getIdentifier() + Schedule.TIMER_SCHEDULE_POSTFIX);
+                    // delete it
+
+                    ScheduleManager.getDefaultManager().removeSchedule(s);
+
+                    notifyDataSetChanged();
+                }
+            }
+        });
+
         // Return the completed view to render on screen
         return view;
+    }
+
+    public void setTimer (long dur) {
+        duration = dur;
+        duration = 1;
+
+        profile = profileManager.getProfileWithIdentifier(profile.getIdentifier());
+
+        long ms = duration * 60 * 1000 / 10;
+        countdown = new CountDownTimer(ms, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                // profile has been turned on, we just wait
+            }
+
+            public void onFinish() {
+                //stopTimer();
+                //toggleButtonView.setChecked(false);
+            }
+        }.start();
     }
 
     // View lookup cache that populates the listview
     public class ViewHolder {
         TextView profileName;
+        TextView profileTime;
+
         //ArrayList of ImageViews w/ app icons
         public ViewHolder (View v){
-            profileName = (TextView)v.findViewById(R.id.profile_list_name);
+            this.profileName = (TextView)v.findViewById(R.id.profile_list_name);
+            this.profileTime = (TextView)v.findViewById(R.id.profile_time_remaining);
         }
     }
 }

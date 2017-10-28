@@ -4,6 +4,7 @@ package edu.usc.csci310.focus.focus.presentation;
  */
 import android.app.Activity;
 import android.content.Intent;
+import android.os.CountDownTimer;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -16,17 +17,27 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import edu.usc.csci310.focus.focus.managers.BlockingManager;
+import android.widget.ToggleButton;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
+import edu.usc.csci310.focus.focus.dataobjects.RecurringTime;
+import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 import edu.usc.csci310.focus.focus.managers.BlockingManager;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
+import edu.usc.csci310.focus.focus.managers.ScheduleManager;
+
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 
 public class ProfileList extends Fragment {
+    public static ProfileList profileList = null;
+
     private ListView listView;
     ArrayList<Profile> profiles;
     FloatingActionButton addProfileButton;
@@ -47,6 +58,8 @@ public class ProfileList extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         profiles = ProfileManager.getDefaultManager().getAllProfiles();
+
+        profileList = this;
     }
 
     //handle UI events
@@ -89,5 +102,28 @@ public class ProfileList extends Fragment {
         ArrayList<Profile> newProfiles = ProfileManager.getDefaultManager().getAllProfiles();
         this.profileListViewAdapter.setProfiles(newProfiles);
         this.profiles = newProfiles;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data == null) {
+            System.out.println("Activity result from creating a profile was null");
+            return;
+        }
+
+        Profile profile = (Profile) data.getExtras().get("profile");
+        profile.setIsActive(true);
+        ProfileManager.getDefaultManager().setProfile(profile);
+
+        long duration = (long) data.getExtras().get("duration");
+        //this.profileListViewAdapter.setTimer(duration);
+
+        // set toggle to whether the profile is active or not
+        //ToggleButton toggle = (ToggleButton) view.findViewById(R.id.toggle_profile_button);
+        //toggle.setChecked(profile.getIsActive());
+    }
+
+    public void render() {
+        this.profileListViewAdapter.notifyDataSetChanged();
     }
 }
