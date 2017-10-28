@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.App;
+import edu.usc.csci310.focus.focus.managers.BlockingManager;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
 
 import java.util.ArrayList;
@@ -105,6 +106,10 @@ public class ProfileInterfaceController extends AppCompatActivity {
         });
 
         initializeDeleteButton();
+
+        //TEST NOTIFICATIONS
+        BlockingManager.getDefaultManager().setContext(this);
+        BlockingManager.getDefaultManagerWithContext(this).issueNotification("Test notification", "This is a test");
 
     }
 

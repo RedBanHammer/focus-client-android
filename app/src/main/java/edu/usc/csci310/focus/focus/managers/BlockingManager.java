@@ -1,20 +1,33 @@
 package edu.usc.csci310.focus.focus.managers;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.NotificationCompat;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import edu.usc.csci310.focus.focus.MainActivity;
+import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.blockers.NotificationBlocker;
 import edu.usc.csci310.focus.focus.blockers.AppBlocker;
 import edu.usc.csci310.focus.focus.blockers.LogEntry;
 import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
+import edu.usc.csci310.focus.focus.presentation.ProfileInterfaceController;
+import edu.usc.csci310.focus.focus.presentation.ProfileList;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 /**
  * Handles blocking apps and notifications.
@@ -208,5 +221,46 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
     public void managerDidRemoveSchedule(ScheduleManager manager, Schedule schedule) {
         System.out.println("[BlockingManager] Got schedule was removed: " + schedule.getName());
         this.updateBlockingModuleApps();
+    }
+
+    //build and issue notifications
+    @RequiresApi(api = 26)
+    public void issueNotification(String title, String message){
+        String channelId = "my_channel";
+        //NOTIFICATION CHANNEL
+        String channelName = "channel_name";
+        int importance = NotificationManager.IMPORTANCE_LOW;
+        NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, importance);
+        notificationChannel.enableLights(true);
+        notificationChannel.setLightColor(Color.RED);
+        notificationChannel.setShowBadge(true);
+        notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+
+        //NOTIFICATION MANAGER
+        NotificationManager notificationManager = (NotificationManager) this.getSystemService(NOTIFICATION_SERVICE);
+        int mNotificationId = 1;
+        notificationManager.createNotificationChannel(notificationChannel);
+
+        //NOTIFICATION BUILDER
+        Notification.Builder mBuilder = new Notification.Builder(this, channelId);
+        mBuilder.setSmallIcon(R.mipmap.ic_launcher);
+        mBuilder.setContentTitle(title);
+        mBuilder.setContentText(message);
+
+        //build an intent that sends the user to the profile that is active/inactive
+        //upon clicking the notification.
+
+        Intent onClickIntent = new Intent(this, MainActivity.class);
+        PendingIntent resultPendingIntent =
+                PendingIntent.getActivity(
+                        this,
+                        0,
+                        onClickIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+
+        notificationManager.notify(mNotificationId, mBuilder.build());
+
     }
 }
