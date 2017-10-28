@@ -88,6 +88,10 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
         this.scheduleManager.delegate = new WeakReference<ScheduleManagerDelegate>(this);
         this.profileManager.delegate = new WeakReference<ProfileManagerDelegate>(this);
 
+        if (NotificationBlocker.getSharedNotificationBlocker() != null) {
+            this.setNotificationBlocker(NotificationBlocker.getSharedNotificationBlocker());
+        }
+
         this.startBlockingModules();
 
         this.run();
