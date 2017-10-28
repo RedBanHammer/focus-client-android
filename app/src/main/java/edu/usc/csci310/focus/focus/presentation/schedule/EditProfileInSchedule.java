@@ -95,8 +95,17 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
                 didCheckBoxes[dayOfWeek] = true;
             }
         }
-        hourText.setText(String.valueOf(endHours-startHours));
-        minText.setText(String.valueOf(endMins-startMins));
+        int hoursDiff = endHours-startHours;
+        int minsDiff = endMins-startMins;
+        if (minsDiff < 0){
+            hoursDiff -=1;
+            minsDiff +=60;
+        }
+        if (hoursDiff == -24){
+            hoursDiff = 0;
+        }
+        hourText.setText(String.valueOf(hoursDiff));
+        minText.setText(String.valueOf(minsDiff));
         profileID = i.getStringExtra(ScheduleInterfaceController.PROFILE_ID);
 
         DateFormat df = new SimpleDateFormat("h:mm a");
@@ -302,6 +311,14 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
     private boolean isDurationValid() {
         int maxMins = 10*60;
         int totalMins = hours*60 + mins;
+
+        int maxMinutes = 1440;
+        int minIndex = startHours*60+startMins;
+        int duration = hours*60+mins;
+        int total = minIndex + duration;
+        if (total > maxMinutes) {
+            return false;
+        }
         return ((totalMins <= maxMins) && totalMins >=10);
     }
 
