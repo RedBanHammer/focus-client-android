@@ -4,6 +4,7 @@ package edu.usc.csci310.focus.focus.presentation;
  */
 import android.app.Activity;
 import android.content.Intent;
+import android.os.CountDownTimer;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -20,11 +21,15 @@ import android.widget.ToggleButton;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
+import edu.usc.csci310.focus.focus.dataobjects.RecurringTime;
+import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 import edu.usc.csci310.focus.focus.managers.BlockingManager;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
+import edu.usc.csci310.focus.focus.managers.ScheduleManager;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -101,16 +106,14 @@ public class ProfileList extends Fragment {
         }
 
         Profile profile = (Profile) data.getExtras().get("profile");
-        if (requestCode == 0) {
-            if(resultCode == RESULT_OK){
-                // all good
-                profile.setIsActive(true);
-                ProfileManager.getDefaultManager().setProfile(profile);
-            }
-            if (resultCode == RESULT_CANCELED) {
-                // if comes back negative, set toggle to off
+        profile.setIsActive(true);
+        ProfileManager.getDefaultManager().setProfile(profile);
 
-            }
-        }
+        long duration = (long) data.getExtras().get("duration");
+        //this.profileListViewAdapter.setTimer(duration);
+
+        // set toggle to whether the profile is active or not
+        //ToggleButton toggle = (ToggleButton) view.findViewById(R.id.toggle_profile_button);
+        //toggle.setChecked(profile.getIsActive());
     }
 }

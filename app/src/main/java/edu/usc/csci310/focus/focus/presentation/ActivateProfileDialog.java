@@ -8,10 +8,7 @@ import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import edu.usc.csci310.focus.focus.R;
-import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.Timer;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
@@ -29,17 +26,18 @@ public class ActivateProfileDialog extends AppCompatActivity {
     TextView tv;
     NumberPicker hoursPicker;
     NumberPicker minutesPicker;
+    long minutes;
     Timer timer;
 
     public void setProfile(Profile profile) {
         this.profile = profile;
-        this.timer = new Timer(profile);
         this.renderProfileInfo();
     }
 
     public void ActivateProfileDialog(Profile profile)
     {
         this.profile = profile;
+        this.timer = new Timer(this.profile);
     }
 
     /*
@@ -92,20 +90,17 @@ public class ActivateProfileDialog extends AppCompatActivity {
             public void onClick(View v) {
                 int hrs = hoursPicker.getValue();
                 int mins = minutesPicker.getValue();
+                minutes = mins + (hrs * 60);
 
-                // Check if minutes input is valid
-                if (hrs == 0 && mins == 0) {
-                    // TODO: show dialog saying to input time
-                    // I don't think this is possible anymore
-                } else {
-                    long minutes = mins + (hrs * 60);
-                    timer.setTime(minutes);
-                    timer.start();
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("profile", profile);
-                    setResult(RESULT_OK, returnIntent);
-                    finish();
-                }
+                // instead of all this, package it as a schedule?
+                timer.setTime(minutes);
+                timer.start();
+
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("profile", profile);
+                returnIntent.putExtra("duration", minutes);
+                setResult(RESULT_OK, returnIntent);
+                finish();
             }
 
         });
@@ -116,7 +111,6 @@ public class ActivateProfileDialog extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra("profile", profile);
                 setResult(RESULT_CANCELED, returnIntent);
                 finish();
             }

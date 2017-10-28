@@ -3,6 +3,7 @@ package edu.usc.csci310.focus.focus.presentation;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,10 +16,14 @@ import android.widget.ToggleButton;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
+import edu.usc.csci310.focus.focus.dataobjects.RecurringTime;
+import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
+import edu.usc.csci310.focus.focus.managers.ScheduleManager;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -31,6 +36,11 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
     protected ArrayList<Profile> profiles;
     private View view;
     private Profile profile;
+
+    private long duration;
+    private CountDownTimer countdown;
+    private ProfileManager profileManager = ProfileManager.getDefaultManager();
+    private ScheduleManager scheduleManager = ScheduleManager.getDefaultManager();
 
     /**
      * Update the data set and reload the view.
@@ -73,12 +83,15 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
         //set the toggle button listener
         ToggleButton toggle = (ToggleButton) view.findViewById(R.id.toggle_profile_button);
 
+        //toggle.setChecked(profile.getIsActive());
+
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onCheckedChanged(final CompoundButton buttonView, boolean isChecked) {
                 Profile profile = profiles.get(position);
-                profile = ProfileManager.getDefaultManager().getProfileWithIdentifier(profile.getIdentifier());
-                if (isChecked) {
+                profile = ProfileManager.getDefaultManager()
+                        .getProfileWithIdentifier(profile.getIdentifier());
+                if (isChecked) { // turning on
                     // if turning on, bring up timer dialog
                     Intent intent = new Intent(getContext(), ActivateProfileDialog.class);
                     intent.putExtra("profile", (Serializable) profile);
@@ -89,22 +102,41 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
                     intent.addCategory(Intent.CATEGORY_LAUNCHER);
 
                     ((Activity) getContext()).startActivityForResult(intent, 0);
-
-                    profile = ProfileManager.getDefaultManager().getProfileWithIdentifier(profile.getIdentifier());
-                    if (!profile.getIsActive()) {
-                        // if comes back negative, set toggle to off
-                        ToggleButton toggle = (ToggleButton) view.findViewById(R.id.toggle_profile_button);
-                        toggle.setChecked(false);
-                    }
-                } else {
-                    profile.setIsActive(isChecked);
+                } else { // turning off
+                    profile.setIsActive(false);
                     ProfileManager.getDefaultManager().setProfile(profile);
+
+                    // find schedule with profile.name + " Timer"
+                    Schedule s = ScheduleManager.getDefaultManager().
+                            getScheduleWithName(profile.getName() + " Timer");
+                    // delete it
+                    ScheduleManager.getDefaultManager().removeSchedule(s);
                 }
             }
         });
 
         // Return the completed view to render on screen
         return view;
+    }
+
+    public void setTimer (long dur) {
+        duration = dur;
+        duration = 1;
+
+        profile = profileManager.getProfileWithIdentifier(profile.getIdentifier());
+
+        long ms = duration * 60 * 1000 / 10;
+        countdown = new CountDownTimer(ms, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                // profile has been turned on, we just wait
+            }
+
+            public void onFinish() {
+                //stopTimer();
+                //toggleButtonView.setChecked(false);
+            }
+        }.start();
     }
 
     // View lookup cache that populates the listview

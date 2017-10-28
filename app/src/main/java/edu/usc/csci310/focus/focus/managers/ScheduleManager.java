@@ -53,7 +53,8 @@ public class ScheduleManager {
      * @param schedule The schedule object to remove.
      */
     public void removeSchedule(Schedule schedule) {
-        this.removeScheduleWithIdentifier(schedule.getIdentifier());
+        if (schedule != null)
+            this.removeScheduleWithIdentifier(schedule.getIdentifier());
     }
 
     /**
