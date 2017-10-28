@@ -10,6 +10,7 @@ import java.util.Map;
 
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
 import edu.usc.csci310.focus.focus.managers.ScheduleManager;
+import edu.usc.csci310.focus.focus.presentation.ProfileList;
 
 /**
  * Created by Ashley Walker on 10/20/2017.
@@ -39,18 +40,18 @@ public class Timer implements Serializable {
      * Start the timer.
      */
     public void start() {
-        long ms = minutes * 60 * 1000;
-        profile.setIsActive(true);
-        ProfileManager.getDefaultManager().setProfile(profile);
+        long ms = this.minutes * 60 * 1000;
+        this.profile.setIsActive(true);
+        ProfileManager.getDefaultManager().setProfile(this.profile);
 
-        String name = profile.getName() + " Timer";
+        String name = this.profile.getIdentifier() + Schedule.TIMER_SCHEDULE_POSTFIX;
         final Schedule createdSchedule = new Schedule(name);
 
         // so, get the day and time
         RecurringTime timer = new RecurringTime();
         Calendar now = Calendar.getInstance();
         long nowMinutes = (now.get(Calendar.HOUR_OF_DAY) * 60) + now.get(Calendar.MINUTE);
-        timer.addTime(now.get(Calendar.DAY_OF_WEEK)-1, nowMinutes, minutes);
+        timer.addTime(now.get(Calendar.DAY_OF_WEEK)-1, nowMinutes, this.minutes);
 
         // add profile to schedule
         createdSchedule.addProfile(profile.getIdentifier(), timer);
@@ -66,6 +67,9 @@ public class Timer implements Serializable {
             public void onTick(long millisUntilFinished) {
                 // profile has been turned on, we just wait
                 // TODO: countdown time manually, show to user
+
+                // TODO: Use android broadcast notification intent channel instead of static vars
+                ProfileList.profileList.render();
             }
 
             public void onFinish() {
@@ -81,12 +85,12 @@ public class Timer implements Serializable {
         this.minutes = 0;
         this.countdown.cancel();
 
-        profile.setIsActive(false);
+        this.profile.setIsActive(false);
         ProfileManager.getDefaultManager().setProfile(profile);
 
         // find schedule with profile.name + " Timer"
         Schedule s = ScheduleManager.getDefaultManager().
-                getScheduleWithName(profile.getName() + " Timer");
+                getScheduleWithName(this.profile.getIdentifier() + Schedule.TIMER_SCHEDULE_POSTFIX);
         // delete it
         ScheduleManager.getDefaultManager().removeSchedule(s);
     }
