@@ -83,7 +83,10 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
         //set the toggle button listener
         ToggleButton toggle = (ToggleButton) view.findViewById(R.id.toggle_profile_button);
 
-        //toggle.setChecked(profile.getIsActive());
+        boolean profileIsActive = ScheduleManager.getDefaultManager().getScheduleWithName(profile.getName() + " Timer") != null;
+
+        toggle.setOnCheckedChangeListener(null);
+        toggle.setChecked(profileIsActive);
 
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
