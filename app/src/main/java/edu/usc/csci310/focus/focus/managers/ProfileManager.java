@@ -44,7 +44,9 @@ public class ProfileManager {
 
         // notify delegate
         ProfileManagerDelegate delegateRef = this.delegate.get();
-        delegateRef.managerDidUpdateProfile(this, profile);
+        if (delegateRef != null) {
+            delegateRef.managerDidUpdateProfile(this, profile);
+        }
     }
 
     /*
@@ -72,7 +74,9 @@ public class ProfileManager {
             }
 
             ProfileManagerDelegate delegateRef = this.delegate.get();
-            delegateRef.managerDidRemoveProfile(this, removedProfile);
+            if (delegateRef != null) {
+                delegateRef.managerDidRemoveProfile(this, removedProfile);
+            }
         }
     }
 

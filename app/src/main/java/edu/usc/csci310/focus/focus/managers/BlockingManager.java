@@ -64,7 +64,7 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
     }
 
     public void didUpdateLogEntries() {
-        if (this.logEntryDelegate != null) {
+        if (this.logEntryDelegate != null && this.logEntryDelegate.get() != null) {
             this.logEntryDelegate.get().blockingManagerDidUpdateLogEntries(this);
         }
     }
