@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class AppBlocker extends IntentService implements Blocker {
     }
 
 
+    @RequiresApi(api = 26)
     @Override
     protected void onHandleIntent(Intent workIntent) {
         // Set the blocking manager

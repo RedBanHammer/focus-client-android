@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import edu.usc.csci310.focus.focus.managers.BlockingManager;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -77,6 +78,7 @@ public class ProfileList extends Fragment {
                 startActivityForResult(intent, 0);
             }
         });
+
         return v;
     }
 

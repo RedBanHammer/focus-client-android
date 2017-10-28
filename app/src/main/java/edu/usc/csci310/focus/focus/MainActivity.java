@@ -3,6 +3,7 @@ package edu.usc.csci310.focus.focus;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.AppOpsManager;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
+        this.createNotificationChannel();
         this.requestPermissions();
     }
 
@@ -254,5 +256,23 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void createNotificationChannel(){
+        //create notification channel
+        if (android.os.Build.VERSION.SDK_INT >= 26) {
+            NotificationManager mNotificationManager = (NotificationManager)getSystemService(
+                    Context.NOTIFICATION_SERVICE);
+            String channelId = "csci310-focus";
+            String channelName = "focus-channel";
+            String channelDescription = "focus";
+            NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(channelDescription);
+            channel.enableLights(false);
+            channel.enableVibration(false);
+
+            //set notification channel in manager
+            mNotificationManager.createNotificationChannel(channel);
+        }
     }
 }
