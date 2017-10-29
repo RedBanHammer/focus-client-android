@@ -39,7 +39,7 @@ public class AppBlockedPopup extends DialogFragment {
                 continue;
             }
 
-            for (String pIdentifier : s.getActiveProfileIdentifiers()) {
+            for (String pIdentifier : s.getActiveProfileIdentifiers(ProfileManager.getDefaultManager())) {
                 Profile p = ProfileManager.getDefaultManager().getProfileWithIdentifier(pIdentifier);
                 for (App a : p.getApps()) {
                     if (a.getName().equals(appName) && !blockingSchedules.contains(s.getName())) {
