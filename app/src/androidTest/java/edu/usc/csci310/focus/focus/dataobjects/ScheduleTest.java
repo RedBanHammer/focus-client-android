@@ -114,10 +114,10 @@ public class ScheduleTest {
     //this one accesses profile manager..... doesnt work because of files. needs tweaking
     @Test
     public void getActiveProfileIdentifiers() throws Exception {
-        testSchedule.addProfile(testProfile.getIdentifier(), time);
+        testSchedule.addProfile(testProfile.getIdentifier(), time1);
         ArrayList<String> expectedList = new ArrayList<String>();
         expectedList.add(testProfile.getIdentifier());
-        ArrayList<String> resultList = testSchedule.getActiveProfileIdentifiers();
+        ArrayList<String> resultList = testSchedule.getActiveProfileIdentifiers(mockedProfileManager);
 
         assertEquals(expectedList, resultList);
     }
