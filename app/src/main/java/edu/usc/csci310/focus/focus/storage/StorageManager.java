@@ -2,6 +2,7 @@ package edu.usc.csci310.focus.focus.storage;
 import android.content.Context;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import edu.usc.csci310.focus.focus.dataobjects.*;
@@ -40,6 +41,9 @@ public class StorageManager {
     public void setContext(@NonNull Context context) {
         this.context = context;
     }
+    public @Nullable Context getContext() {
+        return this.context;
+    }
 
     /**
      * Public API methods.
@@ -52,8 +56,19 @@ public class StorageManager {
      * @param identifier A unique identifier for the object to store.
      */
     public <T extends Serializable> void setObject(@NonNull  T object, @NonNull String group, @NonNull String identifier) {
+        this.setObject(object, group, identifier, this.context.getFilesDir().getAbsolutePath());
+    }
+
+    /**
+     * Save an object to disk storage given a specific base folder path.
+     * @param object The object to save.
+     * @param group The name of the group to store the object in.
+     * @param identifier A unique identifier for the object to store.
+     * @param basePath The root folder path to save objects into.
+     */
+    public <T extends Serializable> void setObject(@NonNull  T object, @NonNull String group, @NonNull String identifier, @NonNull String basePath) {
         try {
-            String fullPath = this.context.getFilesDir().getAbsolutePath() + "/" + group;
+            String fullPath = basePath + "/" + group;
 
             File dir = new File(fullPath);
             if (!dir.exists()) {
@@ -89,10 +104,22 @@ public class StorageManager {
      * @return An in the group `group` and the identifier `identifier` if it exists.
      */
     public <T extends Serializable> T getObject(@NonNull String group, @NonNull String identifier) {
+        return this.getObject(group, identifier, this.context.getFilesDir().getAbsolutePath());
+    }
+
+    /**
+     * Get an object from disk storage based on its namespaced identifier.
+     * @source https://stackoverflow.com/a/33896724
+     * @param group The name of the group to retrieve the object from.
+     * @param identifier A unique identifier for the object to retrieve.
+     * @param basePath The root folder path to retrieve the object from.
+     * @return An in the group `group` and the identifier `identifier` if it exists.
+     */
+    public <T extends Serializable> T getObject(@NonNull String group, @NonNull String identifier, @NonNull String basePath) {
         T object = null;
 
         try {
-            String fullPath = this.context.getFilesDir().getAbsolutePath() + "/" + group;
+            String fullPath = basePath + "/" + group;
 
             File dir = new File(fullPath);
             if (!dir.exists()) {
@@ -127,12 +154,19 @@ public class StorageManager {
      * @return An ArrayList of all objects inside the grouop
      */
     public @NonNull ArrayList<Serializable> getObjectsWithPrefix(@NonNull String group) {
+        return this.getObjectsWithPrefix(group, this.context.getFilesDir().getAbsolutePath());
+    }
+
+    /**
+     * Get all objects from disk storage inside a particular group.
+     * @param group The name of the group to retrieve objects from.
+     * @param basePath The root folder path to retrieve objects from.
+     * @return An ArrayList of all objects inside the grouop
+     */
+    public @NonNull ArrayList<Serializable> getObjectsWithPrefix(@NonNull String group, @NonNull String basePath) {
         ArrayList<Serializable> objects = new ArrayList<Serializable>();
 
-        if (this.context == null) {
-            System.out.println("wtf");
-        }
-        String fullPath = this.context.getFilesDir().getAbsolutePath() + "/" + group;
+        String fullPath = basePath + "/" + group;
 
         File dir = new File(fullPath);
         if (!dir.exists()) {
@@ -141,7 +175,7 @@ public class StorageManager {
 
         for (final File fileEntry : dir.listFiles()) {
             String identifier = fileEntry.getName();
-            Serializable object = this.getObject(group, identifier);
+            Serializable object = this.getObject(group, identifier, basePath);
             if (object != null) {
                 objects.add(object);
             } else {
@@ -159,19 +193,31 @@ public class StorageManager {
      * @param identifier A unique identifier for the object to delete.
      */
     public void removeObject(@NonNull String group, @NonNull String identifier) {
-        String fullPath = this.context.getFilesDir().getAbsolutePath() + "/" + group;
+        this.removeObject(group, identifier, this.context.getFilesDir().getAbsolutePath());
+    }
+
+    /**
+     * Remove the object matching the storage identifier.
+     * @param group The name of the group to delete the object from.
+     * @param identifier A unique identifier for the object to delete.
+     * @param basePath The root folder path to delete the object from.
+     * @return true if removing the object was successful, false if the object couldn't be deleted.
+     */
+    public boolean removeObject(@NonNull String group, @NonNull String identifier, @NonNull String basePath) {
+        String fullPath = basePath + "/" + group;
 
         File dir = new File(fullPath);
         if (!dir.exists()) {
-            return;
+            return false;
         }
 
         File file = new File(fullPath, identifier);
         if (!file.exists()) {
-            return;
+            return false;
         }
 
-        file.delete();
+        boolean success = file.delete();
+        return success;
     }
 
     /**
@@ -179,14 +225,33 @@ public class StorageManager {
      * @param group The name of the group to delete the objects from.
      */
     public void removeObjectsWithPrefix(@NonNull String group) {
-        String fullPath = this.context.getFilesDir().getAbsolutePath() + "/" + group;
+        this.removeObjectsWithPrefix(group, this.context.getFilesDir().getAbsolutePath());
+    }
+
+    /**
+     * Remove all objects inside a group.
+     * @param group The name of the group to delete the objects from.
+     * @param basePath The root folder path to delete the objects from.
+     * @return true if removing the objects was successful, false if the objects couldn't be deleted.
+     */
+    public boolean removeObjectsWithPrefix(@NonNull String group, @NonNull String basePath) {
+        String fullPath = basePath + "/" + group;
 
         File dir = new File(fullPath);
         if (!dir.exists()) {
-            return;
+            return false;
         }
 
-        dir.delete();
+        // Recursively remove all files within the directory
+        File[] fileList = dir.listFiles();
+        for (final File fileEntry : fileList) {
+            boolean success = fileEntry.delete();
+            if (!success) {
+                return false;
+            }
+        }
 
+        return true;
     }
+
 }
