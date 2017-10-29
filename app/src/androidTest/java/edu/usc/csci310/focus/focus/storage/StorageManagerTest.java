@@ -31,13 +31,13 @@ import static org.mockito.Mockito.mock;
  */
 public class StorageManagerTest {
     @Test
-    public void getDefaultManager() throws Exception {
+    public void testGetDefaultManager() throws Exception {
         StorageManager expectedManager = StorageManager.getDefaultManager();
         assertEquals(expectedManager, StorageManager.getDefaultManager());
     }
 
     @Test
-    public void getDefaultManagerWithContext() throws Exception {
+    public void testGetDefaultManagerWithContext() throws Exception {
         Context context = mock(Context.class);
 
         StorageManager expectedManager = StorageManager.getDefaultManager();
@@ -48,7 +48,7 @@ public class StorageManagerTest {
     }
 
     @Test
-    public void setContext() throws Exception {
+    public void testSetContext() throws Exception {
         Context context = mock(Context.class);
 
         StorageManager testedManager = StorageManager.getDefaultManager();
@@ -61,7 +61,7 @@ public class StorageManagerTest {
     public TemporaryFolder tmpFileDir = new TemporaryFolder();
 
     @Test
-    public void setGetRemoveSingleObject() throws Exception {
+    public void testSetGetRemoveSingleObject() throws Exception {
         Context context = InstrumentationRegistry.getInstrumentation().getContext();
         StorageManager testedManager = StorageManager.getDefaultManagerWithContext(context);
         File baseDir = this.tmpFileDir.newFolder("storage-test");
@@ -89,7 +89,7 @@ public class StorageManagerTest {
     }
 
     @Test
-    public void setGetRemoveObjectsWithPrefix() throws Exception {
+    public void testSetGetRemoveObjectsWithPrefix() throws Exception {
         Context context = InstrumentationRegistry.getInstrumentation().getContext();
         StorageManager testedManager = StorageManager.getDefaultManagerWithContext(context);
         File baseDir = this.tmpFileDir.newFolder("storage-test");
@@ -134,7 +134,7 @@ public class StorageManagerTest {
     }
 
     @Test
-    public void getNonExistentObject() throws Exception {
+    public void testGetNonExistentObject() throws Exception {
         Context context = InstrumentationRegistry.getInstrumentation().getContext();
         StorageManager testedManager = StorageManager.getDefaultManagerWithContext(context);
         File baseDir = this.tmpFileDir.newFolder("storage-test");
@@ -145,7 +145,7 @@ public class StorageManagerTest {
     }
 
     @Test
-    public void getNonExistentObjectsWithPrefix() throws Exception {
+    public void testGetNonExistentObjectsWithPrefix() throws Exception {
         Context context = InstrumentationRegistry.getInstrumentation().getContext();
         StorageManager testedManager = StorageManager.getDefaultManagerWithContext(context);
         File baseDir = this.tmpFileDir.newFolder("storage-test");
@@ -156,7 +156,7 @@ public class StorageManagerTest {
     }
 
     @Test
-    public void removeNonExistentObject() throws Exception {
+    public void testRemoveNonExistentObject() throws Exception {
         Context context = InstrumentationRegistry.getInstrumentation().getContext();
         StorageManager testedManager = StorageManager.getDefaultManagerWithContext(context);
         File baseDir = this.tmpFileDir.newFolder("storage-test");
@@ -167,7 +167,7 @@ public class StorageManagerTest {
     }
 
     @Test
-    public void removeNonExistentGroup() throws Exception {
+    public void testRemoveNonExistentGroup() throws Exception {
         Context context = InstrumentationRegistry.getInstrumentation().getContext();
         StorageManager testedManager = StorageManager.getDefaultManagerWithContext(context);
         File baseDir = this.tmpFileDir.newFolder("storage-test");

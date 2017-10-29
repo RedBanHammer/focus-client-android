@@ -21,7 +21,7 @@ public class RecurringTimeTest {
     public RecurringTime times = new RecurringTime();
 
     @Test
-    public void combineWith() throws Exception {
+    public void testCombineWith() throws Exception {
         int dayIndex = 1;
         int dayIndex2 = 2;
         Long minuteIndex = new Long(0);
@@ -38,7 +38,7 @@ public class RecurringTimeTest {
     }
 
     @Test
-    public void addTime() throws Exception {
+    public void testCddTime() throws Exception {
         int dayIndex = 1;
         Long minuteIndex = new Long(0);
         Long duration = new Long(60);
@@ -49,13 +49,13 @@ public class RecurringTimeTest {
     }
 
     @Test
-    public void getTimes() throws Exception {
+    public void testGetTimes() throws Exception {
         ArrayList<Map<Long, Long>> expectedTimes = times.getTimes();
         assertEquals(expectedTimes, times.getTimes());
     }
 
     @Test
-    public void removeTimes() throws Exception {
+    public void testRemoveTimes() throws Exception {
         int dayIndex = 1;
         Long min1 = new Long(0);
         Long dur1 = new Long(60);
@@ -69,7 +69,7 @@ public class RecurringTimeTest {
     }
 
     @Test
-    public void removeTime() throws Exception {
+    public void testRemoveTime() throws Exception {
         int dayIndex = 1;
         Long minuteIndex = new Long(0);
         Long duration = new Long(60);
