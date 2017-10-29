@@ -40,9 +40,9 @@ public class BlockingManagerTest {
     private BlockingManager testedBlockingManager = null;
 
     // Test Apps
-    private App testApp1 = new App("YouTube", "com.google.android.youtube"); // Blocked
-    private App testApp2 = new App("Gmail", "com.google.android.gmail"); // Blocked
-    private App testApp3 = new App("Messages", "com.google.android.messages"); // Not blocked
+    private final App testApp1 = new App("YouTube", "com.google.android.youtube"); // Blocked
+    private final App testApp2 = new App("Gmail", "com.google.android.gmail"); // Blocked
+    private final App testApp3 = new App("Messages", "com.google.android.messages"); // Not blocked
 
     // Test Profiles
     private Profile testProfile1; // Actively scheduled during test, 2 apps

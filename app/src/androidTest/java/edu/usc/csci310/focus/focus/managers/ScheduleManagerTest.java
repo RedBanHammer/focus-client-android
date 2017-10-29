@@ -24,7 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Created by Briana on 10/29/17.
+ *
  */
 public class ScheduleManagerTest {
     @Mock
