@@ -33,7 +33,9 @@ public class StorageManagerTest {
     @Test
     public void testGetDefaultManager() throws Exception {
         StorageManager expectedManager = StorageManager.getDefaultManager();
-        assertEquals(expectedManager, StorageManager.getDefaultManager());
+        for (int i = 0; i < 50; i++) {
+            assertEquals(expectedManager, StorageManager.getDefaultManager());
+        }
     }
 
     @Test
