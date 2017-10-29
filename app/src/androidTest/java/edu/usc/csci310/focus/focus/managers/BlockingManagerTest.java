@@ -54,6 +54,8 @@ public class BlockingManagerTest {
     private HashSet<App> expectedBlockedApps;
     private ArrayList<Schedule> mockedActiveSchedules;
 
+    private BlockingManagerLogEntryDelegate mockedLogEntryDelegate;
+
     @Before
     public void setUp() {
         // Set up profile manager
@@ -80,6 +82,10 @@ public class BlockingManagerTest {
         // Mock blocking modules
         this.testedBlockingManager.setAppBlocker(this.mockedAppBlocker);
         this.testedBlockingManager.setNotificationBlocker(this.mockedNotificationBlocker);
+
+        // Mock log entry delegate
+        this.mockedLogEntryDelegate = mock(BlockingManagerLogEntryDelegate.class);
+        this.testedBlockingManager.setLogEntryDelegate(this.mockedLogEntryDelegate);
     }
 
     private void setUpProfiles() {
@@ -169,88 +175,39 @@ public class BlockingManagerTest {
     }
 
     @Test
-    public void createBlockingManagerWithContext() throws Exception {
+    public void testManagerUpdatesBlockedAppsOnProfileRemove() throws Exception {
+        // Trigger a profile update
+        this.testedBlockingManager.managerDidRemoveProfile(this.mockedProfileManager, this.testProfile1);
 
+        // The blocking manager should have updated the apps for both its blockers.
+        verify(this.mockedAppBlocker, atLeastOnce()).setApps(this.expectedBlockedApps);
+        verify(this.mockedNotificationBlocker, atLeastOnce()).setApps(this.expectedBlockedApps);
     }
 
     @Test
-    public void setLogEntryDelegate() throws Exception {
+    public void testManagerUpdatesBlockedAppsOnScheduleUpdate() throws Exception {
+        // Trigger a profile update
+        this.testedBlockingManager.managerDidUpdateSchedule(this.mockedScheduleManager, this.mockedActiveSchedules.get(0));
 
+        // The blocking manager should have updated the apps for both its blockers.
+        verify(this.mockedAppBlocker, atLeastOnce()).setApps(this.expectedBlockedApps);
+        verify(this.mockedNotificationBlocker, atLeastOnce()).setApps(this.expectedBlockedApps);
     }
 
     @Test
-    public void setAppBlocker() throws Exception {
+    public void testManagerUpdatesBlockedAppsOnScheduleRemove() throws Exception {
+        // Trigger a profile update
+        this.testedBlockingManager.managerDidRemoveSchedule(this.mockedScheduleManager, this.mockedActiveSchedules.get(0));
 
+        // The blocking manager should have updated the apps for both its blockers.
+        verify(this.mockedAppBlocker, atLeastOnce()).setApps(this.expectedBlockedApps);
+        verify(this.mockedNotificationBlocker, atLeastOnce()).setApps(this.expectedBlockedApps);
     }
 
     @Test
-    public void setNotificationBlocker() throws Exception {
-
+    public void testManagerLogEntryDelegate() throws Exception {
+        // Test that the log entry delegate receives callbacks.
+        this.testedBlockingManager.didUpdateLogEntries();
+        verify(this.mockedLogEntryDelegate, atLeastOnce()).blockingManagerDidUpdateLogEntries(this.testedBlockingManager);
     }
-
-    @Test
-    public void didUpdateLogEntries() throws Exception {
-
-    }
-
-    @Test
-    public void onHandleIntent() throws Exception {
-
-    }
-
-    @Test
-    public void run() throws Exception {
-
-    }
-
-    @Test
-    public void getNotificationLogEntries() throws Exception {
-
-    }
-
-    @Test
-    public void clearAllNotificationLogEntries() throws Exception {
-
-    }
-
-    @Test
-    public void getAppOpenLogEntries() throws Exception {
-
-    }
-
-    @Test
-    public void clearAllAppOpenLogEntries() throws Exception {
-
-    }
-
-    @Test
-    public void startBlockingModules() throws Exception {
-
-    }
-
-    @Test
-    public void managerDidUpdateProfile() throws Exception {
-
-    }
-
-    @Test
-    public void managerDidRemoveProfile() throws Exception {
-
-    }
-
-    @Test
-    public void managerDidUpdateSchedule() throws Exception {
-
-    }
-
-    @Test
-    public void managerDidRemoveSchedule() throws Exception {
-
-    }
-
-    @Test
-    public void issueNotification() throws Exception {
-
-    }
-
 }

@@ -118,7 +118,7 @@ public class AppBlocker extends IntentService implements Blocker {
         }
     }
 
-    public void bringToForeground(App app) {
+    private void bringToForeground(App app) {
         Intent intent = new Intent(MainActivity.mainActivityContext, SplashScreen.class);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // You need this if starting

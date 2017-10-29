@@ -108,7 +108,6 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
         profileManager.delegate = new WeakReference<ProfileManagerDelegate>(this);
     }
 
-    @RequiresApi(api = 26)
     @Override
     protected void onHandleIntent(Intent workIntent) {
         setDefaultManager(this);
@@ -133,7 +132,6 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
      * Continuously poll for profile and schedule updates in the background and update
      * blocked app lists in blocking modules.
      */
-    @RequiresApi(api = 26)
     public void run() {
         while (true) {
             this.updateBlockingModuleApps();
@@ -313,6 +311,5 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
         builder.setContentIntent(resultPendingIntent);
 
         notificationManager.notify(mNotificationId, builder.build());
-
     }
 }
