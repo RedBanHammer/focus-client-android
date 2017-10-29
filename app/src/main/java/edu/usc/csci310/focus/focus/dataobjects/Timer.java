@@ -66,8 +66,7 @@ public class Timer implements Serializable {
 
             public void onTick(long millisUntilFinished) {
                 // profile has been turned on, we just wait
-                // TODO: countdown time manually, show to user
-
+                // countdown time manually, show to user
                 // TODO: Use android broadcast notification intent channel instead of static vars
                 ProfileList.profileList.render();
             }
