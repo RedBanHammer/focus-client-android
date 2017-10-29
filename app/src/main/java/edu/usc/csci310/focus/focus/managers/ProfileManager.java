@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;

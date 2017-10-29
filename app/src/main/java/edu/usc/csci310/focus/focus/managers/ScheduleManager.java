@@ -16,6 +16,8 @@ import edu.usc.csci310.focus.focus.storage.StorageManager;
  */
 
 public class ScheduleManager {
+    public static final String SCHEDULE_GROUP_IDENTIFIER = "Schedules";
+
     private static ScheduleManager defaultManager = new ScheduleManager();
 
 
@@ -48,7 +50,7 @@ public class ScheduleManager {
             return;
         }
 
-        storage.setObject(schedule, "Schedules", schedule.getIdentifier());
+        storage.setObject(schedule, SCHEDULE_GROUP_IDENTIFIER, schedule.getIdentifier());
 
         ScheduleManagerDelegate delegateRef = this.delegate.get();
         if (delegateRef != null) {
@@ -81,7 +83,7 @@ public class ScheduleManager {
         Schedule removedSchedule = this.getScheduleWithIdentifier(scheduleIdentifier);
 
         if (removedSchedule != null) {
-            storage.removeObject("Schedules", scheduleIdentifier);
+            storage.removeObject(SCHEDULE_GROUP_IDENTIFIER, scheduleIdentifier);
 
             ScheduleManagerDelegate delegateRef = this.delegate.get();
             if (delegateRef != null) {
@@ -121,7 +123,7 @@ public class ScheduleManager {
             return null;
         }
 
-        ArrayList<Serializable> serials = storage.getObjectsWithPrefix("Schedules");
+        ArrayList<Serializable> serials = storage.getObjectsWithPrefix(SCHEDULE_GROUP_IDENTIFIER);
         ArrayList<Schedule> schedules = new ArrayList<Schedule>();
 
         for (Serializable obj : serials) {
@@ -148,7 +150,7 @@ public class ScheduleManager {
             return null;
         }
 
-        return storage.getObject("Schedules", identifier);
+        return storage.getObject(SCHEDULE_GROUP_IDENTIFIER, identifier);
     }
 
     /*
@@ -156,7 +158,7 @@ public class ScheduleManager {
     * */
     public @NonNull ArrayList<Schedule> getAllSchedules()
     {
-        ArrayList<Serializable> serials = storage.getObjectsWithPrefix("Schedules");
+        ArrayList<Serializable> serials = storage.getObjectsWithPrefix(SCHEDULE_GROUP_IDENTIFIER);
         ArrayList<Schedule> schedules = new ArrayList<Schedule>();
 
         for (Serializable obj : serials) {

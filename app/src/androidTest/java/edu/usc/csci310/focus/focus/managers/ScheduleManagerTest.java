@@ -1,41 +1,38 @@
 package edu.usc.csci310.focus.focus.managers;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.core.deps.guava.util.concurrent.ExecutionError;
-
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.junit.MockitoRule;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
-import java.io.File;
 import java.io.Serializable;
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
+import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.RecurringTime;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 import edu.usc.csci310.focus.focus.storage.StorageManager;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockingDetails;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by Briana on 10/29/17.
  */
 public class ScheduleManagerTest {
     @Mock
-    private ScheduleManager scheduleManager;
-    private StorageManager storageManager = mock(StorageManager.class);
-    public ScheduleManagerDelegate delegate = mock(ScheduleManagerDelegate.class);
+    private ScheduleManager testedScheduleManager;
+    private StorageManager mockedStorageManager = mock(StorageManager.class);
+    public ScheduleManagerDelegate mockedDelegate = mock(ScheduleManagerDelegate.class);
+    private HashMap<String, HashMap<String, Serializable>> objectHashMap = new HashMap<String, HashMap<String, Serializable>>();
+    private ArrayList<Schedule> testSchedules = new ArrayList<>();
 
     @Test
     public void getScheduleManager() throws Exception {
@@ -45,77 +42,130 @@ public class ScheduleManagerTest {
 
     @Before
     public void init(){
-        scheduleManager = new ScheduleManager(storageManager, delegate);
+        when(this.mockedStorageManager.getObject(anyString(), anyString())).thenAnswer(
+                new Answer<Serializable>() {
+                    @Override
+                    public Serializable answer(InvocationOnMock invocation) {
+                        Object[] args = invocation.getArguments();
+                        String group = (String)args[0];
+                        String id = (String)args[1];
+
+                        HashMap<String, Serializable> groupObjects = objectHashMap.get(group);
+
+                        if (groupObjects != null) {
+                            return groupObjects.get(id);
+                        } else {
+                            return null;
+                        }
+                    }});
+        when(this.mockedStorageManager.getObjectsWithPrefix(anyString())).thenAnswer(
+                new Answer<Serializable>() {
+                    @Override
+                    public Serializable answer(InvocationOnMock invocation) {
+                        Object[] args = invocation.getArguments();
+                        String group = (String)args[0];
+
+                        HashMap<String, Serializable> groupObjects = objectHashMap.get(group);
+
+                        ArrayList<Serializable> objectList = new ArrayList<>();
+                        for (String key : groupObjects.keySet()) {
+                            objectList.add(groupObjects.get(key));
+                        }
+
+                        return objectList;
+                    }});
+
+        this.testedScheduleManager = new ScheduleManager(this.mockedStorageManager, this.mockedDelegate);
+
+        this.setUpSchedules();
+    }
+
+    private void setUpSchedules() {
+        Schedule testSchedule1 = new Schedule("Test Schedule 1");
+        testSchedule1.setIsActive(true);
+
+        Schedule testSchedule2 = new Schedule("Test Schedule 2");
+        testSchedule2.setIsActive(true);
+
+        Schedule testSchedule3 = new Schedule("Test Schedule 3");
+        testSchedule3.setIsActive(false);
+
+        this.testSchedules.add(testSchedule1);
+        this.testSchedules.add(testSchedule2);
+        this.testSchedules.add(testSchedule3);
+
+        HashMap<String, Serializable> objectMap = new HashMap<>();
+        objectMap.put(testSchedule1.getIdentifier(), testSchedule1);
+        objectMap.put(testSchedule2.getIdentifier(), testSchedule2);
+        objectMap.put(testSchedule3.getIdentifier(), testSchedule3);
+
+        this.objectHashMap.put(ScheduleManager.SCHEDULE_GROUP_IDENTIFIER, objectMap);
     }
 
     @Test
-    public void setSchedule() throws Exception {
-        Schedule newSchedule = new Schedule("Schedule Test");
-        scheduleManager.getAllSchedules().add(newSchedule);
-        newSchedule.addProfile("111-111", new RecurringTime());
-        scheduleManager.setSchedule(newSchedule);
-        ArrayList<Schedule> schedules = scheduleManager.getAllSchedules();
-        Schedule sched = scheduleManager.getScheduleWithIdentifier(newSchedule.getIdentifier());
-        assertEquals(sched.getIdentifier(), newSchedule.getIdentifier());
+    public void testSetGetScheduleWithIdentifier() throws Exception {
+        Schedule expectedSchedule = this.testSchedules.get(0);
+        this.testedScheduleManager.getAllSchedules().add(expectedSchedule);
+
+        Profile testProfile = new Profile("Test Profile 1");
+
+        expectedSchedule.addProfile(testProfile.getIdentifier(), new RecurringTime());
+
+        this.testedScheduleManager.setSchedule(expectedSchedule);
+        Schedule schedule = this.testedScheduleManager.getScheduleWithIdentifier(expectedSchedule.getIdentifier());
+
+        assertEquals(expectedSchedule, schedule);
     }
 
     @Test
-    public void removeSchedule() throws Exception {
-        ArrayList<String> profileIDs = new ArrayList<>();
-        Schedule newSchedule = new Schedule(profileIDs, "Schedule 1");
-        scheduleManager.getAllSchedules().add(newSchedule);
-        scheduleManager.removeSchedule(newSchedule);
-        assertEquals(scheduleManager.getScheduleWithIdentifier(newSchedule.getIdentifier()), null);
+    public void testSetGetScheduleWithName() throws Exception {
+        Schedule expectedSchedule = this.testSchedules.get(0);
+        this.testedScheduleManager.getAllSchedules().add(expectedSchedule);
+
+        Profile testProfile = new Profile("Test Profile 1");
+
+        expectedSchedule.addProfile(testProfile.getIdentifier(), new RecurringTime());
+
+        // Test setting a schedule
+        this.testedScheduleManager.setSchedule(expectedSchedule);
+        verify(this.mockedStorageManager, atLeastOnce()).setObject(expectedSchedule, ScheduleManager.SCHEDULE_GROUP_IDENTIFIER, expectedSchedule.getIdentifier());
+
+        // Test getting a schedule
+        Schedule schedule = this.testedScheduleManager.getScheduleWithName(expectedSchedule.getName());
+        assertEquals(expectedSchedule, schedule);
     }
 
     @Test
-    public void removeScheduleWithIdentifier() throws Exception {
-        ArrayList<String> profileIDs = new ArrayList<>();
-        Schedule newSchedule = new Schedule(profileIDs, "Schedule 1");
-        scheduleManager.getAllSchedules().add(newSchedule);
-        scheduleManager.removeScheduleWithIdentifier(newSchedule.getIdentifier());
-        assertEquals(scheduleManager.getScheduleWithIdentifier(newSchedule.getIdentifier()), null);
+    public void testRemoveScheduleWithIdentifier() throws Exception {
+        Schedule expectedSchedule = this.testSchedules.get(0);
+        this.testedScheduleManager.removeScheduleWithIdentifier(expectedSchedule.getIdentifier());
+
+        verify(this.mockedStorageManager, atLeastOnce()).removeObject(ScheduleManager.SCHEDULE_GROUP_IDENTIFIER, expectedSchedule.getIdentifier());
     }
 
     @Test
-    public void getActiveSchedules() throws Exception {
-        ArrayList<Schedule> expectedActiveSchedules = new ArrayList<Schedule>();
-        scheduleManager.getAllSchedules().add(new Schedule("Schedule 1"));
-        scheduleManager.getAllSchedules().add(new Schedule("Schedule 2"));
-        scheduleManager.getAllSchedules().add(new Schedule("Schedule 3"));
-        scheduleManager.getAllSchedules().add(new Schedule("Schedule 4"));
-        ArrayList<Schedule> allSchedules = scheduleManager.getAllSchedules();
+    public void testRemoveSchedule() throws Exception {
+        Schedule expectedSchedule = this.testSchedules.get(0);
+        this.testedScheduleManager.removeSchedule(expectedSchedule);
 
-        for (Schedule schedule : allSchedules) {
+        verify(this.mockedStorageManager, atLeastOnce()).removeObject(ScheduleManager.SCHEDULE_GROUP_IDENTIFIER, expectedSchedule.getIdentifier());
+    }
+
+    @Test
+    public void testGetActiveSchedules() throws Exception {
+        HashSet<Schedule> expectedActiveSchedules = new HashSet<>();
+        for (Schedule schedule : this.testSchedules) {
             if (schedule.getIsActive()) {
                 expectedActiveSchedules.add(schedule);
             }
         }
-        assertEquals(expectedActiveSchedules, scheduleManager.getActiveSchedules());
+
+        assertEquals(expectedActiveSchedules, new HashSet<>(this.testedScheduleManager.getActiveSchedules()));
     }
 
     @Test
-    public void getScheduleWithName() throws Exception {
-        ArrayList<String> profileIDs = new ArrayList<>();
-        Schedule newSchedule = new Schedule(profileIDs, "Schedule 1");
-        scheduleManager.getAllSchedules().add(newSchedule);
-        Schedule expectedSchedule = scheduleManager.getScheduleWithName(newSchedule.getName());
-        assertEquals(expectedSchedule.getIdentifier(), newSchedule.getIdentifier());
-    }
-
-    @Test
-    public void getScheduleWithIdentifier() throws Exception {
-        ArrayList<String> profileIDs = new ArrayList<>();
-        Schedule newSchedule = new Schedule(profileIDs, "Schedule 1");
-        scheduleManager.getAllSchedules().add(newSchedule);
-        Schedule expectedSchedule = scheduleManager.getScheduleWithName(newSchedule.getIdentifier());
-        assertEquals(expectedSchedule.getIdentifier(), newSchedule.getIdentifier());
-    }
-
-    @Test
-    public void getAllSchedules() throws Exception {
-        ArrayList<Schedule> schedules = scheduleManager.getAllSchedules();
-        assertEquals(schedules, scheduleManager.getAllSchedules());
+    public void testGetAllSchedules() throws Exception {
+        assertEquals(new HashSet<>(this.testSchedules), new HashSet<>(this.testedScheduleManager.getAllSchedules()));
     }
 
 }
