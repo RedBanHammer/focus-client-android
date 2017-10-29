@@ -7,9 +7,7 @@ import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
-import edu.usc.csci310.focus.focus.dataobjects.TimeInterval;
 import edu.usc.csci310.focus.focus.storage.StorageManager;
 
 

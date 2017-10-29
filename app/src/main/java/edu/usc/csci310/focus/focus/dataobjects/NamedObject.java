@@ -43,54 +43,6 @@ public class NamedObject implements Serializable {
         return this.identifier;
     }
 
-    /* CodeableObject implementation. */
-    /**
-     * Parse the object into a bytewise representation.
-     * @return A bytewise representation of the object.
-     */
-    public byte[] getBinaryRepresentation() {
-        byte[] binaryRepresentation = new byte[50];
-
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream out = new ObjectOutputStream(baos);
-            out.writeObject(this);
-            binaryRepresentation = baos.toByteArray();
-            out.close();
-            baos.close();
-        }catch(IOException i) {
-            i.printStackTrace();
-        }
-
-        return binaryRepresentation;
-    }
-
-    /**
-     * Convert a binary representation into the internal object fields.
-     * @param binaryRepresentation The bytewise representation to parse.
-     */
-    public void NamedObject(byte[] binaryRepresentation) {
-        NamedObject no;
-
-        try {
-            ByteArrayInputStream bais = new ByteArrayInputStream(binaryRepresentation);
-            ObjectInputStream ois = new ObjectInputStream(bais);
-            no = (NamedObject) ois.readObject();
-            ois.close();
-            bais.close();
-        }catch(IOException i) {
-            i.printStackTrace();
-            return;
-        }catch(ClassNotFoundException c) {
-            System.out.println("NamedObject class not found.");
-            c.printStackTrace();
-            return;
-        }
-
-        this.name = no.getName();
-        this.identifier = no.getIdentifier();
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
