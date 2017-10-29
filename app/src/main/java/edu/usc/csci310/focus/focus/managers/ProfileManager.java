@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
@@ -19,6 +18,7 @@ import edu.usc.csci310.focus.focus.storage.StorageManager;
 
 public class ProfileManager {
     private static ProfileManager defaultManager = new ProfileManager();
+    public static final String PROFILE_GROUP_IDENTIFIER = "Profiles";
 
     public static @NonNull ProfileManager getDefaultManager() {
         return defaultManager;
@@ -26,22 +26,26 @@ public class ProfileManager {
 
     public WeakReference<ProfileManagerDelegate> delegate;
 
-    private StorageManager storage = StorageManager.getDefaultManager();
-
+    private StorageManager storageManager = StorageManager.getDefaultManager();
+    private ScheduleManager scheduleManager = ScheduleManager.getDefaultManager();
     /*
      * Profile Manager constructor.
      */
-    private void ProfileManager() {
+    private ProfileManager() {
         //constructor
     }
-
+    public ProfileManager(StorageManager storageManager, ProfileManagerDelegate delegate, ScheduleManager scheduleManager) {
+        this.storageManager = storageManager;
+        this.delegate = new WeakReference<ProfileManagerDelegate>(delegate);
+        this.scheduleManager = scheduleManager;
+    }
     /*
     * setProfile() method. Takes in a Profile object as parameter.
     */
     public void setProfile(Profile profile)
     {
-        // update with storage manager
-        storage.setObject(profile, "Profiles", profile.getIdentifier());
+        // update with storageManager manager
+        storageManager.setObject(profile, "Profiles", profile.getIdentifier());
 
         // notify delegate
         ProfileManagerDelegate delegateRef = this.delegate.get();
@@ -66,12 +70,12 @@ public class ProfileManager {
         Profile removedProfile = this.getProfileWithIdentifier(identifier);
 
         if (removedProfile != null) {
-            this.storage.removeObject("Profiles", identifier);
+            this.storageManager.removeObject(PROFILE_GROUP_IDENTIFIER, identifier);
 
-            ArrayList<Schedule> schedules = ScheduleManager.getDefaultManager().getAllSchedules();
+            ArrayList<Schedule> schedules = scheduleManager.getAllSchedules();
             for (Schedule schedule : schedules) {
                 schedule.removeProfileWithIdentifier(identifier);
-                ScheduleManager.getDefaultManager().setSchedule(schedule);
+                scheduleManager.setSchedule(schedule);
             }
 
             ProfileManagerDelegate delegateRef = this.delegate.get();
@@ -91,7 +95,7 @@ public class ProfileManager {
     */
     public @Nullable Profile getProfileWithName(String name)
     {
-        ArrayList<Serializable> serials = this.storage.getObjectsWithPrefix("Profiles");
+        ArrayList<Serializable> serials = this.storageManager.getObjectsWithPrefix(PROFILE_GROUP_IDENTIFIER);
         ArrayList<Profile> profiles = new ArrayList<Profile>();
 
         for (Serializable obj : serials) {
@@ -115,7 +119,7 @@ public class ProfileManager {
     */
     public @Nullable Profile getProfileWithIdentifier(String identifier)
     {
-        return storage.getObject("Profiles", identifier);
+        return storageManager.getObject(PROFILE_GROUP_IDENTIFIER, identifier);
     }
 
     /*
@@ -124,7 +128,7 @@ public class ProfileManager {
     */
     public @NonNull ArrayList<Profile> getProfilesWithNames(String appName)
     {
-        ArrayList<Serializable> serials = storage.getObjectsWithPrefix("Profiles");
+        ArrayList<Serializable> serials = storageManager.getObjectsWithPrefix(PROFILE_GROUP_IDENTIFIER);
         ArrayList<Profile> profiles = new ArrayList<Profile>();
 
         for (Serializable obj : serials) {
@@ -154,7 +158,7 @@ public class ProfileManager {
     */
     public @NonNull ArrayList<Profile> getProfileWithIdentifiers(String appBundleID)
     {
-        ArrayList<Serializable> serials = storage.getObjectsWithPrefix("Profiles");
+        ArrayList<Serializable> serials = this.storageManager.getObjectsWithPrefix(PROFILE_GROUP_IDENTIFIER);
         ArrayList<Profile> profiles = new ArrayList<Profile>();
 
         for (Serializable obj : serials) {
@@ -182,7 +186,7 @@ public class ProfileManager {
     */
     public @NonNull ArrayList<Profile> getAllProfiles()
     {
-        ArrayList<Serializable> serials = storage.getObjectsWithPrefix("Profiles");
+        ArrayList<Serializable> serials = this.storageManager.getObjectsWithPrefix(PROFILE_GROUP_IDENTIFIER);
         ArrayList<Profile> profiles = new ArrayList<Profile>();
 
         for (Serializable obj : serials) {
