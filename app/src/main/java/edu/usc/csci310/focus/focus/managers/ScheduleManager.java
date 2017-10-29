@@ -18,6 +18,7 @@ import edu.usc.csci310.focus.focus.storage.StorageManager;
 public class ScheduleManager {
     private static ScheduleManager defaultManager = new ScheduleManager();
 
+
     public static @NonNull ScheduleManager getDefaultManager() {
         return defaultManager;
     }
@@ -29,8 +30,13 @@ public class ScheduleManager {
     /*
     * Constructor for Schedule Manager
     * */
-    private void ScheduleManager(){
+    private ScheduleManager(){
 
+    }
+
+    public ScheduleManager(StorageManager storageManager, ScheduleManagerDelegate delegate) {
+        storage = storageManager;
+        this.delegate = new WeakReference<ScheduleManagerDelegate>(delegate);
     }
 
     /*
