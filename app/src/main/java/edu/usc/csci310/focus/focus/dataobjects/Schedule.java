@@ -94,14 +94,15 @@ public class Schedule extends NamedObject {
 
     /**
      * Get all profile identifiers that are currently scheduled.
+     * @param manager The Profile Manager to use to retrieve profile info.
      * @return An ArrayList of active profile identifier strings.
      */
-    public @NonNull ArrayList<String> getActiveProfileIdentifiers() {
+    public @NonNull ArrayList<String> getActiveProfileIdentifiers(ProfileManager manager) {
         ArrayList<String> activeProfileIdentifiers = new ArrayList<String>();
 
         for (String profileIdentifier : this.getProfileIdentifiers()) {
             RecurringTime profileTime = this.getProfileTimeWithIdentifier(profileIdentifier);
-            Profile profile = ProfileManager.getDefaultManager().getProfileWithIdentifier(profileIdentifier);
+            Profile profile = manager.getProfileWithIdentifier(profileIdentifier);
 
             if (profile == null) {
                 continue;
