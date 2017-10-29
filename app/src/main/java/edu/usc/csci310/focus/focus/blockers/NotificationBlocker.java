@@ -9,6 +9,7 @@ import android.service.notification.StatusBarNotification;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.managers.BlockingManager;
@@ -18,7 +19,7 @@ import edu.usc.csci310.focus.focus.managers.BlockingManager;
  */
 
 public class NotificationBlocker extends NotificationListenerService implements Blocker {
-    private ArrayList<App> apps = new ArrayList<App>();
+    private HashSet<App> apps = new HashSet<App>();
 
     private Object isBlockingMutex = new Object();
     private boolean isBlocking = false;
@@ -29,7 +30,7 @@ public class NotificationBlocker extends NotificationListenerService implements 
         return sharedNotificationBlocker;
     }
 
-    public void setApps(@NonNull ArrayList<App> apps) {
+    public void setApps(@NonNull HashSet<App> apps) {
         this.apps = apps;
     }
 

@@ -16,6 +16,7 @@ import android.support.v4.app.NotificationCompat;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import edu.usc.csci310.focus.focus.MainActivity;
 import edu.usc.csci310.focus.focus.R;
@@ -37,8 +38,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 public class BlockingManager extends IntentService implements ProfileManagerDelegate, ScheduleManagerDelegate, Runnable {
     // How often in milliseconds to poll for changes in scheduled profiles.
     private static int UPDATE_POLL_INTERVAL = 5 * 1000;
-    HashMap<String, Profile> uniqueActiveProfiles = new HashMap<String, Profile>();;
-
+    private HashMap<String, Profile> uniqueActiveProfiles = new HashMap<String, Profile>();
 
     private static BlockingManager defaultManager = null;
 
@@ -67,14 +67,12 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
         this.logEntryDelegate = new WeakReference<BlockingManagerLogEntryDelegate>(delegate);
     }
 
-    @RequiresApi(api = 26)
     public void setAppBlocker(AppBlocker appBlocker) {
         this.appBlocker = new WeakReference<AppBlocker>(appBlocker);
 
         this.updateBlockingModuleApps();
     }
 
-    @RequiresApi(api = 26)
     public void setNotificationBlocker(NotificationBlocker notificationBlocker) {
         this.notificationBlocker = new WeakReference<NotificationBlocker>(notificationBlocker);
 
@@ -93,6 +91,21 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
 
     public BlockingManager() {
         super("BlockingManager");
+    }
+
+    /**
+     * Initialize a with defined schedule manager and profile manager.
+     * @param scheduleManager ScheduleManager to use when updating blocked apps.
+     * @param profileManager ProfileManager to use when updating blocked apps.
+     */
+    public BlockingManager(ScheduleManager scheduleManager, ProfileManager profileManager) {
+        super("BlockingManager");
+
+        this.scheduleManager = scheduleManager;
+        this.profileManager = profileManager;
+
+        scheduleManager.delegate = new WeakReference<ScheduleManagerDelegate>(this);
+        profileManager.delegate = new WeakReference<ProfileManagerDelegate>(this);
     }
 
     @RequiresApi(api = 26)
@@ -155,44 +168,40 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
 
     /** Manage the blocking modules **/
 
-    @RequiresApi(api = 26)
     private void updateBlockingModuleApps() {
-        HashMap<String, Profile> uniqueActiveProfiles2 = new HashMap<String, Profile>();
+        HashMap<String, Profile> currentUniqueActiveProfiles = new HashMap<String, Profile>();
 
         // Get the current schedule from the ScheduleManager
-        ArrayList<Schedule> activeSchedules = ScheduleManager.getDefaultManager().getActiveSchedules();
+        ArrayList<Schedule> activeSchedules = this.scheduleManager.getActiveSchedules();
 
         for (Schedule schedule : activeSchedules) {
             // Get active profiles in this schedule
-            ArrayList<String> activeProfileIdentifiers = schedule.getActiveProfileIdentifiers();
+            ArrayList<String> activeProfileIdentifiers = schedule.getActiveProfileIdentifiers(this.profileManager);
 
             for (String profileIdentifier : activeProfileIdentifiers) {
-                if (!uniqueActiveProfiles2.containsKey(profileIdentifier)) {
+                if (!currentUniqueActiveProfiles.containsKey(profileIdentifier)) {
                     //find new profile to be blocked
-                    Profile profile = ProfileManager.getDefaultManager().getProfileWithIdentifier(profileIdentifier);
-                    uniqueActiveProfiles2.put(profileIdentifier, profile);
+                    Profile profile = this.profileManager.getProfileWithIdentifier(profileIdentifier);
+                    currentUniqueActiveProfiles.put(profileIdentifier, profile);
 
                     //if we found a profile that wasn't blocked before and is now blocked
-                    if(!uniqueActiveProfiles.containsKey(profileIdentifier)) {
+                    if (!this.uniqueActiveProfiles.containsKey(profileIdentifier)) {
                         //send notification to user that the profile went active
                         String title = "Active Profile";
                         String message = "Profile '" + profile.getName() + "' is now active.";
-                        issueNotification(title, message);
+                        this.issueNotification(title, message);
                     }
-
                 }
-
             }
-
         }
 
-        for(String removedProfile : uniqueActiveProfiles.keySet())
+        for (String removedProfile : this.uniqueActiveProfiles.keySet())
         {
-            if(!uniqueActiveProfiles2.containsKey(removedProfile))
+            if (!currentUniqueActiveProfiles.containsKey(removedProfile))
             {
                 //profile is no longer being blocked, send notification
                 //make temp profile
-                Profile p = ProfileManager.getDefaultManager().getProfileWithIdentifier(removedProfile);
+                Profile p = this.profileManager.getProfileWithIdentifier(removedProfile);
                 String title = "Deactivated Profile";
                 String message = "Profile '" + p.getName() + "' has been deactivated";
                 issueNotification(title, message);
@@ -200,8 +209,8 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
         }
 
         HashMap<String, App> uniqueBlockedApps = new HashMap<String, App>();
-        for (String key : uniqueActiveProfiles2.keySet()) {
-            Profile profile = uniqueActiveProfiles2.get(key);
+        for (String key : currentUniqueActiveProfiles.keySet()) {
+            Profile profile = currentUniqueActiveProfiles.get(key);
 
             if (profile == null) {
                 continue;
@@ -214,7 +223,7 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
             }
         }
 
-        ArrayList<App> blockedApps = new ArrayList<App>();
+        HashSet<App> blockedApps = new HashSet<App>();
         for (String key : uniqueBlockedApps.keySet()) {
             blockedApps.add(uniqueBlockedApps.get(key));
         }
@@ -227,7 +236,7 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
             this.notificationBlocker.get().setApps(blockedApps);
         }
 
-        uniqueActiveProfiles = uniqueActiveProfiles2;
+        this.uniqueActiveProfiles = currentUniqueActiveProfiles;
     }
 
     public void startBlockingModules() {
@@ -243,13 +252,11 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
 
     /** ProfileManagerDelegate implementation **/
 
-    @RequiresApi(api = 26)
     public void managerDidUpdateProfile(ProfileManager manager, Profile profile) {
         System.out.println("[BlockingManager] Got profile was updated: " + profile.getName());
         this.updateBlockingModuleApps();
     }
 
-    @RequiresApi(api = 26)
     public void managerDidRemoveProfile(ProfileManager manager, Profile profile) {
         System.out.println("[BlockingManager] Got profile was removed: " + profile.getName());
         this.updateBlockingModuleApps();
@@ -258,19 +265,21 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
 
     /** ScheduleManagerDelegate implementation **/
 
-    @RequiresApi(api = 26)
     public void managerDidUpdateSchedule(ScheduleManager manager, Schedule schedule) {
         System.out.println("[BlockingManager] Got schedule was updated: " + schedule.getName());
         this.updateBlockingModuleApps();
     }
-    @RequiresApi(api = 26)
     public void managerDidRemoveSchedule(ScheduleManager manager, Schedule schedule) {
         System.out.println("[BlockingManager] Got schedule was removed: " + schedule.getName());
         this.updateBlockingModuleApps();
     }
 
     //build and issue notifications
-    public void issueNotification(String title, String message){
+    public void issueNotification(String title, String message) {
+        if (this.getBaseContext() == null) {
+            return; // Don't actually have a context during some tests
+        }
+
         //NOTIFICATION CHANNEL
         String channelId = "csci310-focus";
         Notification.Builder builder = null;

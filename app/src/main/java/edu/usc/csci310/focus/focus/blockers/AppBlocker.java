@@ -8,10 +8,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import edu.usc.csci310.focus.focus.MainActivity;
@@ -26,7 +28,7 @@ import edu.usc.csci310.focus.focus.presentation.SplashScreen;
  */
 
 public class AppBlocker extends IntentService implements Blocker {
-    private ArrayList<App> apps = new ArrayList<App>();
+    private HashSet<App> apps = new HashSet<App>();
 
     private Object isBlockingMutex = new Object();
     private boolean isBlocking = false;
@@ -49,7 +51,7 @@ public class AppBlocker extends IntentService implements Blocker {
         this.run();
     }
 
-    public void setApps(ArrayList<App> apps) {
+    public void setApps(@NonNull HashSet<App> apps) {
         this.apps = apps;
     }
 
