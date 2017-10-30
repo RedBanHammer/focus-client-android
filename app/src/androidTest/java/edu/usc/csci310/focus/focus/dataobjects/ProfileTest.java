@@ -24,7 +24,7 @@ public class ProfileTest {
     }
 
     @Test
-    public void setAppsTest() throws Exception {
+    public void testSetAppsTest() throws Exception {
         ArrayList<App> expectedAppList = new ArrayList<>();
         expectedAppList.add(testApp);
         testProfile.setApps(expectedAppList);
@@ -34,7 +34,7 @@ public class ProfileTest {
      }
 
     @Test
-    public void addAppTest() throws Exception {
+    public void testAddAppTest() throws Exception {
         //Add an app to a profile
         testProfile.addApp(testApp);
 
@@ -44,7 +44,7 @@ public class ProfileTest {
     }
 
     @Test
-    public void removeAppWithName() throws Exception {
+    public void testRemoveAppWithName() throws Exception {
         testProfile.addApp(testApp);
 
         testProfile.removeAppWithName(appName);
@@ -53,7 +53,7 @@ public class ProfileTest {
     }
 
     @Test
-    public void removeAppNonExistentName() throws Exception {
+    public void testRemoveAppNonExistentName() throws Exception {
         ArrayList<App> expectedApps = new ArrayList<>();
         expectedApps.add(testApp);
         testProfile.setApps(expectedApps);
@@ -65,7 +65,7 @@ public class ProfileTest {
     }
 
     @Test
-    public void removeAppWithIdentifier() throws Exception {
+    public void testRemoveAppWithIdentifier() throws Exception {
         testProfile.addApp(testApp);
         testProfile.removeAppWithIdentifier(appId);
 
@@ -73,7 +73,7 @@ public class ProfileTest {
         assertEquals(false, success);
     }
     @Test
-    public void getBigApps() throws Exception {
+    public void testGetBigApps() throws Exception {
         ArrayList<App> expectedList = new ArrayList<>();
         for(int i = 0; i < 50; i++)
         {

@@ -74,7 +74,7 @@ public class ScheduleTest {
     }
 
     @Test
-    public void addProfile() throws Exception {
+    public void testAddProfile() throws Exception {
         testSchedule.addProfile(testProfile.getIdentifier(), time);
 
         boolean success = testSchedule.getProfileIdentifiers().contains(testProfile.getIdentifier());
@@ -83,7 +83,7 @@ public class ScheduleTest {
 
 
     @Test
-    public void removeProfileWithIdentifier() throws Exception {
+    public void testRemoveProfileWithIdentifier() throws Exception {
         testSchedule.addProfile(testProfile.getIdentifier(), time);
         testSchedule.removeProfileWithIdentifier(testProfile.getIdentifier());
 
@@ -92,7 +92,7 @@ public class ScheduleTest {
     }
 
     @Test
-    public void removeNonExistentProfileWithIdentifier() throws Exception {
+    public void testRemoveNonExistentProfileWithIdentifier() throws Exception {
         testSchedule.addProfile(testProfile.getIdentifier(), time);
         ArrayList<String> expectedIds = testSchedule.getProfileIdentifiers();
         testSchedule.removeProfileWithIdentifier("dummy-id");
