@@ -154,6 +154,9 @@ public class StorageManager {
      * @return An ArrayList of all objects inside the grouop
      */
     public @NonNull ArrayList<Serializable> getObjectsWithPrefix(@NonNull String group) {
+        if (this.context == null) {
+            return new ArrayList<Serializable>();
+        }
         return this.getObjectsWithPrefix(group, this.context.getFilesDir().getAbsolutePath());
     }
 
@@ -193,6 +196,9 @@ public class StorageManager {
      * @param identifier A unique identifier for the object to delete.
      */
     public void removeObject(@NonNull String group, @NonNull String identifier) {
+        if (this.context == null) {
+            return;
+        }
         this.removeObject(group, identifier, this.context.getFilesDir().getAbsolutePath());
     }
 
@@ -225,6 +231,9 @@ public class StorageManager {
      * @param group The name of the group to delete the objects from.
      */
     public void removeObjectsWithPrefix(@NonNull String group) {
+        if (this.context == null) {
+            return;
+        }
         this.removeObjectsWithPrefix(group, this.context.getFilesDir().getAbsolutePath());
     }
 
