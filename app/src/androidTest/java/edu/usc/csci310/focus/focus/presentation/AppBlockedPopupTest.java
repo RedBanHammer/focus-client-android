@@ -24,14 +24,14 @@ import static android.support.test.espresso.intent.matcher.IntentMatchers.hasCom
 @RunWith(AndroidJUnit4.class)
 public class AppBlockedPopupTest {
     @Rule
-    public IntentsTestRule<MainActivity> mActivityRule;
+    public IntentsTestRule<MainActivity> mActivityRule = new IntentsTestRule(MainActivity.class);
 
     // Test App
     private final App testApp1 = new App("YouTube", "com.google.android.youtube");
 
     @Before
     public void setUp() {
-        Intent intent = new Intent(mActivityRule.getActivity(), SplashScreen.class);
+        Intent intent = new Intent(this.mActivityRule.getActivity(), SplashScreen.class);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // You need this if starting
         //  the activity from a service
