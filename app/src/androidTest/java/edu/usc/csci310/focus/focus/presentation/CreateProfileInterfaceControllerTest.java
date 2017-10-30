@@ -45,7 +45,6 @@ public class CreateProfileInterfaceControllerTest {
         onView(withId(R.id.addProfileButton)).perform(click());
         //check activity_create_profile is pulled up
         intended(hasComponent(new ComponentName(getTargetContext(), CreateProfileInterfaceController.class)));
-
     }
 
     @Test
