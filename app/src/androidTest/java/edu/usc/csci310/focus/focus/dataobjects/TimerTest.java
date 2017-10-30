@@ -105,7 +105,7 @@ public class TimerTest {
     }
 
     @Test
-    public void testStart() throws Exception {
+    public void testStartStop() throws Exception {
         this.testedTimer = new Timer(this.testProfile1, this.mockedProfileManager, this.mockedScheduleManager);
 
         this.testedTimer.setTime(10);
