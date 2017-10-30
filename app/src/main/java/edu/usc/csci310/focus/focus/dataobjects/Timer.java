@@ -63,7 +63,7 @@ public class Timer implements Serializable {
         timer.addTime(now.get(Calendar.DAY_OF_WEEK)-1, nowMinutes, this.minutes);
 
         // add profile to schedule
-        createdSchedule.addProfile(profile.getIdentifier(), timer);
+        createdSchedule.addProfile(this.profile.getIdentifier(), timer);
 
         // set repeat to false, active to true
         createdSchedule.setIsActive(true);
@@ -92,15 +92,24 @@ public class Timer implements Serializable {
     public void stop() {
         this.minutes = 0;
         this.countdown.cancel();
+        this.countdown = null;
 
         this.profile.setIsActive(false);
-        ProfileManager.getDefaultManager().setProfile(profile);
+        this.profileManager.setProfile(profile);
 
         // find schedule with profile.name + " Timer"
-        Schedule s = ScheduleManager.getDefaultManager().
+        Schedule s = this.scheduleManager.
                 getScheduleWithName(this.profile.getIdentifier() + Schedule.TIMER_SCHEDULE_POSTFIX);
-        // delete it
-        ScheduleManager.getDefaultManager().removeSchedule(s);
+        // Remove the schedule
+        this.scheduleManager.removeSchedule(s);
+    }
+
+    /**
+     * Whether the timer is currently counting down.
+     * @return YES if the timer is counting down, NO otherwise.
+     */
+    public boolean isRunning() {
+        return (this.countdown != null);
     }
 
 }
