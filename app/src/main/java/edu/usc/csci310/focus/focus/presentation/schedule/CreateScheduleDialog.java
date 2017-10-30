@@ -64,7 +64,11 @@ public class CreateScheduleDialog extends DialogFragment implements TextView.OnE
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Positive response
-                        sendBackResult();
+                        if (mEditText.getText().toString().equals("")){
+                            showFormCompletionError();
+                        }else{
+                            sendBackResult();
+                        }
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -92,6 +96,7 @@ public class CreateScheduleDialog extends DialogFragment implements TextView.OnE
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         // Return input text to activity
+
         sendBackResult();
         return true;
     }
@@ -103,9 +108,27 @@ public class CreateScheduleDialog extends DialogFragment implements TextView.OnE
     // Call this method to send the data back to the parent fragment
     public void sendBackResult() {
         // Notice the use of `getTargetFragment` which will be set when the dialog is displayed
+        if (mEditText.getText().toString().equals("")) {
+            showFormCompletionError();
+            return;
+        }
         EditNameDialogListener listener = (EditNameDialogListener) getTargetFragment();
         listener.onFinishEditDialog(mEditText.getText().toString());
         dismiss();
+    }
+
+    private void showFormCompletionError() {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Incomplete Form")
+                .setMessage("Valid name is needed for the schedule")
+                .setPositiveButton("Okay", new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dismiss();
+                    }
+
+                })
+                .show();
     }
 
 }

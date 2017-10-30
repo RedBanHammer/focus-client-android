@@ -7,8 +7,11 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.widget.ListView;
 
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,9 +21,11 @@ import edu.usc.csci310.focus.focus.MainActivity;
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 
+import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.swipeLeft;
 import static android.support.test.espresso.action.ViewActions.typeText;
@@ -68,6 +73,9 @@ public class ScheduleInterfaceControllerTest {
     @Rule
     public ActivityTestRule<MainActivity> activityTestRule =
             new ActivityTestRule<>(MainActivity.class);
+    @Rule
+    public ActivityTestRule<ScheduleInterfaceController> scheduleTestRule =
+            new ActivityTestRule<>(ScheduleInterfaceController.class);
 
     @Before
     public void init() {
@@ -77,28 +85,74 @@ public class ScheduleInterfaceControllerTest {
     }
 
     @Test
-    public void testCreateSchedule() throws Exception {
+    public void testCreateScheduleWithName() throws Exception {
         onView(withId(R.id.addScheduleButton)).perform(click());
         onView(withText("OK")).check(matches(isDisplayed()));
         onView(withId(R.id.create_schedule_name)).check(matches(isDisplayed()));
-        onView(withId(R.id.create_schedule_name)).perform(typeText("Schedule 1"));
+        onView(withId(R.id.create_schedule_name)).perform(typeText("Schedule 100"));
 
         onView(isRoot()).perform(waitFor(500));
 
         onView(withId(android.R.id.button1)).perform(click());
     }
 
-    // Requires a Schedule to be created
+    @Test
+    public void testCreateScheduleWithoutName() throws Exception {
+        onView(withId(R.id.addScheduleButton)).perform(click());
+        onView(withText("OK")).check(matches(isDisplayed()));
+        onView(withId(R.id.create_schedule_name)).check(matches(isDisplayed()));
+
+        onView(isRoot()).perform(waitFor(500));
+
+        onView(withId(android.R.id.button1)).perform(click());
+        onView(withText("Valid name is needed for the schedule")).check(matches(isDisplayed()));
+    }
+
     @Test
     public void testOpenSchedule() throws Exception {
+        testCreateScheduleWithName();
+        onView(isRoot()).perform(waitFor(1500));
+        final int[] counts = new int[2];
+        onView(withId(R.id.scheduleListView)).check(matches(new TypeSafeMatcher<View>() {
+            @Override
+            public boolean matchesSafely(View view) {
+                ListView listView = (ListView) view;
+
+                counts[0] = listView.getCount();
+                return true;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+
+            }
+        }));
+        onData(anything()).inAdapterView(withId(R.id.scheduleListView)).atPosition(counts[0]-1).perform(click());
+        onView(isRoot()).perform(waitFor(500));
+
+        onView(withId(R.id.schedule_name)).check(matches(withText("Schedule 100")));
+    }
+
+    @Test
+    public void testDayWeekView() throws Exception {
+        testCreateScheduleWithName();
         onView(isRoot()).perform(waitFor(1500));
         onData(anything()).inAdapterView(withId(R.id.scheduleListView)).atPosition(0).perform(click());
+        onView(isRoot()).perform(waitFor(500));
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        onView(isRoot()).perform(waitFor(500));
+        onData(withText("Day view")).check(matches(isDisplayed()));
+//        onView(isRoot()).perform(waitFor(500));
+//        onData(withText("Week view")).perform(click());
+//        onView(isRoot()).perform(waitFor(500));
     }
 
     @Test
     public void testOpenAddProfile() throws Exception {
-        testOpenSchedule();
-        onView(withId(R.id.add_profile)).perform(click());
+        onData(anything()).inAdapterView(withId(R.id.scheduleListView)).atPosition(0).perform(click());
+        onView(isRoot()).perform(waitFor(500));
+        onView(withId(R.id.add_profile_button)).perform(click());
+        onView(isRoot()).perform(waitFor(500));
         onView(withId(R.id.profile_spinner)).check(matches(isDisplayed()));
     }
 }
