@@ -102,7 +102,7 @@ public class ScheduleTest {
     }
 
     @Test
-    public void getProfileIdentifiers() throws Exception {
+    public void testGetProfileIdentifiers() throws Exception {
         testSchedule.addProfile(testProfile.getIdentifier(), time);
         ArrayList<String> expectedList = new ArrayList<>();
         expectedList.add(testProfile.getIdentifier());
@@ -111,9 +111,8 @@ public class ScheduleTest {
         assertEquals(expectedList, resultList);
     }
 
-    //this one accesses profile manager..... doesnt work because of files. needs tweaking
     @Test
-    public void getActiveProfileIdentifiers() throws Exception {
+    public void testGetActiveProfileIdentifiers() throws Exception {
         testSchedule.addProfile(testProfile.getIdentifier(), time1);
         ArrayList<String> expectedList = new ArrayList<String>();
         expectedList.add(testProfile.getIdentifier());
@@ -124,7 +123,7 @@ public class ScheduleTest {
 
     //how to get the remaining time on my side?
     @Test
-    public void getTimeRemainingWithProfileIdentifier() throws Exception {
+    public void testGetTimeRemainingWithProfileIdentifier() throws Exception {
         //time remaining
         //now-start = minutes passed
         //duration - minutes passed = time remaining
@@ -138,14 +137,14 @@ public class ScheduleTest {
     }
 
     @Test
-    public void getTimeRemainingNonExistentProfile() throws Exception {
+    public void testGetTimeRemainingNonExistentProfile() throws Exception {
         long result = testSchedule.getTimeRemainingWithProfileIdentifier("dummy-id");
         assertEquals(0, result);
 
     }
 
     @Test
-    public void getProfileTimes() throws Exception {
+    public void testGetProfileTimes() throws Exception {
         Map<String, RecurringTime> expectedMap = new HashMap<>();
         expectedMap.put(testProfile.getIdentifier(), time);
         testSchedule.addProfile(testProfile.getIdentifier(), time);
@@ -155,7 +154,7 @@ public class ScheduleTest {
     }
 
     @Test
-    public void getProfileTimeWithIdentifier() throws Exception {
+    public void testGetProfileTimeWithIdentifier() throws Exception {
         testSchedule.addProfile(testProfile.getIdentifier(), time);
         RecurringTime resultTime = testSchedule.getProfileTimeWithIdentifier(testProfile.getIdentifier());
 
