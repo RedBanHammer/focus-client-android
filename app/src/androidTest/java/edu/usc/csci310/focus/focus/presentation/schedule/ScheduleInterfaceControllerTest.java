@@ -1,7 +1,9 @@
 package edu.usc.csci310.focus.focus.presentation.schedule;
 
+import android.support.test.espresso.IdlingResource;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.v4.view.ViewPager;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -29,16 +31,27 @@ import static org.junit.Assert.*;
 @RunWith(AndroidJUnit4.class)
 public class ScheduleInterfaceControllerTest {
     @Rule
-    public ActivityTestRule<MainActivity> testScheduleInterfaceController =
+    public ActivityTestRule<MainActivity> activityTestRule =
             new ActivityTestRule<>(MainActivity.class);
     @Before
     public void init(){
         onView(withId(R.id.viewPager)).check(matches(isDisplayed()));
         onView(withId(R.id.viewPager)).perform(swipeLeft());
-        onView(withId(R.id.addScheduleButton)).perform(click());
+        ViewPager viewPager = (ViewPager) activityTestRule.getActivity().findViewById(R.id.viewPager);
+        ViewPagerIdlingResource idling = new ViewPagerIdlingResource(viewPager, "View Pager");
     }
     @Test
     public void testCreateSchedule() throws Exception {
+        onView(withId(R.id.addScheduleButton)).perform(click());
+        onView(withText("OK")).check(matches(isDisplayed()));
+        onView(withId(R.id.create_schedule_name)).check(matches(isDisplayed()));
+        onView(withId(R.id.create_schedule_name)).perform(typeText("Schedule 1"));
+        onView(withId(android.R.id.button1)).perform(click());
+    }
+
+    @Test
+    public void testOpenSchedule() throws Exception {
+
         onView(withText("OK")).check(matches(isDisplayed()));
         onView(withId(R.id.create_schedule_name)).check(matches(isDisplayed()));
 
@@ -50,5 +63,47 @@ public class ScheduleInterfaceControllerTest {
     public void testOpenAddProfile() throws Exception{
         onView(withId(R.id.add_profile)).perform(click());
         onView(withId(R.id.profile_spinner)).check(matches(isDisplayed()));
+    }
+
+    public class ViewPagerIdlingResource implements IdlingResource {
+
+        private final String mName;
+
+        private boolean mIdle = true; // Default to idle since we can't query the scroll state.
+
+        private ResourceCallback mResourceCallback;
+
+        public ViewPagerIdlingResource(ViewPager viewPager, String name) {
+            viewPager.addOnPageChangeListener(new ViewPagerListener());
+            mName = name;
+        }
+
+        @Override
+        public String getName() {
+            return mName;
+        }
+
+        @Override
+        public boolean isIdleNow() {
+            return mIdle;
+        }
+
+        @Override
+        public void registerIdleTransitionCallback(ResourceCallback resourceCallback) {
+            mResourceCallback = resourceCallback;
+        }
+
+        private class ViewPagerListener extends ViewPager.SimpleOnPageChangeListener {
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                mIdle = (state == ViewPager.SCROLL_STATE_IDLE
+                        // Treat dragging as idle, or Espresso will block itself when swiping.
+                        || state == ViewPager.SCROLL_STATE_DRAGGING);
+                if (mIdle && mResourceCallback != null) {
+                    mResourceCallback.onTransitionToIdle();
+                }
+            }
+        }
     }
 }
