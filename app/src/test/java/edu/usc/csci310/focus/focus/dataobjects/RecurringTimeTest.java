@@ -38,7 +38,7 @@ public class RecurringTimeTest {
     }
 
     @Test
-    public void testCddTime() throws Exception {
+    public void testAddTime() throws Exception {
         int dayIndex = 1;
         Long minuteIndex = new Long(0);
         Long duration = new Long(60);
