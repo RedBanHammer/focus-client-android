@@ -95,14 +95,16 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
                 didCheckBoxes[dayOfWeek] = true;
             }
         }
-        int hoursDiff = endHours-startHours;
+        int hoursDiff;
+        if (endHours ==0){
+            hoursDiff = 24 - startHours;
+        }else{
+            hoursDiff = endHours-startHours;
+        }
         int minsDiff = endMins-startMins;
         if (minsDiff < 0){
             hoursDiff -=1;
             minsDiff +=60;
-        }
-        if (hoursDiff == -24){
-            hoursDiff = 0;
         }
         hourText.setText(String.valueOf(hoursDiff));
         minText.setText(String.valueOf(minsDiff));
