@@ -48,7 +48,8 @@ public class ScheduleList extends Fragment implements CreateScheduleDialog.EditN
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        schedules = ScheduleManager.getDefaultManager().getAllSchedules();
+//        schedules = ScheduleManager.getDefaultManager().getAllSchedules();
+        this.updateSchedules();
     }
 
     @Override
@@ -67,18 +68,18 @@ public class ScheduleList extends Fragment implements CreateScheduleDialog.EditN
         // call the views with this layout
         listView = (ListView)v.findViewById(R.id.scheduleListView);
 
-        scheduleListViewAdapter = new ScheduleListViewAdapter(getActivity(), 0, schedules);
+        this.scheduleListViewAdapter = new ScheduleListViewAdapter(getActivity(), 0, this.schedules);
         listView.setAdapter(scheduleListViewAdapter);
-        addScheduleButton = (FloatingActionButton) v.findViewById(R.id.addScheduleButton);
+        this.addScheduleButton = (FloatingActionButton) v.findViewById(R.id.addScheduleButton);
 
         // create new schedule
-        addScheduleButton.setOnClickListener(new View.OnClickListener() {
+        this.addScheduleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showEditDialog();
             }
         });
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        this.listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> a, View v, int position,
                                     long id) {
@@ -112,8 +113,33 @@ public class ScheduleList extends Fragment implements CreateScheduleDialog.EditN
     public void onResume() {
         super.onResume();
 
+        this.updateSchedules();
+    }
+
+    /**
+     * Update the internal schedule list by pulling it from the Schedule Manager
+     */
+    private void updateSchedules() {
         ArrayList<Schedule> newSchedules = ScheduleManager.getDefaultManager().getAllSchedules();
-        scheduleListViewAdapter.setSchedules(newSchedules);
-        this.schedules = newSchedules;
+
+        // Filter schedules to not include timer schedules
+        ArrayList<Schedule> filteredSchedules = new ArrayList<Schedule>();
+        for (Schedule schedule : newSchedules) {
+            if (schedule.getProfileIdentifiers().size() == 0) {
+                filteredSchedules.add(schedule);
+            } else {
+                String profileName = schedule.getProfileIdentifiers().get(0);
+
+                if (!schedule.getName().equals(profileName + Schedule.TIMER_SCHEDULE_POSTFIX)) {
+                    filteredSchedules.add(schedule);
+                }
+            }
+        }
+
+        if (this.scheduleListViewAdapter != null) {
+            this.scheduleListViewAdapter.setSchedules(filteredSchedules);
+        }
+
+        this.schedules = filteredSchedules;
     }
 }
