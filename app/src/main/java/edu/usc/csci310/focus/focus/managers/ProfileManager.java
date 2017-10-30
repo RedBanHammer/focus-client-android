@@ -85,6 +85,13 @@ public class ProfileManager {
         }
     }
 
+    /**
+     * Purge all saved profiles.
+     */
+    public void removeAllProfiles() {
+        this.storageManager.removeObjectsWithPrefix(PROFILE_GROUP_IDENTIFIER);
+    }
+
     /*
     * ----------------------------GETTERS------------------------------------
     * */

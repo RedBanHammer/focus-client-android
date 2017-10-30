@@ -27,7 +27,7 @@ public class ScheduleManager {
 
     public WeakReference<ScheduleManagerDelegate> delegate;
 
-    private StorageManager storage = StorageManager.getDefaultManager();
+    private StorageManager storageManager = StorageManager.getDefaultManager();
 
     /*
     * Constructor for Schedule Manager
@@ -37,7 +37,7 @@ public class ScheduleManager {
     }
 
     public ScheduleManager(StorageManager storageManager, ScheduleManagerDelegate delegate) {
-        storage = storageManager;
+        this.storageManager = storageManager;
         this.delegate = new WeakReference<ScheduleManagerDelegate>(delegate);
     }
 
@@ -50,7 +50,7 @@ public class ScheduleManager {
             return;
         }
 
-        storage.setObject(schedule, SCHEDULE_GROUP_IDENTIFIER, schedule.getIdentifier());
+        storageManager.setObject(schedule, SCHEDULE_GROUP_IDENTIFIER, schedule.getIdentifier());
 
         ScheduleManagerDelegate delegateRef = this.delegate.get();
         if (delegateRef != null) {
@@ -83,13 +83,20 @@ public class ScheduleManager {
         Schedule removedSchedule = this.getScheduleWithIdentifier(scheduleIdentifier);
 
         if (removedSchedule != null) {
-            storage.removeObject(SCHEDULE_GROUP_IDENTIFIER, scheduleIdentifier);
+            this.storageManager.removeObject(SCHEDULE_GROUP_IDENTIFIER, scheduleIdentifier);
 
             ScheduleManagerDelegate delegateRef = this.delegate.get();
             if (delegateRef != null) {
                 delegateRef.managerDidRemoveSchedule(this, removedSchedule);
             }
         }
+    }
+
+    /**
+     * Purge all saved schedules.
+     */
+    public void removeAllSchedules() {
+        this.storageManager.removeObjectsWithPrefix(SCHEDULE_GROUP_IDENTIFIER);
     }
 
     /*
@@ -123,7 +130,7 @@ public class ScheduleManager {
             return null;
         }
 
-        ArrayList<Serializable> serials = storage.getObjectsWithPrefix(SCHEDULE_GROUP_IDENTIFIER);
+        ArrayList<Serializable> serials = storageManager.getObjectsWithPrefix(SCHEDULE_GROUP_IDENTIFIER);
         ArrayList<Schedule> schedules = new ArrayList<Schedule>();
 
         for (Serializable obj : serials) {
@@ -150,7 +157,7 @@ public class ScheduleManager {
             return null;
         }
 
-        return storage.getObject(SCHEDULE_GROUP_IDENTIFIER, identifier);
+        return storageManager.getObject(SCHEDULE_GROUP_IDENTIFIER, identifier);
     }
 
     /*
@@ -158,7 +165,7 @@ public class ScheduleManager {
     * */
     public @NonNull ArrayList<Schedule> getAllSchedules()
     {
-        ArrayList<Serializable> serials = storage.getObjectsWithPrefix(SCHEDULE_GROUP_IDENTIFIER);
+        ArrayList<Serializable> serials = storageManager.getObjectsWithPrefix(SCHEDULE_GROUP_IDENTIFIER);
         ArrayList<Schedule> schedules = new ArrayList<Schedule>();
 
         for (Serializable obj : serials) {
