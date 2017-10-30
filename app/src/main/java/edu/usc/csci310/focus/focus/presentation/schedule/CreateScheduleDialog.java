@@ -76,7 +76,7 @@ public class CreateScheduleDialog extends DialogFragment implements TextView.OnE
 
         Dialog dialog = builder.create();
 
-        mEditText = (EditText) view.findViewById(R.id.schedule_name);
+        mEditText = (EditText) view.findViewById(R.id.create_schedule_name);
 
         // set this instance as callback for editor action
         mEditText.setOnEditorActionListener(this);

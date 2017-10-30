@@ -6,7 +6,7 @@
 
     <!-- TODO: Update blank fragment layout -->
     <EditText
-        android:id="@+id/schedule_name"
+        android:id="@+id/create_schedule_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:hint="@string/set_schedule_name" />
