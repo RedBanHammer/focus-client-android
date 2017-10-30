@@ -16,7 +16,9 @@ import org.junit.runner.RunWith;
 
 import edu.usc.csci310.focus.focus.MainActivity;
 import edu.usc.csci310.focus.focus.R;
+import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 
+import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 
 import static android.support.test.espresso.action.ViewActions.click;
@@ -28,6 +30,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.anything;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.*;
 
 /**
@@ -38,6 +42,7 @@ public class ScheduleInterfaceControllerTest {
 
     /**
      * Perform action of waiting for a specific time.
+     *
      * @source https://stackoverflow.com/a/35924943
      */
     public static ViewAction waitFor(final long millis) {
@@ -63,16 +68,14 @@ public class ScheduleInterfaceControllerTest {
     @Rule
     public ActivityTestRule<MainActivity> activityTestRule =
             new ActivityTestRule<>(MainActivity.class);
+
     @Before
-    public void init(){
+    public void init() {
         onView(withId(R.id.viewPager)).check(matches(isDisplayed()));
         onView(withId(R.id.viewPager)).perform(swipeLeft());
-
         onView(isRoot()).perform(waitFor(1000));
-
-        ViewPager viewPager = (ViewPager) activityTestRule.getActivity().findViewById(R.id.viewPager);
-        ViewPagerIdlingResource idling = new ViewPagerIdlingResource(viewPager, "View Pager");
     }
+
     @Test
     public void testCreateSchedule() throws Exception {
         onView(withId(R.id.addScheduleButton)).perform(click());
@@ -81,65 +84,21 @@ public class ScheduleInterfaceControllerTest {
         onView(withId(R.id.create_schedule_name)).perform(typeText("Schedule 1"));
 
         onView(isRoot()).perform(waitFor(500));
-        
+
         onView(withId(android.R.id.button1)).perform(click());
     }
 
+    // Requires a Schedule to be created
     @Test
     public void testOpenSchedule() throws Exception {
-
-        onView(withText("OK")).check(matches(isDisplayed()));
-        onView(withId(R.id.create_schedule_name)).check(matches(isDisplayed()));
-
-//        perform(typeText("Schedule 1"));
-//        onView(withId(android.R.id.button1)).perform(click());
+        onView(isRoot()).perform(waitFor(1500));
+        onData(anything()).inAdapterView(withId(R.id.scheduleListView)).atPosition(0).perform(click());
     }
 
     @Test
-    public void testOpenAddProfile() throws Exception{
+    public void testOpenAddProfile() throws Exception {
+        testOpenSchedule();
         onView(withId(R.id.add_profile)).perform(click());
         onView(withId(R.id.profile_spinner)).check(matches(isDisplayed()));
-    }
-
-    public class ViewPagerIdlingResource implements IdlingResource {
-
-        private final String mName;
-
-        private boolean mIdle = true; // Default to idle since we can't query the scroll state.
-
-        private ResourceCallback mResourceCallback;
-
-        public ViewPagerIdlingResource(ViewPager viewPager, String name) {
-            viewPager.addOnPageChangeListener(new ViewPagerListener());
-            mName = name;
-        }
-
-        @Override
-        public String getName() {
-            return mName;
-        }
-
-        @Override
-        public boolean isIdleNow() {
-            return mIdle;
-        }
-
-        @Override
-        public void registerIdleTransitionCallback(ResourceCallback resourceCallback) {
-            mResourceCallback = resourceCallback;
-        }
-
-        private class ViewPagerListener extends ViewPager.SimpleOnPageChangeListener {
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                mIdle = (state == ViewPager.SCROLL_STATE_IDLE
-                        // Treat dragging as idle, or Espresso will block itself when swiping.
-                        || state == ViewPager.SCROLL_STATE_DRAGGING);
-                if (mIdle && mResourceCallback != null) {
-                    mResourceCallback.onTransitionToIdle();
-                }
-            }
-        }
     }
 }
