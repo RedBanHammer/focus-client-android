@@ -22,10 +22,19 @@ public class Timer implements Serializable {
     private Profile profile;
     private long minutes;
     private CountDownTimer countdown;
+    private ScheduleManager scheduleManager = ScheduleManager.getDefaultManager();
+    private ProfileManager profileManager = ProfileManager.getDefaultManager();
 
     public Timer(Profile profile) {
         this.minutes = 0;
         this.profile = profile;
+    }
+
+    public Timer(Profile profile, ProfileManager pm, ScheduleManager sm) {
+        this.minutes = 0;
+        this.profile = profile;
+        this.profileManager = pm;
+        this.scheduleManager = sm;
     }
 
     /**
@@ -42,7 +51,7 @@ public class Timer implements Serializable {
     public void start() {
         long ms = this.minutes * 60 * 1000;
         this.profile.setIsActive(true);
-        ProfileManager.getDefaultManager().setProfile(this.profile);
+        this.profileManager.setProfile(this.profile);
 
         String name = this.profile.getIdentifier() + Schedule.TIMER_SCHEDULE_POSTFIX;
         final Schedule createdSchedule = new Schedule(name);
@@ -60,7 +69,7 @@ public class Timer implements Serializable {
         createdSchedule.setIsActive(true);
 
         // setSchedule with ScheduleManager
-        ScheduleManager.getDefaultManager().setSchedule(createdSchedule);
+        this.scheduleManager.setSchedule(createdSchedule);
 
         this.countdown = new CountDownTimer(ms, 1000) {
 

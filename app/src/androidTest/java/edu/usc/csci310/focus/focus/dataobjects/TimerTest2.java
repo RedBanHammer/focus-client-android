@@ -1,6 +1,7 @@
 package edu.usc.csci310.focus.focus.dataobjects;
 
 import android.content.Context;
+import android.os.Looper;
 import android.support.test.InstrumentationRegistry;
 import android.test.mock.MockContext;
 
@@ -17,6 +18,7 @@ import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
@@ -31,50 +33,48 @@ import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TimerTest2 {
-    private static Profile profile;
     private static Timer timer;
     Context context;
 
     @Rule
     public TemporaryFolder tmpFileDir = new TemporaryFolder();
 
-    @Before
-    public void setupForEachTest() throws Exception {
-        //
-        context = InstrumentationRegistry.getInstrumentation().getContext();
-        StorageManager testedManager = StorageManager.getDefaultManagerWithContext(context);
-        File baseDir = this.tmpFileDir.newFolder("storage-test");
-
-        profile = new Profile("profileName");
-        App a = new App("appName", "appIdentifier");
-        profile.addApp(a);
-        StorageManager.getDefaultManagerWithContext(context).setObject(profile, "Profiles", profile.getIdentifier());
-
-        timer = new Timer(profile);
-
-        timer.setTime(10);
-    }
+    @Mock
+    private ProfileManager mockedProfileManager = ProfileManager.getDefaultManager();
+    private ScheduleManager mockedScheduleManger = ScheduleManager.getDefaultManager();
 
     @Test
     public void testStart() throws Exception {
+        Profile profile = new Profile("profileName");
+        App a = new App("appName", "appIdentifier");
+        profile.addApp(a);
+        this.mockedProfileManager.setProfile(profile);
+
+        timer = new Timer(profile, this.mockedProfileManager, this.mockedScheduleManger);
+
+        timer.setTime(10);
+
+        Looper.prepare();
+
         timer.start();
-        profile = StorageManager.getDefaultManagerWithContext(context)
-                .getObject("Profiles", profile.getIdentifier());
+
+        profile = this.mockedProfileManager.getProfileWithIdentifier(profile.getIdentifier());
 
         // assert profile is active
+        assertNotNull(profile);
         assertTrue(profile.getIsActive());
 
         // assert schedule exists
         String scheduleName = profile.getIdentifier() + Schedule.TIMER_SCHEDULE_POSTFIX;
-        ArrayList<Serializable> serials = StorageManager.getDefaultManagerWithContext(context).getObjectsWithPrefix("Schedules");
-        ArrayList<Schedule> schedules = new ArrayList<Schedule>();
-
+        //ArrayList<Serializable> serials = StorageManager.getDefaultManagerWithContext(context).getObjectsWithPrefix("Schedules");
+        ArrayList<Schedule> schedules = this.mockedScheduleManger.getAllSchedules();
+        /*
         for (Serializable obj : serials) {
             if (obj != null) {
                 schedules.add((Schedule) obj);
             }
         }
-
+        */
         Schedule schedule = null;
         for (Schedule s : schedules) {
             if (s.getName().equals(scheduleName)) {
@@ -88,8 +88,8 @@ public class TimerTest2 {
         assertTrue(schedule.getIsActive());
 
         // assert schedule has profile
-        ArrayList<String> identifiers = schedule.getActiveProfileIdentifiers();
-        Profile schedulesProfile = ProfileManager.getDefaultManager().getProfileWithIdentifier(identifiers.get(0));
+        ArrayList<String> identifiers = schedule.getActiveProfileIdentifiers(this.mockedProfileManager);
+        Profile schedulesProfile = this.mockedProfileManager.getProfileWithIdentifier(identifiers.get(0));
         assertEquals(profile, schedulesProfile);
 
         // stop with that for now...
