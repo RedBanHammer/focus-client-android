@@ -35,7 +35,7 @@ public class ScheduleManagerTest {
     private ArrayList<Schedule> testSchedules = new ArrayList<>();
 
     @Test
-    public void getScheduleManager() throws Exception {
+    public void testGetScheduleManager() throws Exception {
         ScheduleManager expectedManager = ScheduleManager.getDefaultManager();
         assertEquals(expectedManager, ScheduleManager.getDefaultManager());
     }
