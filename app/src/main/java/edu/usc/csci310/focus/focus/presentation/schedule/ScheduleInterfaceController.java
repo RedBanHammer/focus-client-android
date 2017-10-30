@@ -124,14 +124,9 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
                 posButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //send new name to schedule manager
                         String newName = text.getText().toString();
-                        schedule.setName(newName);
-                        ScheduleManager.getDefaultManager().setSchedule(schedule);
-
-                        //exit the dialog, reload the name
-                        scheduleName.setText(newName);
                         editNameDialog.dismiss();
+                        didFinishEditingScheduleName(newName);
                     }
                 });
 
@@ -148,6 +143,36 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
             }
 
         });
+    }
+
+    private void didFinishEditingScheduleName(String newName) {
+        if (newName.equals("")) {
+            // Don't accept blank names, show an error
+            this.showInvalidNameError();
+            return;
+        }
+
+
+        //send new name to schedule manager
+        schedule.setName(newName);
+        ScheduleManager.getDefaultManager().setSchedule(schedule);
+
+        //exit the dialog, reload the name
+        scheduleName.setText(newName);
+    }
+
+    private void showInvalidNameError() {
+        new AlertDialog.Builder(this)
+                .setTitle("Invalid Name")
+                .setMessage("You cannot enter a blank name for a schedule.")
+                .setPositiveButton("Okay", new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+
+                })
+                .show();
     }
 
     private void initializeDeleteButton() {

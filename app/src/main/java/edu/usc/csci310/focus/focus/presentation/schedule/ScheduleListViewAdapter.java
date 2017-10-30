@@ -32,21 +32,7 @@ public class ScheduleListViewAdapter extends ArrayAdapter<Schedule> {
     public void setSchedules(@NonNull ArrayList<Schedule> schedules) {
         this.schedules.clear();
 
-        // Filter schedules to not include timer schedules
-        ArrayList<Schedule> filteredSchedules = new ArrayList<Schedule>();
-        for (Schedule schedule : schedules) {
-            if (schedule.getProfileIdentifiers().size() == 0) {
-                filteredSchedules.add(schedule);
-            } else {
-                String profileName = schedule.getProfileIdentifiers().get(0);
-
-                if (!schedule.getName().equals(profileName + Schedule.TIMER_SCHEDULE_POSTFIX)) {
-                    filteredSchedules.add(schedule);
-                }
-            }
-        }
-
-        this.schedules.addAll(filteredSchedules);
+        this.schedules.addAll(schedules);
         this.notifyDataSetChanged();
     }
 
