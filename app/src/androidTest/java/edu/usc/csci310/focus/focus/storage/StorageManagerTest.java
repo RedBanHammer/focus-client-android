@@ -17,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import javax.annotation.concurrent.ThreadSafe;
 
@@ -96,11 +97,12 @@ public class StorageManagerTest {
         StorageManager testedManager = StorageManager.getDefaultManagerWithContext(context);
         File baseDir = this.tmpFileDir.newFolder("storage-test");
 
-        ArrayList<Profile> expectedProfiles = new ArrayList<Profile>();
+        HashSet<Profile> expectedProfiles = new HashSet<Profile>();
         String testGroup = "profiles-test";
+        String testGroup2 = "profiles-test-2";
 
         // Set and get multiple test serializable objects with the same test group.
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 100; i++) {
             Profile expectedProfile = new Profile("A Test Profile " + i);
 
             ArrayList<App> expectedApps = new ArrayList<App>();
@@ -117,9 +119,25 @@ public class StorageManagerTest {
             assertEquals(expectedProfile.getApps(), testedProfile.getApps());
         }
 
+        // Set and get multiple test serializable objects with a different test group.
+        for (int i = 0; i < 100; i++) {
+            Profile expectedProfile = new Profile("A Test Profile " + i);
+
+            ArrayList<App> expectedApps = new ArrayList<App>();
+            expectedApps.add(new App("A Test App", "com.example.app.test"));
+            expectedProfile.setApps(expectedApps);
+
+            testedManager.setObject(expectedProfile, testGroup2, expectedProfile.getIdentifier(), baseDir.getAbsolutePath());
+
+            Profile testedProfile = (Profile)testedManager.getObject(testGroup2, expectedProfile.getIdentifier(), baseDir.getAbsolutePath());
+            assertEquals(expectedProfile, testedProfile);
+            assertEquals(expectedProfile.getName(), testedProfile.getName());
+            assertEquals(expectedProfile.getApps(), testedProfile.getApps());
+        }
+
         // Get all expected serializable objects
         ArrayList<Serializable> rawTestedProfiles = testedManager.getObjectsWithPrefix(testGroup, baseDir.getAbsolutePath());
-        ArrayList<Profile> testedProfiles = new ArrayList<Profile>();
+        HashSet<Profile> testedProfiles = new HashSet<Profile>();
         for (Serializable rawProfile : rawTestedProfiles) {
             if (rawProfile == null) {
                 continue;
@@ -133,6 +151,11 @@ public class StorageManagerTest {
         boolean success = testedManager.removeObjectsWithPrefix(testGroup, baseDir.getAbsolutePath());
         assertEquals(true, success);
         assertEquals(new ArrayList<Serializable>(), testedManager.getObjectsWithPrefix(testGroup, baseDir.getAbsolutePath()));
+
+        // Remove all serializable objects
+        success = testedManager.removeObjectsWithPrefix(testGroup2, baseDir.getAbsolutePath());
+        assertEquals(true, success);
+        assertEquals(new ArrayList<Serializable>(), testedManager.getObjectsWithPrefix(testGroup2, baseDir.getAbsolutePath()));
     }
 
     @Test

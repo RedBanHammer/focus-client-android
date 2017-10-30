@@ -56,4 +56,9 @@ public class NamedObject implements Serializable {
         NamedObject other = (NamedObject)obj;
         return (other.getIdentifier().equals(this.getIdentifier()));
     }
+
+    @Override
+    public int hashCode() {
+        return this.getIdentifier().hashCode();
+    }
 }
