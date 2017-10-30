@@ -13,12 +13,6 @@
         android:layout_weight="1.0"
         android:orientation="vertical"
         >
-        <ListView
-            android:id="@+id/profileListView"
-            android:scrollbarAlwaysDrawVerticalTrack="true"
-            android:scrollbars="vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"></ListView>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/addProfileButton"
@@ -29,5 +23,12 @@
             app:srcCompat="@android:drawable/ic_input_add">
 
         </android.support.design.widget.FloatingActionButton>
+
+        <ListView
+            android:id="@+id/profileListView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:scrollbars="vertical"></ListView>
     </FrameLayout>
 </LinearLayout>
