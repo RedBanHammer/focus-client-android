@@ -39,11 +39,6 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
     private View view;
     private Profile profile;
 
-    private long duration;
-    private CountDownTimer countdown;
-    private ProfileManager profileManager = ProfileManager.getDefaultManager();
-    private ScheduleManager scheduleManager = ScheduleManager.getDefaultManager();
-
     /**
      * Update the data set and reload the view.
      * @param profiles The new list of profiles to display.
@@ -136,26 +131,6 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
 
         // Return the completed view to render on screen
         return view;
-    }
-
-    public void setTimer (long dur) {
-        duration = dur;
-        duration = 1;
-
-        profile = profileManager.getProfileWithIdentifier(profile.getIdentifier());
-
-        long ms = duration * 60 * 1000 / 10;
-        countdown = new CountDownTimer(ms, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                // profile has been turned on, we just wait
-            }
-
-            public void onFinish() {
-                //stopTimer();
-                //toggleButtonView.setChecked(false);
-            }
-        }.start();
     }
 
     // View lookup cache that populates the listview

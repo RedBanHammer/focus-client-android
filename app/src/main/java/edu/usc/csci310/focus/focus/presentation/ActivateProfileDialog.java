@@ -93,13 +93,11 @@ public class ActivateProfileDialog extends AppCompatActivity {
                 int mins = minutesPicker.getValue();
                 minutes = mins + (hrs * 60);
 
-                // instead of all this, package it as a schedule?
+                //package profile as a schedule using Timer
                 timer.setTime(minutes);
                 timer.start();
 
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra("profile", profile);
-                returnIntent.putExtra("duration", minutes);
                 setResult(RESULT_OK, returnIntent);
                 finish();
             }

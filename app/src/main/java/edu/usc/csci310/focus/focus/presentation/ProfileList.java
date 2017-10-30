@@ -110,17 +110,6 @@ public class ProfileList extends Fragment {
             System.out.println("Activity result from creating a profile was null");
             return;
         }
-
-        Profile profile = (Profile) data.getExtras().get("profile");
-        profile.setIsActive(true);
-        ProfileManager.getDefaultManager().setProfile(profile);
-
-        long duration = (long) data.getExtras().get("duration");
-        //this.profileListViewAdapter.setTimer(duration);
-
-        // set toggle to whether the profile is active or not
-        //ToggleButton toggle = (ToggleButton) view.findViewById(R.id.toggle_profile_button);
-        //toggle.setChecked(profile.getIsActive());
     }
 
     public void render() {

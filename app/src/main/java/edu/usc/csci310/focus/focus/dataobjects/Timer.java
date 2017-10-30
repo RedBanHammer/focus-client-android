@@ -22,10 +22,19 @@ public class Timer implements Serializable {
     private Profile profile;
     private long minutes;
     private CountDownTimer countdown;
+    private ScheduleManager scheduleManager = ScheduleManager.getDefaultManager();
+    private ProfileManager profileManager = ProfileManager.getDefaultManager();
 
     public Timer(Profile profile) {
         this.minutes = 0;
         this.profile = profile;
+    }
+
+    public Timer(Profile profile, ProfileManager pm, ScheduleManager sm) {
+        this.minutes = 0;
+        this.profile = profile;
+        this.profileManager = pm;
+        this.scheduleManager = sm;
     }
 
     /**
@@ -42,7 +51,7 @@ public class Timer implements Serializable {
     public void start() {
         long ms = this.minutes * 60 * 1000;
         this.profile.setIsActive(true);
-        ProfileManager.getDefaultManager().setProfile(this.profile);
+        this.profileManager.setProfile(this.profile);
 
         String name = this.profile.getIdentifier() + Schedule.TIMER_SCHEDULE_POSTFIX;
         final Schedule createdSchedule = new Schedule(name);
@@ -54,20 +63,19 @@ public class Timer implements Serializable {
         timer.addTime(now.get(Calendar.DAY_OF_WEEK)-1, nowMinutes, this.minutes);
 
         // add profile to schedule
-        createdSchedule.addProfile(profile.getIdentifier(), timer);
+        createdSchedule.addProfile(this.profile.getIdentifier(), timer);
 
         // set repeat to false, active to true
         createdSchedule.setIsActive(true);
 
         // setSchedule with ScheduleManager
-        ScheduleManager.getDefaultManager().setSchedule(createdSchedule);
+        this.scheduleManager.setSchedule(createdSchedule);
 
         this.countdown = new CountDownTimer(ms, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 // profile has been turned on, we just wait
-                // TODO: countdown time manually, show to user
-
+                // countdown time manually, show to user
                 // TODO: Use android broadcast notification intent channel instead of static vars
                 ProfileList.profileList.render();
             }
@@ -84,15 +92,24 @@ public class Timer implements Serializable {
     public void stop() {
         this.minutes = 0;
         this.countdown.cancel();
+        this.countdown = null;
 
         this.profile.setIsActive(false);
-        ProfileManager.getDefaultManager().setProfile(profile);
+        this.profileManager.setProfile(profile);
 
         // find schedule with profile.name + " Timer"
-        Schedule s = ScheduleManager.getDefaultManager().
+        Schedule s = this.scheduleManager.
                 getScheduleWithName(this.profile.getIdentifier() + Schedule.TIMER_SCHEDULE_POSTFIX);
-        // delete it
-        ScheduleManager.getDefaultManager().removeSchedule(s);
+        // Remove the schedule
+        this.scheduleManager.removeSchedule(s);
+    }
+
+    /**
+     * Whether the timer is currently counting down.
+     * @return YES if the timer is counting down, NO otherwise.
+     */
+    public boolean isRunning() {
+        return (this.countdown != null);
     }
 
 }
