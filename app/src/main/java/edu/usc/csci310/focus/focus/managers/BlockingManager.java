@@ -179,6 +179,11 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
                 if (!currentUniqueActiveProfiles.containsKey(profileIdentifier)) {
                     //find new profile to be blocked
                     Profile profile = this.profileManager.getProfileWithIdentifier(profileIdentifier);
+
+                    if (profile == null) {
+                        continue;
+                    }
+
                     currentUniqueActiveProfiles.put(profileIdentifier, profile);
 
                     //if we found a profile that wasn't blocked before and is now blocked
@@ -199,6 +204,11 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
                 //profile is no longer being blocked, send notification
                 //make temp profile
                 Profile p = this.profileManager.getProfileWithIdentifier(removedProfile);
+
+                if (p == null) {
+                    continue;
+                }
+
                 String title = "Deactivated Profile";
                 String message = "Profile '" + p.getName() + "' has been deactivated";
                 issueNotification(title, message);
