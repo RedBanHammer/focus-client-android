@@ -2,6 +2,7 @@ package edu.usc.csci310.focus.focus.presentation;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.intent.Intents;
@@ -10,6 +11,10 @@ import android.support.test.runner.AndroidJUnit4;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitor;
 import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
 import android.support.test.runner.lifecycle.Stage;
+import android.support.test.uiautomator.By;
+import android.support.test.uiautomator.UiDevice;
+import android.support.test.uiautomator.UiObject2;
+import android.support.test.uiautomator.Until;
 
 import org.junit.After;
 import org.junit.Before;
@@ -41,6 +46,7 @@ import static org.junit.Assert.*;
 
 @RunWith(AndroidJUnit4.class)
 public class ProfileInterfaceControllerTest {
+    private String NOTIFICATION_TITLE = "Active Profile";
     @Rule
     public IntentsTestRule<MainActivity> mActivityRule =
             new IntentsTestRule(MainActivity.class);
@@ -69,6 +75,21 @@ public class ProfileInterfaceControllerTest {
         onView(withId(R.id.submitProfileButton)).perform(click());
         //check that the name changed
         onView(withId(R.id.profileName)).check(matches(withText("changedName")));
+    }
+
+    @Test
+    public void testNotificationOnToggle() {
+        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+
+        ///click the toggle
+        onView(withId(R.id.toggle_profile_button)).perform(click());
+        onView(withId(R.id.startButton)).perform(click());
+        device.openNotification();
+        device.wait(Until.hasObject(By.text(NOTIFICATION_TITLE)), 10000);
+        UiObject2 title = device.findObject(By.text(NOTIFICATION_TITLE));
+        assertEquals(NOTIFICATION_TITLE, title.getText());
+        title.click();
+        device.wait(Until.hasObject(By.text(MainActivity.class.getName())), 10000);
     }
 
 
