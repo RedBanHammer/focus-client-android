@@ -1,5 +1,7 @@
 package edu.usc.csci310.focus.focus.managers;
 
+import android.support.annotation.Nullable;
+
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 
 
@@ -17,5 +19,5 @@ abstract interface ScheduleManagerDelegate {
     /*
     * managerDidRemoveSchedule method. Takes in a ScheduleManager object and a Schedule object
     */
-    public void managerDidRemoveSchedule(ScheduleManager manager, Schedule schedule);
+    public void managerDidRemoveSchedule(ScheduleManager manager, @Nullable Schedule schedule);
 }

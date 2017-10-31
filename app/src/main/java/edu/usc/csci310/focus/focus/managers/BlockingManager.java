@@ -250,12 +250,16 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
     /** ProfileManagerDelegate implementation **/
 
     public void managerDidUpdateProfile(ProfileManager manager, Profile profile) {
-        System.out.println("[BlockingManager] Got profile was updated: " + profile.getName());
+        if (profile != null) {
+            System.out.println("[BlockingManager] Got profile was updated: " + profile.getName());
+        }
         this.updateBlockingModuleApps();
     }
 
     public void managerDidRemoveProfile(ProfileManager manager, Profile profile) {
-        System.out.println("[BlockingManager] Got profile was removed: " + profile.getName());
+        if (profile != null) {
+            System.out.println("[BlockingManager] Got profile was removed: " + profile.getName());
+        }
         this.updateBlockingModuleApps();
     }
 
@@ -263,11 +267,15 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
     /** ScheduleManagerDelegate implementation **/
 
     public void managerDidUpdateSchedule(ScheduleManager manager, Schedule schedule) {
-        System.out.println("[BlockingManager] Got schedule was updated: " + schedule.getName());
+        if (schedule != null) {
+            System.out.println("[BlockingManager] Got schedule was updated: " + schedule.getName());
+        }
         this.updateBlockingModuleApps();
     }
     public void managerDidRemoveSchedule(ScheduleManager manager, Schedule schedule) {
-        System.out.println("[BlockingManager] Got schedule was removed: " + schedule.getName());
+        if (schedule != null) {
+            System.out.println("[BlockingManager] Got schedule was removed: " + schedule.getName());
+        }
         this.updateBlockingModuleApps();
     }
 

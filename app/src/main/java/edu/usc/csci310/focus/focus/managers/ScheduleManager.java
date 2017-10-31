@@ -97,6 +97,11 @@ public class ScheduleManager {
      */
     public void removeAllSchedules() {
         this.storageManager.removeObjectsWithPrefix(SCHEDULE_GROUP_IDENTIFIER);
+
+        ScheduleManagerDelegate delegateRef = this.delegate.get();
+        if (delegateRef != null) {
+            delegateRef.managerDidRemoveSchedule(this, null);
+        }
     }
 
     /*

@@ -1,5 +1,7 @@
 package edu.usc.csci310.focus.focus.managers;
 
+import android.support.annotation.Nullable;
+
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 
 /**
@@ -19,5 +21,5 @@ abstract interface ProfileManagerDelegate {
      * @param manager The ProifileManager that is sending the event.
      * @param profile The profile that was deleted.
      */
-    public void managerDidRemoveProfile(ProfileManager manager, Profile profile);
+    public void managerDidRemoveProfile(ProfileManager manager, @Nullable Profile profile);
 }

@@ -90,6 +90,11 @@ public class ProfileManager {
      */
     public void removeAllProfiles() {
         this.storageManager.removeObjectsWithPrefix(PROFILE_GROUP_IDENTIFIER);
+
+        ProfileManagerDelegate delegateRef = this.delegate.get();
+        if (delegateRef != null) {
+            delegateRef.managerDidRemoveProfile(this, null);
+        }
     }
 
     /*
