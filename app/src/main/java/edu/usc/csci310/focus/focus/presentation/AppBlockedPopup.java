@@ -70,9 +70,11 @@ public class AppBlockedPopup extends DialogFragment {
                 message = message + "• " + s + "\n";
             }
             if (blockingProfiles.size() > 0) {
-                message = message + "and ";
+                message = message + "\nand ";
             }
-        } else if (blockingProfiles.size() > 0) {
+        }
+
+        if (blockingProfiles.size() > 0) {
             message = message + "the following profile" +
                     (blockingProfiles.size() != 1 ? "s" : "") + ":\n\n";
 
