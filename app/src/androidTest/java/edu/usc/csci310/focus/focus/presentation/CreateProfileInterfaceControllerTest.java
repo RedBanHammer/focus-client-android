@@ -5,6 +5,8 @@ import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +14,8 @@ import org.junit.runner.RunWith;
 import edu.usc.csci310.focus.focus.MainActivity;
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.App;
+import edu.usc.csci310.focus.focus.managers.BlockingManager;
+import edu.usc.csci310.focus.focus.managers.ProfileManager;
 
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static android.support.test.espresso.Espresso.onData;
@@ -38,7 +42,16 @@ public class CreateProfileInterfaceControllerTest {
     public IntentsTestRule<MainActivity> mActivityRule =
             new IntentsTestRule(MainActivity.class);
 
+    @Before
+    public void setUp() {
+        BlockingManager.createBlockingManagerWithContext(this.mActivityRule.getActivity().getApplicationContext());
+        ProfileManager.getDefaultManager().removeAllProfiles();
 
+    }
+    @After
+    public void tearDown() {
+        ProfileManager.getDefaultManager().removeAllProfiles();
+    }
     @Test
     public void testOpenCreateNewProfile() {
         //click the add new profile button
