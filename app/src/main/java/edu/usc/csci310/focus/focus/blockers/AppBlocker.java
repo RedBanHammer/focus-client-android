@@ -86,7 +86,7 @@ public class AppBlocker extends IntentService implements Blocker {
                             break;
                         }
                     }
-                    
+
 //                }
 //            }
 
