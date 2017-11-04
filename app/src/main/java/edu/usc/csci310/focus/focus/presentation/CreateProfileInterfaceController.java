@@ -110,8 +110,9 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String name = tv.getText().toString();
                 //first check if the name is empty
-                if(tv.getText().toString().matches(""))
+                if(name.matches(""))
                 {
                     //they didn't enter a name
                     errorDialog();
@@ -121,8 +122,13 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
                 {
                     appErrorDialog();
                 }
+                else if(checkDuplicateProfile(name))
+                {
+                    duplicateNameDialog();
+                }
                 else
                 {
+
                     //if we are creating a new profile and not editing an old one
                     if(profileIfEditing == null) {
                         profileIfEditing = new Profile(tv.getText().toString());
@@ -193,6 +199,33 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
 
                 })
                 .show();
+    }
+    private void duplicateNameDialog() {
+        new android.app.AlertDialog.Builder(this)
+                .setTitle("Duplicate name")
+                .setMessage("The name you entered is already taken.")
+                .setPositiveButton("Okay", new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+
+                })
+                .show();
+    }
+
+    private boolean checkDuplicateProfile(String newProfileName){
+        ArrayList<Profile> profiles = ProfileManager.getDefaultManager().getAllProfiles();
+        //is the name a duplicate of a previous profile?
+        for(Profile p : profiles)
+        {
+            if(p.getName().equals(newProfileName))
+            {
+                //name already exists
+                return true;
+            }
+        }
+        return false;
     }
 
     /*
