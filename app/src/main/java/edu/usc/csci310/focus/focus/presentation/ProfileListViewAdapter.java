@@ -80,10 +80,15 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
         Schedule timerSchedule = ScheduleManager.getDefaultManager().getScheduleWithName(this.profile.getIdentifier() + Schedule.TIMER_SCHEDULE_POSTFIX);
 
         if (timerSchedule != null) {
-            Long minutesRemaining = timerSchedule.getTimeRemainingWithProfileIdentifier(profile.getIdentifier());
-            viewHolder.profileTime.setText(
-                    minutesRemaining.toString() +
-                    " minute" + (minutesRemaining != 1 ? "s" : "") + " left");
+            ArrayList<Long> timesRemaining = timerSchedule.getTimesRemainingWithProfileIdentifier(profile.getIdentifier());
+            if (timesRemaining.size() > 0) {
+                Long minutesRemaining = timesRemaining.get(0);
+                viewHolder.profileTime.setText(
+                        minutesRemaining.toString() +
+                                " minute" + (minutesRemaining != 1 ? "s" : "") + " left");
+            } else {
+                viewHolder.profileTime.setText(PLACEHOLDER_TIMER_TEXT);
+            }
         } else {
             viewHolder.profileTime.setText(PLACEHOLDER_TIMER_TEXT);
         }

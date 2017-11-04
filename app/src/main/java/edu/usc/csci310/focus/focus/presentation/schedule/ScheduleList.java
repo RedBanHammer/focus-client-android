@@ -125,10 +125,11 @@ public class ScheduleList extends Fragment implements CreateScheduleDialog.EditN
         // Filter schedules to not include timer schedules
         ArrayList<Schedule> filteredSchedules = new ArrayList<Schedule>();
         for (Schedule schedule : newSchedules) {
-            if (schedule.getProfileIdentifiers().size() == 0) {
+            ArrayList<String> identifiers = schedule.getScheduledProfileIdentifiers();
+            if (identifiers.size() == 0) {
                 filteredSchedules.add(schedule);
             } else {
-                String profileName = schedule.getProfileIdentifiers().get(0);
+                String profileName = identifiers.get(0);
 
                 if (!schedule.getName().equals(profileName + Schedule.TIMER_SCHEDULE_POSTFIX)) {
                     filteredSchedules.add(schedule);

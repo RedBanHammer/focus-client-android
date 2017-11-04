@@ -6,12 +6,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.util.Pair;
 
 import java.util.ArrayList;
 
 import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
+import edu.usc.csci310.focus.focus.dataobjects.RecurringTime;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
+import edu.usc.csci310.focus.focus.dataobjects.ScheduledProfile;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
 import edu.usc.csci310.focus.focus.managers.ScheduleManager;
 
@@ -33,9 +36,14 @@ public class AppBlockedPopup extends DialogFragment {
         ArrayList<String> blockingProfiles = new ArrayList<String>();
 
         for (Schedule s : schedules) {
-            String profileName = s.getProfileIdentifiers().get(0);
+            ArrayList<ScheduledProfile> scheduledProfiles = s.getScheduledProfiles();
+            if (scheduledProfiles.size() == 0) {
+                continue;
+            }
 
-            if (s.getName().equals(profileName + Schedule.TIMER_SCHEDULE_POSTFIX)) {
+            String profileIdentifier = scheduledProfiles.get(0).identifier;
+
+            if (s.getName().equals(profileIdentifier + Schedule.TIMER_SCHEDULE_POSTFIX)) {
                 continue;
             }
 
