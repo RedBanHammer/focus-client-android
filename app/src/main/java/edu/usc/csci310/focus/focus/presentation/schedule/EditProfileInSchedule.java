@@ -26,7 +26,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
@@ -39,12 +41,12 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
     public static final String START_HOUR_EDIT = "start_houre";
     public static final String START_MIN_EDIT = "start_minse";
     public static final String DID_DELETE_PROFILE = "did_delete";
-    public static final String PROFILE_ID = "profile_id";
-
+    public static final String OLD_PROFILE_ID = "profile_id";
+    public static final String NEW_PROFILE_ID = "new_profile_id";
 
     private CheckBox [] daysCB = new CheckBox[7];
     private Boolean [] didCheckBoxes = new Boolean[7];
-    private TextView profileName;
+    private Spinner profileNameSpinner;
     private Button startTimeButton;
     private EditText hourText, minText;
     private Button updateProfileButton, deleteProfileButton;
@@ -54,13 +56,14 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
     private int mins;
     private int startHours;
     private int startMins;
-    private String profileID;
+    private String oldProfileID, newProfileId;
+    private String profileName;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile_in_schedule);
 
         startTimeButton = (Button)findViewById(R.id.start_time_button);
-        profileName = (TextView) findViewById(R.id.profile_name);
+        profileNameSpinner = (Spinner) findViewById(R.id.profile_name_spinner);
         hourText = (EditText) findViewById(R.id.hours_field);
         minText = (EditText) findViewById(R.id.mins_field);
 
@@ -76,8 +79,7 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
 
         Intent i = getIntent();
         ArrayList<Map<Long, Long>> times = (ArrayList<Map<Long, Long>>) i.getSerializableExtra(ScheduleInterfaceController.PROFILE_TIME);
-        String name = i.getStringExtra(ScheduleInterfaceController.PROFILE_NAME);
-        profileName.setText(name);
+        String initialProfileName = i.getStringExtra(ScheduleInterfaceController.PROFILE_NAME);
         Calendar startTime = (Calendar) i.getSerializableExtra(ScheduleInterfaceController.START_TIME);
         Calendar endTime = (Calendar) i.getSerializableExtra(ScheduleInterfaceController.END_TIME);
 
@@ -108,7 +110,7 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
         }
         hourText.setText(String.valueOf(hoursDiff));
         minText.setText(String.valueOf(minsDiff));
-        profileID = i.getStringExtra(ScheduleInterfaceController.PROFILE_ID);
+        oldProfileID = i.getStringExtra(ScheduleInterfaceController.PROFILE_ID);
 
         DateFormat df = new SimpleDateFormat("h:mm a");
         Date date = new Date(0, 0, 0, startHours, startMins);
@@ -117,6 +119,31 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
         startTimeButton.setText(time);
         this.profiles = ProfileManager.getDefaultManager().getAllProfiles();
 
+        int spinnerIndex = 0;
+        String[] profileNames = new String[this.profiles.size()];
+        for (int index =0; index<this.profiles.size(); index++){
+            String spinnerName = profiles.get(index).getName();
+            profileNames[index] = spinnerName;
+            if (spinnerName.equals(initialProfileName)){
+                spinnerIndex = index;
+            }
+        }
+        ArrayAdapter adapter = new ArrayAdapter(EditProfileInSchedule.this, android.R.layout.simple_spinner_item, profileNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        profileNameSpinner.setAdapter(adapter);
+        profileNameSpinner.setSelection(spinnerIndex);
+        profileNameSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                profileName = adapterView.getItemAtPosition(i).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
         startTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -226,7 +253,7 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
     public void deleteProfile(){
         Intent i = new Intent();
         i.putExtra(DID_DELETE_PROFILE, true);
-        i.putExtra(PROFILE_ID, profileID);
+        i.putExtra(OLD_PROFILE_ID, oldProfileID);
         setResult(Activity.RESULT_OK, i);
         finish();
     }
@@ -269,7 +296,7 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
             this.showNumberFormatError();
             return;
         }
-
+        setProfileId();
         Intent i = new Intent();
         i.putExtra(DAYCB_EDIT, didCheckBoxes);
         i.putExtra(HOURS_EDIT, hours);
@@ -277,11 +304,18 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
         i.putExtra(START_HOUR_EDIT, startHours);
         i.putExtra(START_MIN_EDIT, startMins);
         i.putExtra(DID_DELETE_PROFILE, false);
-        i.putExtra(PROFILE_ID, profileID);
+        i.putExtra(OLD_PROFILE_ID, oldProfileID);
+        i.putExtra(NEW_PROFILE_ID, newProfileId);
         setResult(Activity.RESULT_OK, i);
         finish();
     }
-
+    private void setProfileId(){
+        for (int i=0; i<profiles.size(); i++){
+            if (profiles.get(i).getName().equals(profileName)){
+                newProfileId = profiles.get(i).getIdentifier();
+            }
+        }
+    }
     private void showNumberFormatError() {
         new AlertDialog.Builder(this)
                 .setTitle("Invalid Duration")
