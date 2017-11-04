@@ -16,7 +16,7 @@
             android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/fab_margin"
-            android:background="@color/event_color_03"
+            android:background="@color/toolbar"
             android:text="Edit Name" />
 
         <TextView
