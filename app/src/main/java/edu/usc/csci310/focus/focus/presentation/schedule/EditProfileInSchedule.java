@@ -310,6 +310,7 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
         i.putExtra(DID_DELETE_PROFILE, false);
         i.putExtra(OLD_PROFILE_ID, oldProfileID);
         i.putExtra(NEW_PROFILE_ID, newProfileId);
+        i.putExtra(PROFILE_INDEX, profileIndex);
         setResult(Activity.RESULT_OK, i);
         finish();
     }
