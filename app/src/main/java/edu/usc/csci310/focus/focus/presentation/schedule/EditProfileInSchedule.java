@@ -43,6 +43,7 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
     public static final String DID_DELETE_PROFILE = "did_delete";
     public static final String OLD_PROFILE_ID = "profile_id";
     public static final String NEW_PROFILE_ID = "new_profile_id";
+    public static final String PROFILE_INDEX = "profile_index";
 
     private CheckBox [] daysCB = new CheckBox[7];
     private Boolean [] didCheckBoxes = new Boolean[7];
