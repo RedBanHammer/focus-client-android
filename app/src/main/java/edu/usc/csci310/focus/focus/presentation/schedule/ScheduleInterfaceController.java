@@ -562,31 +562,31 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         List<WeekViewEvent> weekviewEvents = new ArrayList<WeekViewEvent>();
 
         for (WeekViewEvent event : this.events) {
-            // Clone the event
-            WeekViewEvent newEvent = new WeekViewEvent(
-                    event.getId(),
-                    event.getName(),
-                    event.getStartTime(),
-                    event.getEndTime());
-            newEvent.setColor(event.getColor());
+            for (int weekIndex = 0; weekIndex < 4; weekIndex++) {
+                // Clone the event
+                WeekViewEvent newEvent = new WeekViewEvent(
+                        event.getId(),
+                        event.getName(),
+                        event.getStartTime(),
+                        event.getEndTime());
+                newEvent.setColor(event.getColor());
 
-            Calendar newStartTime = (Calendar) newEvent.getStartTime().clone();
-            newStartTime.set(Calendar.YEAR, newYear);
-            newStartTime.set(Calendar.MONTH, newMonth-1);
-            newStartTime.set(Calendar.DAY_OF_WEEK, newEvent.getStartTime().get(Calendar.DAY_OF_WEEK));
-            newStartTime.set(Calendar.HOUR_OF_DAY, newEvent.getStartTime().get(Calendar.HOUR_OF_DAY));
-            newStartTime.set(Calendar.MINUTE, newEvent.getStartTime().get(Calendar.MINUTE));
-            newEvent.setStartTime(newStartTime);
+                Calendar newStartTime = (Calendar) newEvent.getStartTime().clone();
+                newStartTime.set(Calendar.YEAR, newYear);
+                newStartTime.set(Calendar.MONTH, newMonth - 1);
+                newStartTime.set(Calendar.WEEK_OF_MONTH, weekIndex+1);
+                newStartTime.set(Calendar.DAY_OF_WEEK, newEvent.getStartTime().get(Calendar.DAY_OF_WEEK));
+                newStartTime.set(Calendar.HOUR_OF_DAY, newEvent.getStartTime().get(Calendar.HOUR_OF_DAY));
+                newStartTime.set(Calendar.MINUTE, newEvent.getStartTime().get(Calendar.MINUTE));
+                newEvent.setStartTime(newStartTime);
 
-            Calendar newEndTime = (Calendar) newEvent.getEndTime().clone();
-            newEndTime.set(Calendar.YEAR, newYear);
-            newEndTime.set(Calendar.MONTH, newMonth-1);
-            newEndTime.set(Calendar.DAY_OF_WEEK, newEvent.getEndTime().get(Calendar.DAY_OF_WEEK));
-            newEndTime.set(Calendar.HOUR_OF_DAY, newEvent.getEndTime().get(Calendar.HOUR_OF_DAY));
-            newEndTime.set(Calendar.MINUTE, newEvent.getEndTime().get(Calendar.MINUTE));
-            newEvent.setEndTime(newEndTime);
+                Calendar newEndTime = (Calendar) newStartTime.clone();
+                newEndTime.add(Calendar.HOUR, newEvent.getEndTime().get(Calendar.HOUR) - newEvent.getStartTime().get(Calendar.HOUR));
+                newEndTime.add(Calendar.MINUTE, newEvent.getEndTime().get(Calendar.MINUTE) - newEvent.getStartTime().get(Calendar.MINUTE));
+                newEvent.setEndTime(newEndTime);
 
-            weekviewEvents.add(newEvent);
+                weekviewEvents.add(newEvent);
+            }
         }
 
         return weekviewEvents;
