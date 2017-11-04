@@ -10,21 +10,23 @@
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="8dp">
 
-        <TextView
-            android:id="@+id/profileName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:padding="30dp"
-            android:textSize="24sp"
-            tools:ignore="LabelFor" />
+    <TextView
+        android:id="@+id/profileName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:padding="30dp"
+        android:textColor="@color/event_color_01"
+        android:textSize="24sp"
+        tools:ignore="LabelFor" />
 
-        <Button
-            android:id="@+id/changeNameButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Edit Profile" />
+    <Button
+        android:id="@+id/changeNameButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/event_color_03"
+        android:text="Edit Profile" />
 
         <ListView
             android:id="@+id/listviewprofile"
@@ -32,13 +34,13 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <Button
-            android:id="@+id/deleteButton"
-            android:layout_width="match_parent"
-            android:layout_margin="10dp"
-            android:layout_height="wrap_content"
-            android:text="Delete Profile"
-            android:textColor="@android:color/white"
-            android:background="@android:color/holo_red_light"/>
+    <Button
+        android:id="@+id/deleteButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@android:color/holo_red_light"
+        android:text="Delete Profile"
+        android:textColor="@android:color/white" />
 
 </LinearLayout>

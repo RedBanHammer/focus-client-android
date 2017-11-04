@@ -65,8 +65,8 @@
             android:layout_height="44dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
+            android:background="@color/event_color_01"
             android:text="Start"
-            android:background="@color/colorPrimary"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
 

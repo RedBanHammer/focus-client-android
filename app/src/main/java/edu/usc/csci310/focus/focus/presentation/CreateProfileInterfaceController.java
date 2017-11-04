@@ -217,8 +217,19 @@ public class CreateProfileInterfaceController extends AppCompatActivity {
     private boolean checkDuplicateProfile(String newProfileName){
         ArrayList<Profile> profiles = ProfileManager.getDefaultManager().getAllProfiles();
         //is the name a duplicate of a previous profile?
+        if(profileIfEditing != null)
+        {
+            //we are editing a profile, check if the profile is a duplicate name
+            //EXCEPT if the name is edited don't check again
+            if(profileIfEditing.getName().equals(newProfileName))
+            {
+                //its the same name as before, return false
+                return false;
+            }
+        }
         for(Profile p : profiles)
         {
+
             if(p.getName().equals(newProfileName))
             {
                 //name already exists

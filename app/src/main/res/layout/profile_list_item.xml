@@ -19,6 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:text="Name"
+            android:textColor="@color/event_color_01"
             android:textSize="21sp" />
 
         <TextView
@@ -37,7 +38,8 @@
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:layout_alignParentRight="true"
-            android:text="ON" />
+            android:text="ON"
+            android:theme="@style/ToggleButton" />
 
     </RelativeLayout>
 </LinearLayout>
