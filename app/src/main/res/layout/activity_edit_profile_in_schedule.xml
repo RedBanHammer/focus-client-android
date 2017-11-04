@@ -21,15 +21,14 @@
                 android:layout_centerVertical="true"
                 android:text="Profile"
                 android:textSize="18sp"/>
-            <TextView
-                android:id="@+id/profile_name"
+            <Spinner
+                android:id="@+id/profile_name_spinner"
                 android:layout_toEndOf="@id/profile"
                 android:layout_width="match_parent"
                 android:layout_marginLeft="@dimen/fab_margin"
                 android:layout_height="match_parent"
                 android:background="@color/toolbar"
                 android:text="@string/add_profiles"
-                android:clickable="false"
                 android:gravity="center"/>
         </RelativeLayout>
 

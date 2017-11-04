@@ -238,10 +238,8 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
                 int hours = data.getIntExtra(AddProfileToSchedule.HOURS, 0);
                 int mins = data.getIntExtra(AddProfileToSchedule.MINS, 0);
 
-                Long maxMinutes = new Long(1440);
                 Long minIndex = new Long(startHours*60+startMins);
                 Long duration = new Long(hours*60+mins);
-                Long total = minIndex + duration;
                 RecurringTime rt = new RecurringTime();
 
                 for (int i=0; i<dayCB.length; i++){
@@ -286,8 +284,8 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
 
     private void deleteProfileFromSchedule(Intent data){
         int profileIndex = data.getIntExtra(EditProfileInSchedule.PROFILE_INDEX, -1);
-        String profID = data.getStringExtra(EditProfileInSchedule.PROFILE_ID);
-        schedule.removeScheduledProfileAtIndex(profileIndex);
+		String profID = data.getStringExtra(EditProfileInSchedule.OLD_PROFILE_ID);
+		schedule.removeScheduledProfileAtIndex(profileIndex);
         ScheduleManager.getDefaultManager().setSchedule(this.schedule);
         for (int i=0; i<events.size(); i++){
             if (mapID.get(events.get(i).getId()).equals(profID)){
@@ -299,7 +297,8 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
 
     private void updateProfileInSchedule(Intent data){
         int scheduledProfileIndex = data.getIntExtra(EditProfileInSchedule.PROFILE_INDEX, -1);
-        String profID = data.getStringExtra(EditProfileInSchedule.PROFILE_ID);
+		String oldProfID = data.getStringExtra(EditProfileInSchedule.OLD_PROFILE_ID);
+        String newProfID = data.getStringExtra(EditProfileInSchedule.NEW_PROFILE_ID);
         Boolean dayCB [] = (Boolean[]) data.getSerializableExtra(EditProfileInSchedule.DAYCB_EDIT);
         int hours = data.getIntExtra(EditProfileInSchedule.HOURS_EDIT, 0);
         int mins = data.getIntExtra(EditProfileInSchedule.MINS_EDIT, 0);
@@ -332,7 +331,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
             Calendar startTime = Calendar.getInstance();
             rt.addTime(startTime.get(Calendar.DAY_OF_WEEK)-1, minIndex, duration);
         }
-        schedule.addProfile(profID, rt);
+        schedule.addProfile(newProfID, rt);
         ScheduleManager.getDefaultManager().setSchedule(this.schedule);
         this.populateEventsList(schedule);
     }
