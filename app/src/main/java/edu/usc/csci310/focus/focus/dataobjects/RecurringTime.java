@@ -104,4 +104,23 @@ public class RecurringTime implements Serializable {
     public void removeTime(Integer dayIndex, Long minuteIndex) {
         this.times.get(dayIndex).remove(minuteIndex);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof RecurringTime)) {
+            return false;
+        }
+
+        RecurringTime other = (RecurringTime)obj;
+        return (other.getTimes().equals(this.getTimes()));
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getTimes().hashCode();
+    }
 }

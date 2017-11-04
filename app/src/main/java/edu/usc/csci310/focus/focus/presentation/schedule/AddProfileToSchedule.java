@@ -88,18 +88,20 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
         daysCB[6] = (CheckBox)findViewById(R.id.saturday);
         addProfileButton =(Button)findViewById(R.id.add_profile);
 
-        this.profiles = ProfileManager.getDefaultManager().getAllProfiles();
         Intent i = getIntent();
         Schedule schedule = (Schedule) i.getSerializableExtra(ScheduleInterfaceController.SCHEDULE);
-        ArrayList<String> profileIDs = schedule.getProfileIdentifiers();
-        String[] profileNames = new String[Math.max(0, this.profiles.size()-profileIDs.size())];
-        Set<String> set = new HashSet<String>(profileIDs);
+        ArrayList<String> profileIDs = schedule.getScheduledProfileIdentifiers();
+        String[] profileNames = new String[profileIDs.size()];
         int arrayIndex = 0;
-        for (int j =0; j<this.profiles.size(); j++){
-            if (!profileIDs.contains(this.profiles.get(j).getIdentifier())){
-                profileNames[arrayIndex] = profiles.get(j).getName();
-                arrayIndex++;
-            }
+
+        this.profiles = new ArrayList<>();
+        for (String profileId : profileIDs) {
+            Profile profile = ProfileManager.getDefaultManager().getProfileWithIdentifier(profileId);
+            profileNames[arrayIndex] = profile.getName();
+
+            profiles.add(profile);
+
+            arrayIndex++;
         }
         ArrayAdapter adapter = new ArrayAdapter(AddProfileToSchedule.this, android.R.layout.simple_spinner_item, profileNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

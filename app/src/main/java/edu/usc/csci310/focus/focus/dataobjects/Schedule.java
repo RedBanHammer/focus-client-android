@@ -2,6 +2,7 @@ package edu.usc.csci310.focus.focus.dataobjects;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,25 +20,24 @@ import edu.usc.csci310.focus.focus.managers.ScheduleManager;
 public class Schedule extends NamedObject {
     public static final String TIMER_SCHEDULE_POSTFIX = "-TIMER";
 
-    private static final long serialVersionUID = 3L;
+    private static final long serialVersionUID = 5L;
 
-    private ArrayList<String> profileIdentifiers = new ArrayList<String>();
-    private Map<String, RecurringTime> profileTimes = new HashMap<String, RecurringTime>();
+    private ArrayList<ScheduledProfile> scheduledProfiles = new ArrayList<>();
     private Boolean isActive = false;
 
     /**
      * Create a new Schedule object with a list of profiles.
-     * @param profileIdentifiers The initial profile identifiers to populate the schedule with.
+     * @param scheduledProfiles The initial profile identifiers to populate the schedule with.
      * @param name The name of the schedule.
      */
-    public Schedule(@NonNull ArrayList<String> profileIdentifiers, @NonNull String name) {
+    public Schedule(@NonNull ArrayList<ScheduledProfile> scheduledProfiles, @NonNull String name) {
         super(name);
-        this.profileIdentifiers = profileIdentifiers;
+        this.scheduledProfiles = scheduledProfiles;
     }
 
     public Schedule(@NonNull String name) {
         super(name);
-        this.profileIdentifiers = new ArrayList<String>();
+        this.scheduledProfiles = new ArrayList<>();
     }
 
     /**
@@ -46,50 +46,85 @@ public class Schedule extends NamedObject {
      * @param time The recurring times the profile should activate in the schedule.
      */
     public void addProfile(@NonNull String profileIdentifier, @NonNull RecurringTime time) {
-        if (!this.profileIdentifiers.contains(profileIdentifier)) {
-            this.profileIdentifiers.add(profileIdentifier);
-            this.profileTimes.put(profileIdentifier, time);
-        } else {
-            RecurringTime previousTime = this.profileTimes.get(profileIdentifier);
-            previousTime.combineWith(time);
-        }
+        // Create a new pair to schedule.
+        ScheduledProfile scheduledProfile = new ScheduledProfile(profileIdentifier, time);
+
+        scheduledProfiles.add(scheduledProfile);
     }
 
     /**
      * Set all profiles contained within the schedule.
-     * @param profileIdentifiers An ArrayList of profile identifiers to set in the schedule.
+     * @param scheduledProfiles An ArrayList of profile identifiers to set in the schedule.
      */
-    public void setProfileIdentifiers(@NonNull ArrayList<String> profileIdentifiers) {
-        this.profileIdentifiers = profileIdentifiers;
+    public void setScheduledProfile(@NonNull ArrayList<ScheduledProfile> scheduledProfiles) {
+        this.scheduledProfiles = scheduledProfiles;
     }
 
     /**
-     * Remove a profile from the schedule and remove its recurring time entry.
-     * @param profile The profile to remove.
-     */
-    public void removeProfile(@NonNull Profile profile) {
-        this.removeProfileWithIdentifier(profile.getIdentifier());
-    }
-
-    /**
-     * Remove a profile from the schedule given its identifier.
+     * Remove all scheduled profiles given a specific identifier.
      * @param profileIdentifier The string identifier of the profile to remove.
      */
-    public void removeProfileWithIdentifier(@NonNull String profileIdentifier) {
-        int index = this.profileIdentifiers.indexOf(profileIdentifier);
+    public void removeAllProfilesWithIdentifier(@NonNull String profileIdentifier) {
+        if (profileIdentifier == null) {
+            return;
+        }
 
-        if (index >= 0) {
-            this.profileIdentifiers.remove(index);
-            this.profileTimes.remove(profileIdentifier);
+        ArrayList<ScheduledProfile> newScheduledProfiles = new ArrayList<>();
+
+        for (ScheduledProfile scheduledProfile : scheduledProfiles) {
+            if (!scheduledProfile.identifier.equals(profileIdentifier)) {
+                newScheduledProfiles.add(scheduledProfile);
+            }
+        }
+
+        scheduledProfiles = newScheduledProfiles;
+    }
+
+    /**
+     * Remove a single scheduled profile given its identifier and recurring time.
+     * @param profileIdentifier The string identifier of the profile to remove.
+     * @param recurringTime A recurring time instance associated with the profile.
+     */
+    public void removeProfileWithIdentifierRecurringTime(@NonNull String profileIdentifier,
+                                                         @NonNull RecurringTime recurringTime) {
+        Pair<String, RecurringTime> pair = new Pair<>(profileIdentifier, recurringTime);
+
+        int index = scheduledProfiles.indexOf(pair);
+        if (index > -1) {
+            removeScheduledProfileAtIndex(index);
         }
     }
 
     /**
-     * Get all profile identifiers tracked by the schedule.
-     * @return An ArrayList of profile string identifiers.
+     * Remove a scheduled profile given its index in the scheduled profiles array.
+     * @param index The index of the scheduled profile to remove.
      */
-    public @NonNull ArrayList<String> getProfileIdentifiers() {
-        return this.profileIdentifiers != null ? this.profileIdentifiers : new ArrayList<String>();
+    public void removeScheduledProfileAtIndex(@NonNull int index) {
+        scheduledProfiles.remove(index);
+    }
+
+    /**
+     * Get all scheduled profiles tracked by the schedule.
+     * @return An ArrayList of scheduled profile pairs (identifier, recurring time).
+     */
+    public @NonNull ArrayList<ScheduledProfile> getScheduledProfiles() {
+        return scheduledProfiles;
+    }
+
+    /**
+     * Get all unique scheduled profile identifiers.
+     * @return An array of the scheduled profile identifier strings.
+     */
+    public @NonNull ArrayList<String> getScheduledProfileIdentifiers() {
+        ArrayList<String> identifiers = new ArrayList<>();
+
+        for (ScheduledProfile scheduledProfile : scheduledProfiles) {
+            if (!identifiers.contains(scheduledProfile.identifier)) {
+                identifiers.add(scheduledProfile.identifier);
+            }
+        }
+
+        return identifiers;
     }
 
     /**
@@ -98,10 +133,12 @@ public class Schedule extends NamedObject {
      * @return An ArrayList of active profile identifier strings.
      */
     public @NonNull ArrayList<String> getActiveProfileIdentifiers(ProfileManager manager) {
-        ArrayList<String> activeProfileIdentifiers = new ArrayList<String>();
+        ArrayList<String> activeProfileIdentifiers = new ArrayList<>();
 
-        for (String profileIdentifier : this.getProfileIdentifiers()) {
-            RecurringTime profileTime = this.getProfileTimeWithIdentifier(profileIdentifier);
+        for (ScheduledProfile scheduledProfile : scheduledProfiles) {
+            String profileIdentifier = scheduledProfile.identifier;
+
+            RecurringTime profileTime = scheduledProfile.time;
             Profile profile = manager.getProfileWithIdentifier(profileIdentifier);
 
             if (profile == null) {
@@ -146,60 +183,61 @@ public class Schedule extends NamedObject {
     /**
      * Returns the amount of active time left for a currently scheduled profile.
      * @param identifier The string identifier of the profile.
-     * @return The amount of active time in minutes left for a scheduled profile. 0 of not scheduled.
+     * @return An array list of the amount of active times in minutes left for a scheduled profile.
      */
-    public @NonNull long getTimeRemainingWithProfileIdentifier(@NonNull String identifier) {
+    public @NonNull ArrayList<Long> getTimesRemainingWithProfileIdentifier(@NonNull String identifier) {
+        ArrayList<Long> timesRemaining = new ArrayList<>();
+
         if (identifier == null) {
-            return 0;
+            return timesRemaining;
         }
 
-        RecurringTime profileTime = this.getProfileTimeWithIdentifier(identifier);
-        if (profileTime == null) {
-            return 0;
-        }
+        ArrayList<RecurringTime> profileTimes = this.getProfileTimesWithIdentifier(identifier);
 
-        Calendar c = Calendar.getInstance();
-        long now = c.getTimeInMillis();
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        c.set(Calendar.MINUTE, 0);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
-        long passed = now - c.getTimeInMillis();
-        long minutesPassed = passed / 1000 / 60;
-        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 1; // Sun = 1 (index starting at 1)
+        for (RecurringTime profileTime : profileTimes) {
+            Calendar c = Calendar.getInstance();
+            long now = c.getTimeInMillis();
+            c.set(Calendar.HOUR_OF_DAY, 0);
+            c.set(Calendar.MINUTE, 0);
+            c.set(Calendar.SECOND, 0);
+            c.set(Calendar.MILLISECOND, 0);
+            long passed = now - c.getTimeInMillis();
+            long minutesPassed = passed / 1000 / 60;
+            int dayOfWeek = c.get(Calendar.DAY_OF_WEEK) - 1; // Sun = 1 (index starting at 1)
 
-        // Check if the minutes index (minutesPassed) is in a recurring time block for today
-        Map<Long, Long> times = profileTime.getTimes().get(dayOfWeek);
+            // Check if the minutes index (minutesPassed) is in a recurring time block for today
+            Map<Long, Long> times = profileTime.getTimes().get(dayOfWeek);
 
-        for (Long key : times.keySet()) {
-            Long duration = times.get(key);
+            for (Long key : times.keySet()) {
+                Long duration = times.get(key);
 
-            // Check if contained within the start and start+duration
-            if (minutesPassed >= key && minutesPassed <= key+duration) {
-                return key+duration - minutesPassed;
-            } else {
-                return 0;
+                // Check if contained within the start and start+duration
+                if (minutesPassed >= key && minutesPassed <= key + duration) {
+                    timesRemaining.add(new Long(key + duration - minutesPassed));
+                } else {
+                    timesRemaining.add(new Long(0));
+                }
             }
         }
 
-        return 0;
+        return timesRemaining;
     }
 
     /**
-     * Get all scheduled profile times.
-     * @return A Map of profile identifiers to a scheduled RecurringTime.
-     */
-    public @NonNull Map<String, RecurringTime> getProfileTimes() {
-        return this.profileTimes;
-    }
-
-    /**
-     * Get the scheduled time for a profile given its identifier.
+     * Get all scheduled times for a profile given its identifier.
      * @param identifier The string identifier of a profile.
-     * @return The RecurringTime if the profile is scheduled. Null if not scheduled.
+     * @return An array of recurring times if the profile is scheduled.
      */
-    public @Nullable RecurringTime getProfileTimeWithIdentifier(String identifier) {
-        return this.profileTimes.get(identifier);
+    public @Nullable ArrayList<RecurringTime> getProfileTimesWithIdentifier(String identifier) {
+        ArrayList<RecurringTime> times = new ArrayList<>();
+
+        for (ScheduledProfile scheduledProfile : scheduledProfiles) {
+            if (scheduledProfile.identifier.equals(identifier)) {
+                times.add(scheduledProfile.time);
+            }
+        }
+
+        return times;
     }
 
     /**

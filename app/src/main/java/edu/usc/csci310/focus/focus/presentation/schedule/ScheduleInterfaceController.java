@@ -12,6 +12,7 @@ import android.content.Intent;
 import android.graphics.RectF;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Pair;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,9 +41,12 @@ import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.RecurringTime;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
+import edu.usc.csci310.focus.focus.dataobjects.ScheduledProfile;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
 import edu.usc.csci310.focus.focus.managers.ScheduleManager;
 import edu.usc.csci310.focus.focus.presentation.ProfileInterfaceController;
+
+import static java.lang.Math.toIntExact;
 
 public class ScheduleInterfaceController extends AppCompatActivity implements WeekView.EventClickListener, MonthLoader.MonthChangeListener, WeekView.EventLongPressListener, WeekView.EmptyViewLongPressListener {
     public static final String PROFILE_TIME = "profile_time";
@@ -50,6 +54,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
     public static final String START_TIME = "start_time";
     public static final String END_TIME = "end_time";
     public static final String PROFILE_ID = "PROFILE_ID";
+    public static final String PROFILE_INDEX = "PROFILE_INDEX";
     private static final int TYPE_DAY_VIEW = 1;
     private static final int TYPE_THREE_DAY_VIEW = 2;
     private static final int TYPE_WEEK_VIEW = 3;
@@ -280,8 +285,9 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
     }
 
     private void deleteProfileFromSchedule(Intent data){
+        int profileIndex = data.getIntExtra(EditProfileInSchedule.PROFILE_INDEX, -1);
         String profID = data.getStringExtra(EditProfileInSchedule.PROFILE_ID);
-        schedule.removeProfileWithIdentifier(profID);
+        schedule.removeScheduledProfileAtIndex(profileIndex);
         ScheduleManager.getDefaultManager().setSchedule(this.schedule);
         for (int i=0; i<events.size(); i++){
             if (mapID.get(events.get(i).getId()).equals(profID)){
@@ -292,6 +298,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
     }
 
     private void updateProfileInSchedule(Intent data){
+        int scheduledProfileIndex = data.getIntExtra(EditProfileInSchedule.PROFILE_INDEX, -1);
         String profID = data.getStringExtra(EditProfileInSchedule.PROFILE_ID);
         Boolean dayCB [] = (Boolean[]) data.getSerializableExtra(EditProfileInSchedule.DAYCB_EDIT);
         int hours = data.getIntExtra(EditProfileInSchedule.HOURS_EDIT, 0);
@@ -305,7 +312,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         Long minIndex = new Long(startHours*60+startMins);
         Long duration = new Long(hours*60+mins);
         Long total = minIndex + duration;
-        schedule.removeProfileWithIdentifier(profID);
+        schedule.removeScheduledProfileAtIndex(scheduledProfileIndex);
         RecurringTime rt = new RecurringTime();
         boolean dayChecked = false;
         for (int i=0; i<dayCB.length; i++){
@@ -459,7 +466,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
     private void populateEventsList(Schedule schedule){
         this.events.clear(); // Cleanup
 
-        Map<String, RecurringTime> map = schedule.getProfileTimes();
+        ArrayList<ScheduledProfile> scheduledProfiles = schedule.getScheduledProfiles();
 
         int[] colors = {
                 getResources().getColor(R.color.event_color_01),
@@ -469,17 +476,17 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         };
 
 
-        ArrayList<String> profileIdentifiers = schedule.getProfileIdentifiers();
         int profileIndex = 0;
 
-        for (Map.Entry<String, RecurringTime> entry : map.entrySet()) {
-            Profile profile = ProfileManager.getDefaultManager().getProfileWithIdentifier(profileIdentifiers.get(profileIndex));
+        for (ScheduledProfile scheduledProfile : scheduledProfiles) {
+            String profileIdentifier = scheduledProfile.identifier;
+            Profile profile = ProfileManager.getDefaultManager().getProfileWithIdentifier(profileIdentifier);
 
             if (profile == null) {
                 continue;
             }
 
-            RecurringTime profileTime = schedule.getProfileTimeWithIdentifier(profile.getIdentifier());
+            RecurringTime profileTime = scheduledProfile.time;
 
             if (profileTime == null) { // Profile is not in schedule
                 continue;
@@ -514,12 +521,12 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
                     endTime.add(Calendar.MINUTE, minutes); // Add duration minutes to startTime
 
                     WeekViewEvent event = new WeekViewEvent(
-                            this.events.size(),
+                            profileIndex,
                             profile.getName(),
                             startTime,
                             endTime
                     );
-                    mapID.put(new Long(this.events.size()), profile.getIdentifier());
+                    mapID.put(new Long(profileIndex), profile.getIdentifier());
                     event.setColor(colors[profileIndex % colors.length]);
 
                     this.events.add(event);
@@ -535,12 +542,13 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
     //when event is clicked
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
-        String id = mapID.get(new Long(event.getId()));
+        Long eventId = event.getId();
+        String profileIdentifier = mapID.get(new Long(eventId));
         String name = event.getName();
         Calendar startTime = event.getStartTime();
         Calendar endTime = event.getEndTime();
         Intent i = new Intent(ScheduleInterfaceController.this, EditProfileInSchedule.class);
-        RecurringTime rt = schedule.getProfileTimeWithIdentifier(id);
+        RecurringTime rt = schedule.getScheduledProfiles().get((int) Math.max(Math.min(Integer.MAX_VALUE, eventId), Integer.MIN_VALUE)).time;
 
         if (rt != null) {
             ArrayList<Map<Long, Long>> times = rt.getTimes();
@@ -548,7 +556,8 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
             i.putExtra(PROFILE_NAME, name);
             i.putExtra(START_TIME, startTime);
             i.putExtra(END_TIME, endTime);
-            i.putExtra(PROFILE_ID, id);
+            i.putExtra(PROFILE_ID, profileIdentifier);
+            i.putExtra(PROFILE_INDEX, eventId);
             startActivityForResult(i, 11);
         }
     }
@@ -562,31 +571,31 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         List<WeekViewEvent> weekviewEvents = new ArrayList<WeekViewEvent>();
 
         for (WeekViewEvent event : this.events) {
-            // Clone the event
-            WeekViewEvent newEvent = new WeekViewEvent(
-                    event.getId(),
-                    event.getName(),
-                    event.getStartTime(),
-                    event.getEndTime());
-            newEvent.setColor(event.getColor());
+            for (int weekIndex = 0; weekIndex < 4; weekIndex++) {
+                // Clone the event
+                WeekViewEvent newEvent = new WeekViewEvent(
+                        event.getId(),
+                        event.getName(),
+                        event.getStartTime(),
+                        event.getEndTime());
+                newEvent.setColor(event.getColor());
 
-            Calendar newStartTime = (Calendar) newEvent.getStartTime().clone();
-            newStartTime.set(Calendar.YEAR, newYear);
-            newStartTime.set(Calendar.MONTH, newMonth-1);
-            newStartTime.set(Calendar.DAY_OF_WEEK, newEvent.getStartTime().get(Calendar.DAY_OF_WEEK));
-            newStartTime.set(Calendar.HOUR_OF_DAY, newEvent.getStartTime().get(Calendar.HOUR_OF_DAY));
-            newStartTime.set(Calendar.MINUTE, newEvent.getStartTime().get(Calendar.MINUTE));
-            newEvent.setStartTime(newStartTime);
+                Calendar newStartTime = (Calendar) newEvent.getStartTime().clone();
+                newStartTime.set(Calendar.YEAR, newYear);
+                newStartTime.set(Calendar.MONTH, newMonth - 1);
+                newStartTime.set(Calendar.WEEK_OF_MONTH, weekIndex+1);
+                newStartTime.set(Calendar.DAY_OF_WEEK, newEvent.getStartTime().get(Calendar.DAY_OF_WEEK));
+                newStartTime.set(Calendar.HOUR_OF_DAY, newEvent.getStartTime().get(Calendar.HOUR_OF_DAY));
+                newStartTime.set(Calendar.MINUTE, newEvent.getStartTime().get(Calendar.MINUTE));
+                newEvent.setStartTime(newStartTime);
 
-            Calendar newEndTime = (Calendar) newEvent.getEndTime().clone();
-            newEndTime.set(Calendar.YEAR, newYear);
-            newEndTime.set(Calendar.MONTH, newMonth-1);
-            newEndTime.set(Calendar.DAY_OF_WEEK, newEvent.getEndTime().get(Calendar.DAY_OF_WEEK));
-            newEndTime.set(Calendar.HOUR_OF_DAY, newEvent.getEndTime().get(Calendar.HOUR_OF_DAY));
-            newEndTime.set(Calendar.MINUTE, newEvent.getEndTime().get(Calendar.MINUTE));
-            newEvent.setEndTime(newEndTime);
+                Calendar newEndTime = (Calendar) newStartTime.clone();
+                newEndTime.add(Calendar.HOUR, newEvent.getEndTime().get(Calendar.HOUR) - newEvent.getStartTime().get(Calendar.HOUR));
+                newEndTime.add(Calendar.MINUTE, newEvent.getEndTime().get(Calendar.MINUTE) - newEvent.getStartTime().get(Calendar.MINUTE));
+                newEvent.setEndTime(newEndTime);
 
-            weekviewEvents.add(newEvent);
+                weekviewEvents.add(newEvent);
+            }
         }
 
         return weekviewEvents;

@@ -40,6 +40,7 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
     public static final String START_MIN_EDIT = "start_minse";
     public static final String DID_DELETE_PROFILE = "did_delete";
     public static final String PROFILE_ID = "profile_id";
+    public static final String PROFILE_INDEX = "profile_index";
 
 
     private CheckBox [] daysCB = new CheckBox[7];
@@ -55,6 +56,8 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
     private int startHours;
     private int startMins;
     private String profileID;
+    private int profileIndex;
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile_in_schedule);
@@ -109,6 +112,7 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
         hourText.setText(String.valueOf(hoursDiff));
         minText.setText(String.valueOf(minsDiff));
         profileID = i.getStringExtra(ScheduleInterfaceController.PROFILE_ID);
+        profileIndex = i.getIntExtra(ScheduleInterfaceController.PROFILE_INDEX, -1);
 
         DateFormat df = new SimpleDateFormat("h:mm a");
         Date date = new Date(0, 0, 0, startHours, startMins);
@@ -227,6 +231,7 @@ public class EditProfileInSchedule extends AppCompatActivity implements TimePick
         Intent i = new Intent();
         i.putExtra(DID_DELETE_PROFILE, true);
         i.putExtra(PROFILE_ID, profileID);
+        i.putExtra(PROFILE_INDEX, profileIndex);
         setResult(Activity.RESULT_OK, i);
         finish();
     }

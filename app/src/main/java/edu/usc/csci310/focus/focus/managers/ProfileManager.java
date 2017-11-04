@@ -74,7 +74,7 @@ public class ProfileManager {
 
             ArrayList<Schedule> schedules = scheduleManager.getAllSchedules();
             for (Schedule schedule : schedules) {
-                schedule.removeProfileWithIdentifier(identifier);
+                schedule.removeAllProfilesWithIdentifier(identifier);
                 scheduleManager.setSchedule(schedule);
             }
 
