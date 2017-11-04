@@ -87,23 +87,6 @@ public class AppBlocker extends IntentService implements Blocker {
                         }
                     }
 
-                    ArrayList<Profile> profiles = ProfileManager.getDefaultManager().getAllProfiles();
-                    for (Profile p : profiles) {
-                        if (p.getIsActive()) {
-                            for (App a : p.getApps()) {
-                                if (packageName.equals(a.getIdentifier())) {
-                                    LogEntry logEntry = new LogEntry(a, null, null, LogEntry.LogEntryEventType.OPEN);
-                                    LoggingService.logEntry(logEntry);
-
-                                    // Block the app by bringing Focus into the foreground with info.
-                                    this.bringToForeground(a);
-
-                                    break;
-                                }
-                            }
-                        }
-                        break;
-                    }
 //                }
 //            }
 
