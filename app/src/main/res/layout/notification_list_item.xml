@@ -28,13 +28,14 @@
         android:textSize="14dp"
         android:text="10-14-2017 18:39:56" />
 
-    <TextView
-        android:id="@+id/notification_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:textSize="18dp"
-        android:text="The title of a notification" />
+        <TextView
+            android:id="@+id/notification_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="The title of a notification"
+            android:textColor="@color/event_color_01"
+            android:textSize="18dp"
+            android:textStyle="bold" />
 
     <TextView
         android:id="@+id/notification_text"

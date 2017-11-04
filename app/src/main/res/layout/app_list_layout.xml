@@ -15,6 +15,7 @@
         android:id="@+id/checkBox1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/event_color_01"
         android:textSize="24sp" />
 
 </LinearLayout>

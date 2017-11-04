@@ -162,16 +162,17 @@
                 android:imeOptions="actionDone"/>
 
         </RelativeLayout>
+
         <Button
             android:id="@+id/add_profile"
-            android:layout_below="@id/duration_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            android:textColor="@android:color/white"
-            android:textStyle="bold"
+            android:layout_below="@id/duration_layout"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/event_color_01"
             android:text="@string/add_profiles"
-            android:layout_gravity="center_horizontal"/>
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
 
     </LinearLayout>
 </RelativeLayout>

@@ -175,25 +175,27 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/duration_layout"
             android:layout_alignParentBottom="true">
+
             <Button
                 android:id="@+id/update_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
-                android:textColor="@android:color/white"
-                android:textStyle="bold"
-                android:text="Update"
                 android:layout_above="@+id/delete_profile"
-                android:layout_marginBottom="@dimen/page_padding"/>
+                android:layout_marginBottom="@dimen/page_padding"
+                android:background="@color/event_color_01"
+                android:text="Update"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
+
             <Button
                 android:id="@+id/delete_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
-                android:textColor="@android:color/white"
-                android:textStyle="bold"
+                android:layout_alignParentBottom="true"
+                android:background="@android:color/holo_red_light"
                 android:text="Delete"
-                android:layout_alignParentBottom="true"/>
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
         </RelativeLayout>
 
 

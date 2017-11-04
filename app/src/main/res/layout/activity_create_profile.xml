@@ -29,6 +29,7 @@
         android:id="@+id/chooseAppButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/event_color_03"
         android:text="Add Apps" />
 
     <ListView
@@ -41,6 +42,7 @@
         android:id="@+id/submitProfileButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/event_color_03"
         android:text="Done" />
 
 
