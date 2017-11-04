@@ -43,6 +43,7 @@ import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
+import edu.usc.csci310.focus.focus.managers.ScheduleManager;
 
 public class AddProfileToSchedule extends AppCompatActivity implements TimePickerFragment.OnCompleteListener{
     public static final String DAYCB = "daycb";
@@ -90,17 +91,12 @@ public class AddProfileToSchedule extends AppCompatActivity implements TimePicke
 
         Intent i = getIntent();
         Schedule schedule = (Schedule) i.getSerializableExtra(ScheduleInterfaceController.SCHEDULE);
-        ArrayList<String> profileIDs = schedule.getScheduledProfileIdentifiers();
-        String[] profileNames = new String[profileIDs.size()];
+        this.profiles = ProfileManager.getDefaultManager().getAllProfiles();
+        String[] profileNames = new String[profiles.size()];
         int arrayIndex = 0;
 
-        this.profiles = new ArrayList<>();
-        for (String profileId : profileIDs) {
-            Profile profile = ProfileManager.getDefaultManager().getProfileWithIdentifier(profileId);
+        for (Profile profile : profiles) {
             profileNames[arrayIndex] = profile.getName();
-
-            profiles.add(profile);
-
             arrayIndex++;
         }
         ArrayAdapter adapter = new ArrayAdapter(AddProfileToSchedule.this, android.R.layout.simple_spinner_item, profileNames);

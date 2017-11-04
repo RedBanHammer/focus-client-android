@@ -547,7 +547,8 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         Calendar startTime = event.getStartTime();
         Calendar endTime = event.getEndTime();
         Intent i = new Intent(ScheduleInterfaceController.this, EditProfileInSchedule.class);
-        RecurringTime rt = schedule.getScheduledProfiles().get((int) Math.max(Math.min(Integer.MAX_VALUE, eventId), Integer.MIN_VALUE)).time;
+        int profileIndex = (int) Math.max(Math.min(Integer.MAX_VALUE, eventId), Integer.MIN_VALUE);
+        RecurringTime rt = schedule.getScheduledProfiles().get(profileIndex).time;
 
         if (rt != null) {
             ArrayList<Map<Long, Long>> times = rt.getTimes();
@@ -556,7 +557,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
             i.putExtra(START_TIME, startTime);
             i.putExtra(END_TIME, endTime);
             i.putExtra(PROFILE_ID, profileIdentifier);
-            i.putExtra(PROFILE_INDEX, eventId);
+            i.putExtra(PROFILE_INDEX, profileIndex);
             startActivityForResult(i, 11);
         }
     }
