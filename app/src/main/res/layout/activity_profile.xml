@@ -25,10 +25,10 @@
         android:id="@+id/changeNameButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/event_color_03"
+        android:background="@color/toolbar"
         android:text="Edit Profile" />
 
-        <ListView
+    <ListView
             android:id="@+id/listviewprofile"
             android:layout_width="match_parent"
             android:layout_height="0dp"
