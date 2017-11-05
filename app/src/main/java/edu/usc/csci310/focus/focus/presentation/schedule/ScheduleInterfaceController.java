@@ -228,47 +228,9 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        boolean dayChecked = false;
         if (data!=null){
             if (requestCode ==10 && resultCode == Activity.RESULT_OK){
-                Boolean dayCB [] = (Boolean[]) data.getSerializableExtra(AddProfileToSchedule.DAYCB);
-
-                int startHours = data.getIntExtra(AddProfileToSchedule.START_HOUR, 0);
-                int startMins = data.getIntExtra(AddProfileToSchedule.START_MIN, 0);
-                int hours = data.getIntExtra(AddProfileToSchedule.HOURS, 0);
-                int mins = data.getIntExtra(AddProfileToSchedule.MINS, 0);
-
-                Long minIndex = new Long(startHours*60+startMins);
-                Long duration = new Long(hours*60+mins);
-                RecurringTime rt = new RecurringTime();
-
-                for (int i=0; i<dayCB.length; i++){
-                    if (dayCB[i]){
-                        // check if wraps to next day
-//                        if (total > maxMinutes){
-//                            Long timeRemainingInDay = maxMinutes-minIndex;
-//                            rt.addTime(i, minIndex, timeRemainingInDay);
-//                            // rt.addTime(i+1, new Long(0), duration-timeRemainingInDay);
-//                        }else{ // profile time block in same day
-                            rt.addTime(i, minIndex, duration);
-//                        }
-                        dayChecked = true;
-                    }
-                }
-
-                // If none of the days were checked, schedule the profile for the current day of the week
-                if (!dayChecked){
-                    Calendar startTime = Calendar.getInstance();
-                    int dayOfWeek = startTime.get(Calendar.DAY_OF_WEEK);
-                    rt.addTime(startTime.get(Calendar.DAY_OF_WEEK)-1, minIndex , duration);
-                }
-
-                //add profile with recurring time to schedule
-                Profile profile = (Profile) data.getSerializableExtra(AddProfileToSchedule.SELECTED_PROFILE);
-                this.schedule.addProfile(profile.getIdentifier(), rt);
-                ScheduleManager.getDefaultManager().setSchedule(this.schedule);
-
-                this.populateEventsList(this.schedule);
+                addProfileInSchedule(data);
             }
             //Edit profile/event in schedule
             else if (requestCode ==11){
@@ -281,7 +243,40 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
             }
         }
     }
+    private void addProfileInSchedule(Intent data){
+        Boolean dayCB [] = (Boolean[]) data.getSerializableExtra(AddProfileToSchedule.DAYCB);
 
+        int startHours = data.getIntExtra(AddProfileToSchedule.START_HOUR, 0);
+        int startMins = data.getIntExtra(AddProfileToSchedule.START_MIN, 0);
+        int hours = data.getIntExtra(AddProfileToSchedule.HOURS, 0);
+        int mins = data.getIntExtra(AddProfileToSchedule.MINS, 0);
+
+        Long minIndex = new Long(startHours*60+startMins);
+        Long duration = new Long(hours*60+mins);
+        RecurringTime rt = new RecurringTime();
+        boolean dayChecked = false;
+
+        for (int i=0; i<dayCB.length; i++){
+            if (dayCB[i]){
+                rt.addTime(i, minIndex, duration);
+                dayChecked = true;
+            }
+        }
+
+        // If none of the days were checked, schedule the profile for the current day of the week
+        if (!dayChecked){
+            Calendar startTime = Calendar.getInstance();
+            int dayOfWeek = startTime.get(Calendar.DAY_OF_WEEK);
+            rt.addTime(startTime.get(Calendar.DAY_OF_WEEK)-1, minIndex , duration);
+        }
+
+        //add profile with recurring time to schedule
+        Profile profile = (Profile) data.getSerializableExtra(AddProfileToSchedule.SELECTED_PROFILE);
+        this.schedule.addProfile(profile.getIdentifier(), rt);
+        ScheduleManager.getDefaultManager().setSchedule(this.schedule);
+
+        this.populateEventsList(this.schedule);
+    }
     private void deleteProfileFromSchedule(Intent data){
         int profileIndex = data.getIntExtra(EditProfileInSchedule.PROFILE_INDEX, -1);
 		String profID = data.getStringExtra(EditProfileInSchedule.OLD_PROFILE_ID);
@@ -297,7 +292,6 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
 
     private void updateProfileInSchedule(Intent data){
         int scheduledProfileIndex = data.getIntExtra(EditProfileInSchedule.PROFILE_INDEX, -1);
-		String oldProfID = data.getStringExtra(EditProfileInSchedule.OLD_PROFILE_ID);
         String newProfID = data.getStringExtra(EditProfileInSchedule.NEW_PROFILE_ID);
         Boolean dayCB [] = (Boolean[]) data.getSerializableExtra(EditProfileInSchedule.DAYCB_EDIT);
         int hours = data.getIntExtra(EditProfileInSchedule.HOURS_EDIT, 0);
@@ -306,24 +300,15 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         int startHours = data.getIntExtra(EditProfileInSchedule.START_HOUR_EDIT, 0);
         int startMins = data.getIntExtra(EditProfileInSchedule.START_MIN_EDIT, 0);
 
-        Long maxMinutes = new Long(1440);
 
         Long minIndex = new Long(startHours*60+startMins);
         Long duration = new Long(hours*60+mins);
-        Long total = minIndex + duration;
         schedule.removeScheduledProfileAtIndex(scheduledProfileIndex);
         RecurringTime rt = new RecurringTime();
         boolean dayChecked = false;
         for (int i=0; i<dayCB.length; i++){
             if (dayCB[i]){
-                // check if wraps to next day
-//                if (total > maxMinutes){
-//                    Long timeRemainingInDay = maxMinutes-minIndex;
-//                    rt.addTime(i, minIndex, timeRemainingInDay);
-//                    // rt.addTime(i+1, new Long(0), duration-timeRemainingInDay);
-//                }else{ // profile time block in same day
-                    rt.addTime(i, minIndex, duration);
-//                }
+                rt.addTime(i, minIndex, duration);
                 dayChecked = true;
             }
         }
@@ -426,41 +411,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         Toast.makeText(this, "Empty view long pressed: " + getEventTitle(time), Toast.LENGTH_SHORT).show();
     }
 
-    /*
-     * Renders a daily schedule view
-     *
-     * @param int - day of the week
-     */
-    private void renderDailySchedule(int day){
 
-    }
-
-    /*
-     * Renders a weekly schedule view
-     *
-     */
-    private void renderWeeklySchedule(){
-
-    }
-
-    /*
-     * Returns whether the user selected a profileInterfaceController
-     *
-     * @param ProfileInterfaceController - profileInterfaceController the user selects
-     * @return true if the user selected a profileInterfaceController; otherwise, false
-     */
-    private boolean didSelectProfile(ProfileInterfaceController profileInterfaceController){
-        return false;
-    }
-
-    /*
-     * Returns whether the user enabled the schedule
-     *
-     * @return true if user enabled the schedule; otherwise, false
-     */
-    private boolean didToggleActiveState(boolean active){
-        return false;
-    }
 
     private void populateEventsList(Schedule schedule){
         this.events.clear(); // Cleanup
@@ -620,4 +571,39 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
 //        getWeekView().notifyDatasetChanged();
 //        Toast.makeText(this, "Empty view long pressed: " + getEventTitle(time), Toast.LENGTH_SHORT).show();
 //    }
+    /*
+     * Renders a daily schedule view
+     *
+     * @param int - day of the week
+     */
+    private void renderDailySchedule(int day){
+
+    }
+
+    /*
+     * Renders a weekly schedule view
+     *
+     */
+    private void renderWeeklySchedule(){
+
+    }
+
+    /*
+     * Returns whether the user selected a profileInterfaceController
+     *
+     * @param ProfileInterfaceController - profileInterfaceController the user selects
+     * @return true if the user selected a profileInterfaceController; otherwise, false
+     */
+    private boolean didSelectProfile(ProfileInterfaceController profileInterfaceController){
+        return false;
+    }
+
+    /*
+     * Returns whether the user enabled the schedule
+     *
+     * @return true if user enabled the schedule; otherwise, false
+     */
+    private boolean didToggleActiveState(boolean active){
+        return false;
+    }
 }
