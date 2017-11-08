@@ -11,4 +11,5 @@
     <color name="toolbar_text">#8f000000</color>
     <color name="accent">#2789e4</color>
     <color name="secondary_text_material_light">#011627</color>
+    <color name="white">#FFFFFF</color>
 </resources>

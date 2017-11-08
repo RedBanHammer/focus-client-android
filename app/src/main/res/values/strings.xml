@@ -26,4 +26,6 @@
     <string name="action_three_day_view">3 day view</string>
     <string name="action_week_view">Week view</string>
     <string name="title_activity_schedule">Schedule</string>
+
+    <string name="edit_schedule_name">New Schedule Name</string>
 </resources>

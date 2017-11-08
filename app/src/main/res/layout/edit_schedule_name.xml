@@ -2,39 +2,43 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="@dimen/fab_margin">
 
     <TextView
         android:id="@+id/textView2"
+        style="@style/TextAppearance.AppCompat.Medium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="New Name" />
+        android:text="@string/edit_schedule_name"
+        android:gravity="center_horizontal"/>
 
     <EditText
         android:id="@+id/newNameText"
         android:layout_width="match_parent"
-        android:layout_height="69dp"
-        android:textSize="24sp"
-        tools:text="New Name" />
+        android:layout_height="wrap_content"
+        android:textSize="24sp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/positiveButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="OK" />
-
         <Button
             android:id="@+id/negativeButton"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Cancel" />
+            android:text="Cancel"
+            android:textColor="@color/colorAccent"/>
+        <Button
+            android:id="@+id/positiveButton"
+            style="@style/Base.Widget.AppCompat.Button.Borderless"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="OK"
+            android:textColor="@color/colorAccent"/>
 
     </LinearLayout>
 

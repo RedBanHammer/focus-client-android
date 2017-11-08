@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.graphics.RectF;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Pair;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,8 +46,6 @@ import edu.usc.csci310.focus.focus.managers.ProfileManager;
 import edu.usc.csci310.focus.focus.managers.ScheduleManager;
 import edu.usc.csci310.focus.focus.presentation.ProfileInterfaceController;
 
-import static java.lang.Math.toIntExact;
-
 public class ScheduleInterfaceController extends AppCompatActivity implements WeekView.EventClickListener, MonthLoader.MonthChangeListener, WeekView.EventLongPressListener, WeekView.EmptyViewLongPressListener {
     public static final String PROFILE_TIME = "profile_time";
     public static final String PROFILE_NAME = "profile_name";
@@ -64,9 +62,9 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
     private WeekView mWeekView;
     private TextView scheduleName;
     private Schedule schedule;
-    private Button editNameButton;
+    private ImageButton editNameButton;
     private Dialog editNameDialog;
-    private Button deleteButton;
+    private ImageButton deleteButton, addProfileButton;
     private EditText text;
     private Button posButton;
     private Button negButton;
@@ -110,19 +108,28 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
 
         this.initializeEditNameButton();
         this.initializeDeleteButton();
+        this.initializeAddProfileButton();
         //populate events list with WeekViewEvents to be displayed in the calender
 
         this.populateEventsList(schedule);
     }
-
+    private void initializeAddProfileButton(){
+        addProfileButton = (ImageButton)findViewById(R.id.add_profile_button);
+        addProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openAddProfileActivity();
+            }
+        });
+    }
     private void initializeEditNameButton() {
-        this.editNameButton = (Button) findViewById(R.id.edit_schedule_name_button);
+        this.editNameButton = (ImageButton) findViewById(R.id.edit_schedule_name_button);
         this.editNameButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 editNameDialog = new Dialog(ScheduleInterfaceController.this);
-                editNameDialog.setContentView(R.layout.edit_profile_name);
+                editNameDialog.setContentView(R.layout.edit_schedule_name);
                 editNameDialog.setTitle(TITLE);
                 text = (EditText) editNameDialog.findViewById(R.id.newNameText);
                 posButton = (Button) editNameDialog.findViewById(R.id.positiveButton);
@@ -181,7 +188,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
     }
 
     private void initializeDeleteButton() {
-        this.deleteButton = (Button) findViewById(R.id.delete_schedule_button);
+        this.deleteButton = (ImageButton) findViewById(R.id.delete_schedule_button);
         this.deleteButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -327,10 +334,6 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
         switch (id){
             case R.id.action_today:
                 mWeekView.goToToday();
-                return true;
-            //adding a profile to the schedule
-            case R.id.add_profile_button:
-                openAddProfileActivity();
                 return true;
             case R.id.action_day_view:
                 if (mWeekViewType != TYPE_DAY_VIEW) {
@@ -555,7 +558,7 @@ public class ScheduleInterfaceController extends AppCompatActivity implements We
 
     /**
      * Triggered when the users clicks on a empty space of the calendar.
-     * @param time: {@link Calendar} object set with the date and time of the clicked position on the view.
+     * @param  {@link Calendar} object set with the date and time of the clicked position on the view.
      */
 //    @Override
 //    public void onEmptyViewLongPress(Calendar time) {
