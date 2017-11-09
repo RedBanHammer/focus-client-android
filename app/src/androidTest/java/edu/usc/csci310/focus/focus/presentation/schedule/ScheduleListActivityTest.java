@@ -178,13 +178,7 @@ public class ScheduleListActivityTest {
 
         // Check that the displayed schedule name matches the expected schedule name
         ViewInteraction textView = onView(
-                allOf(withId(R.id.schedule_name), withText(TEST_SCHEDULE_NAME_1),
-                        childAtPosition(
-                                childAtPosition(
-                                        IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class),
-                                        0),
-                                1),
-                        isDisplayed()));
+                allOf(withId(R.id.schedule_name), withText(TEST_SCHEDULE_NAME_1)));
         textView.check(matches(withText(TEST_SCHEDULE_NAME_1)));
     }
 
@@ -194,7 +188,7 @@ public class ScheduleListActivityTest {
 
         // Click edit name button
         ViewInteraction appCompatButton4 = onView(
-                allOf(withId(R.id.edit_schedule_name_button), withText("Edit Name"), isDisplayed()));
+                allOf(withId(R.id.edit_schedule_name_button), isDisplayed()));
         appCompatButton4.perform(click());
 
         // Set schedule name in popup
@@ -209,13 +203,7 @@ public class ScheduleListActivityTest {
 
         // Check that the displayed schedule name was changed in details view
         ViewInteraction textView = onView(
-                allOf(withId(R.id.schedule_name), withText(TEST_SCHEDULE_NAME_2),
-                        childAtPosition(
-                                childAtPosition(
-                                        IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class),
-                                        0),
-                                1),
-                        isDisplayed()));
+                allOf(withId(R.id.schedule_name), withText(TEST_SCHEDULE_NAME_2)));
         textView.check(matches(withText(TEST_SCHEDULE_NAME_2)));
 
         // Check that the displayed schedule name was changed in schedule list
@@ -236,7 +224,7 @@ public class ScheduleListActivityTest {
         this.testOpenScheduleDetails();
 
         ViewInteraction appCompatButton6 = onView(
-                allOf(withId(R.id.edit_schedule_name_button), withText("Edit Name"), isDisplayed()));
+                allOf(withId(R.id.edit_schedule_name_button), isDisplayed()));
         appCompatButton6.perform(click());
 
         ViewInteraction appCompatEditText3 = onView(
@@ -249,13 +237,7 @@ public class ScheduleListActivityTest {
 
         // Check that the displayed schedule name was NOT changed in details view
         ViewInteraction textView = onView(
-                allOf(withId(R.id.schedule_name), withText(TEST_SCHEDULE_NAME_1),
-                        childAtPosition(
-                                childAtPosition(
-                                        IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class),
-                                        0),
-                                1),
-                        isDisplayed()));
+                allOf(withId(R.id.schedule_name), withText(TEST_SCHEDULE_NAME_1)));
         textView.check(matches(withText(TEST_SCHEDULE_NAME_1)));
 
         // Check that the displayed schedule name was NOT changed in schedule list
@@ -276,7 +258,7 @@ public class ScheduleListActivityTest {
         this.testOpenScheduleDetails();
 
         ViewInteraction appCompatButton6 = onView(
-                allOf(withId(R.id.edit_schedule_name_button), withText("Edit Name"), isDisplayed()));
+                allOf(withId(R.id.edit_schedule_name_button), isDisplayed()));
         appCompatButton6.perform(click());
 
         ViewInteraction appCompatEditText3 = onView(
@@ -298,13 +280,7 @@ public class ScheduleListActivityTest {
 
         // Check that the displayed schedule name was NOT changed in details view
         ViewInteraction textView = onView(
-                allOf(withId(R.id.schedule_name), withText(TEST_SCHEDULE_NAME_1),
-                        childAtPosition(
-                                childAtPosition(
-                                        IsInstanceOf.<View>instanceOf(android.widget.LinearLayout.class),
-                                        0),
-                                1),
-                        isDisplayed()));
+                allOf(withId(R.id.schedule_name), withText(TEST_SCHEDULE_NAME_1)));
         textView.check(matches(withText(TEST_SCHEDULE_NAME_1)));
 
         // Check that the displayed schedule name was NOT changed in schedule list
@@ -388,7 +364,7 @@ public class ScheduleListActivityTest {
 
         // Click add button in menu bar
         ViewInteraction actionMenuItemView2 = onView(
-                allOf(withId(R.id.add_profile_button), withText("+"), withContentDescription("+"), isDisplayed()));
+                allOf(withId(R.id.add_profile_button), isDisplayed()));
         actionMenuItemView2.perform(click());
 
         // Click profile selection spinner
@@ -581,7 +557,7 @@ public class ScheduleListActivityTest {
 
         // Click delete schedule button
         ViewInteraction appCompatButton19 = onView(
-                allOf(withId(R.id.delete_schedule_button), withText("Delete Schedule"), isDisplayed()));
+                allOf(withId(R.id.delete_schedule_button), isDisplayed()));
         appCompatButton19.perform(click());
 
         // Check that confirm delete popup is shown
@@ -610,7 +586,7 @@ public class ScheduleListActivityTest {
 
         // Click delete schedule button
         ViewInteraction appCompatButton21 = onView(
-                allOf(withId(R.id.delete_schedule_button), withText("Delete Schedule"), isDisplayed()));
+                allOf(withId(R.id.delete_schedule_button), isDisplayed()));
         appCompatButton21.perform(click());
 
         // Check that confirm delete popup is shown
