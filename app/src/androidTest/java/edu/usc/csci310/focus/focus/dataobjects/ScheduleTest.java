@@ -77,7 +77,7 @@ public class ScheduleTest {
     public void testAddProfile() throws Exception {
         testSchedule.addProfile(testProfile.getIdentifier(), time);
 
-        boolean success = testSchedule.getProfileIdentifiers().contains(testProfile.getIdentifier());
+        boolean success = testSchedule.getScheduledProfileIdentifiers().contains(testProfile.getIdentifier());
         assertEquals(true, success);
     }
 
@@ -85,19 +85,19 @@ public class ScheduleTest {
     @Test
     public void testRemoveProfileWithIdentifier() throws Exception {
         testSchedule.addProfile(testProfile.getIdentifier(), time);
-        testSchedule.removeProfileWithIdentifier(testProfile.getIdentifier());
+        testSchedule.removeAllProfilesWithIdentifier(testProfile.getIdentifier());
 
-        boolean success = testSchedule.getProfileIdentifiers().contains(testProfile.getIdentifier());
+        boolean success = testSchedule.getScheduledProfileIdentifiers().contains(testProfile.getIdentifier());
         assertEquals(false, success);
     }
 
     @Test
     public void testRemoveNonExistentProfileWithIdentifier() throws Exception {
         testSchedule.addProfile(testProfile.getIdentifier(), time);
-        ArrayList<String> expectedIds = testSchedule.getProfileIdentifiers();
-        testSchedule.removeProfileWithIdentifier("dummy-id");
+        ArrayList<String> expectedIds = testSchedule.getScheduledProfileIdentifiers();
+        testSchedule.removeAllProfilesWithIdentifier("dummy-id");
 
-        ArrayList<String> resultIds = testSchedule.getProfileIdentifiers();
+        ArrayList<String> resultIds = testSchedule.getScheduledProfileIdentifiers();
         assertEquals(expectedIds, resultIds);
     }
 
@@ -106,7 +106,7 @@ public class ScheduleTest {
         testSchedule.addProfile(testProfile.getIdentifier(), time);
         ArrayList<String> expectedList = new ArrayList<>();
         expectedList.add(testProfile.getIdentifier());
-        ArrayList<String> resultList = testSchedule.getProfileIdentifiers();
+        ArrayList<String> resultList = testSchedule.getScheduledProfileIdentifiers();
 
         assertEquals(expectedList, resultList);
     }
@@ -131,32 +131,22 @@ public class ScheduleTest {
         testSchedule.addProfile(testProfile.getIdentifier(), time1);
         long expected = 30l;
 
-        long result = testSchedule.getTimeRemainingWithProfileIdentifier(testProfile.getIdentifier());
-        assertEquals(expected, result);
+        ArrayList<Long> result = testSchedule.getTimesRemainingWithProfileIdentifier(testProfile.getIdentifier());
+        assertEquals((long) expected,(long) result.get(0));
 
     }
 
     @Test
     public void testGetTimeRemainingNonExistentProfile() throws Exception {
-        long result = testSchedule.getTimeRemainingWithProfileIdentifier("dummy-id");
-        assertEquals(0, result);
+        ArrayList<Long> result = testSchedule.getTimesRemainingWithProfileIdentifier("dummy-id");
+        assertEquals(0, result.size());
 
-    }
-
-    @Test
-    public void testGetProfileTimes() throws Exception {
-        Map<String, RecurringTime> expectedMap = new HashMap<>();
-        expectedMap.put(testProfile.getIdentifier(), time);
-        testSchedule.addProfile(testProfile.getIdentifier(), time);
-
-        Map<String, RecurringTime> resultMap = testSchedule.getProfileTimes();
-        assertEquals(expectedMap, resultMap);
     }
 
     @Test
     public void testGetProfileTimeWithIdentifier() throws Exception {
         testSchedule.addProfile(testProfile.getIdentifier(), time);
-        RecurringTime resultTime = testSchedule.getProfileTimeWithIdentifier(testProfile.getIdentifier());
+        RecurringTime resultTime = testSchedule.getProfileTimesWithIdentifier(testProfile.getIdentifier()).get(0);
 
         assertEquals(time, resultTime);
     }
