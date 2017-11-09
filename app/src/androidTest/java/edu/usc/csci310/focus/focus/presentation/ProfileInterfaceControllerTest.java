@@ -129,7 +129,7 @@ public class ProfileInterfaceControllerTest {
         appCompatButton4.perform(click());
 
         ViewInteraction appCompatCheckBox = onView(
-                allOf(withId(R.id.checkBox1), withText("YouTube"),
+                allOf(withId(R.id.checkBox1),
                         withParent(childAtPosition(
                                 withId(R.id.appListView),
                                 0)),
@@ -137,7 +137,7 @@ public class ProfileInterfaceControllerTest {
         appCompatCheckBox.perform(click());
 
         ViewInteraction appCompatCheckBox2 = onView(
-                allOf(withId(R.id.checkBox1), withText("Google App"),
+                allOf(withId(R.id.checkBox1),
                         withParent(childAtPosition(
                                 withId(R.id.appListView),
                                 3)),
