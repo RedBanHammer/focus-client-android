@@ -133,7 +133,7 @@ public class TimerTest {
         assertTrue(createdSchedule.getIsActive());
 
         // Check that the created schedule has the desired test profile
-        String profileIdentifier = createdSchedule.getProfileIdentifiers().get(0);
+        String profileIdentifier = createdSchedule.getScheduledProfileIdentifiers().get(0);
         Profile profileInCreatedSchedule = this.mockedProfileManager.getProfileWithIdentifier(profileIdentifier);
         assertEquals(this.testProfile1, profileInCreatedSchedule);
 
