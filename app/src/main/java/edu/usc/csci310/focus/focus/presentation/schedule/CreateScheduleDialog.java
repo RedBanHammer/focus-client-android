@@ -39,19 +39,6 @@ public class CreateScheduleDialog extends DialogFragment implements TextView.OnE
         return fragment;
     }
 
-    /*@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_create_schedule_dialog, container, false);
-        mEditText = (EditText) view.findViewById(R.id.schedule_name);
-
-        // set this instance as callback for editor action
-        mEditText.setOnEditorActionListener(this);
-        mEditText.requestFocus();
-
-        return inflater.inflate(R.layout.fragment_create_schedule_dialog, null);
-    } */
-
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -65,8 +52,10 @@ public class CreateScheduleDialog extends DialogFragment implements TextView.OnE
                     public void onClick(DialogInterface dialog, int id) {
                         // Positive response
                         if (mEditText.getText().toString().equals("")){
-                            showFormCompletionError();
-                        }else{
+                            showFormCompletionError("Incomplete Form", "Valid name is needed for the schedule");
+                        } else if(duplicateName()){
+                            showFormCompletionError("Invalid Name", "Name already exists");
+                        } else {
                             sendBackResult();
                         }
                     }
@@ -95,36 +84,38 @@ public class CreateScheduleDialog extends DialogFragment implements TextView.OnE
 
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        // Return input text to activity
 
-        sendBackResult();
         return true;
     }
     // Defines the listener interface
     public interface EditNameDialogListener {
         void onFinishEditDialog(String inputText);
     }
-
+    private boolean duplicateName(){
+        ArrayList<Schedule> schedules = ScheduleManager.getDefaultManager().getAllSchedules();
+        for (Schedule sched: schedules){
+            if (sched.getName().equals(mEditText.getText().toString())){
+                return true;
+            }
+        }
+        return false;
+    }
     // Call this method to send the data back to the parent fragment
     public void sendBackResult() {
         // Notice the use of `getTargetFragment` which will be set when the dialog is displayed
-        if (mEditText.getText().toString().equals("")) {
-            showFormCompletionError();
-            return;
-        }
         EditNameDialogListener listener = (EditNameDialogListener) getTargetFragment();
         listener.onFinishEditDialog(mEditText.getText().toString());
         dismiss();
     }
 
-    private void showFormCompletionError() {
+    private void showFormCompletionError(String title, String message) {
         new AlertDialog.Builder(getContext())
-                .setTitle("Incomplete Form")
-                .setMessage("Valid name is needed for the schedule")
+                .setTitle(title)
+                .setMessage(message)
                 .setPositiveButton("Okay", new DialogInterface.OnClickListener()
                 {
                     public void onClick(DialogInterface dialog, int which) {
-                        dismiss();
+
                     }
 
                 })
