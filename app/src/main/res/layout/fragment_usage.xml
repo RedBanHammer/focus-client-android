@@ -5,9 +5,29 @@
     tools:context="edu.usc.csci310.focus.focus.presentation.UsageFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content">
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/profileBarChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/appBarChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/profileBarChart"/>
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/totalPieChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/appBarChart"/>
+
+
+
+    </RelativeLayout>
 
 </ScrollView>
