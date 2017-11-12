@@ -35,8 +35,10 @@ import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 import edu.usc.csci310.focus.focus.managers.BlockingManager;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
 import edu.usc.csci310.focus.focus.managers.ScheduleManager;
+import edu.usc.csci310.focus.focus.presentation.AchievementFragment;
 import edu.usc.csci310.focus.focus.presentation.NotificationListFragment;
 import edu.usc.csci310.focus.focus.presentation.ProfileList;
+import edu.usc.csci310.focus.focus.presentation.UsageFragment;
 import edu.usc.csci310.focus.focus.storage.StorageManager;
 import edu.usc.csci310.focus.focus.presentation.schedule.ScheduleList;
 
@@ -51,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
 
     // Tab titles
-    private static String[] tabs = { "Profiles", "Schedules", "Notifications" };
+    private static String[] tabs = { "Profiles", "Schedules", "Notifications", "Usage", "Achievements" };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout = (TabLayout)findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         this.createNotificationChannel();
         this.requestPermissions();
     }
@@ -88,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
-        private int NUM_TABS = 3;
+        private int NUM_TABS = 4;
         private FragmentManager fm;
 
         public MyPagerAdapter(FragmentManager fragmentManager) {
@@ -107,12 +109,16 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             ArrayList<Profile> profiles = ProfileManager.getDefaultManager().getAllProfiles();
             switch (position) {
-                case 0: // Fragment # 0 - This will show FirstFragment
+                case 0: // Profile List Fragment
                     return ProfileList.newInstance(0, tabs[0]);
-                case 1: // Fragment # 0 - This will show FirstFragment different title
+                case 1: // Schedule List Fragment
                     return ScheduleList.newInstance(1, tabs[1]);
-                case 2: // Fragment # 1 - This will show SecondFragment
+                case 2: // Notification List Fragment
                     return NotificationListFragment.newInstance(2, tabs[2]);
+                case 3: // Usage Tab Fragment
+                    return new UsageFragment();
+//                case 4: // Achievement Tab Fragment
+//                    return new AchievementFragment();
                 default:
                     return null;
             }
@@ -128,6 +134,10 @@ public class MainActivity extends AppCompatActivity {
                     return tabs[1];
                 case 2:
                     return tabs[2];
+                case 3:
+                    return tabs[3];
+                case 4:
+                    return tabs[4];
                 default:
                     return null;
             }
