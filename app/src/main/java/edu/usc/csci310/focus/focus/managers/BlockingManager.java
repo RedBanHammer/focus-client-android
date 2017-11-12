@@ -14,6 +14,8 @@ import android.support.v4.app.NotificationCompat;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -56,6 +58,7 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
 
     private ScheduleManager scheduleManager;
     private ProfileManager profileManager;
+    private StatsManager statsManager;
 
     private WeakReference<NotificationBlocker> notificationBlocker;
     private WeakReference<AppBlocker> appBlocker;
@@ -107,6 +110,23 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
         profileManager.delegate = new WeakReference<ProfileManagerDelegate>(this);
     }
 
+    /**
+     * Constructor used for testing.
+     * @param scheduleManager
+     * @param profileManager
+     * @param statsManager
+     */
+    public BlockingManager(ScheduleManager scheduleManager, ProfileManager profileManager, StatsManager statsManager) {
+        super("BlockingManager");
+
+        this.scheduleManager = scheduleManager;
+        this.profileManager = profileManager;
+        this.statsManager = statsManager;
+
+        scheduleManager.delegate = new WeakReference<ScheduleManagerDelegate>(this);
+        profileManager.delegate = new WeakReference<ProfileManagerDelegate>(this);
+    }
+
     @Override
     protected void onHandleIntent(Intent workIntent) {
         setDefaultManager(this);
@@ -114,6 +134,7 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
         // Initialize manager singleton references
         this.scheduleManager = ScheduleManager.getDefaultManager();
         this.profileManager = ProfileManager.getDefaultManager();
+        this.statsManager = StatsManager.getDefaultManager();
 
         this.scheduleManager.delegate = new WeakReference<ScheduleManagerDelegate>(this);
         this.profileManager.delegate = new WeakReference<ProfileManagerDelegate>(this);
@@ -192,6 +213,8 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
                         String title = "Active Profile";
                         String message = "Profile '" + profile.getName() + "' is now active.";
                         this.issueNotification(title, message);
+
+                        this.logFocusedIntervalWithProfile(profile, schedule);
                     }
                 }
             }
@@ -289,7 +312,26 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
         this.updateBlockingModuleApps();
     }
 
-    //build and issue notifications
+    /**
+     * Log a focused interval into a specific profile.
+     * @param profile The profile to get a new log entry.
+     */
+    private void logFocusedIntervalWithProfile(Profile profile, Schedule schedule) {
+        // Find the longest duration for this scheduled profile.
+        ArrayList<Long> durations = schedule.getTimesRemainingWithProfileIdentifier(profile.getIdentifier());
+        Collections.sort(durations);
+
+        if (durations.size() > 0) {
+            statsManager.getDefaultManager().addFocusedIntervalWithProfileIdentifier(
+                    profile.getIdentifier(),
+                    Calendar.getInstance(),
+                    durations.get(0));
+        } else {
+            System.out.println("Tried to log a profile but no active time remaining in schedule?");
+        }
+    }
+
+    /** Create and issue notifications **/
     public void issueNotification(String title, String message) {
         if (this.getBaseContext() == null) {
             return; // Don't actually have a context during some tests

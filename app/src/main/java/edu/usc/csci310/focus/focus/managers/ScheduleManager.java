@@ -85,9 +85,11 @@ public class ScheduleManager {
         if (removedSchedule != null) {
             this.storageManager.removeObject(SCHEDULE_GROUP_IDENTIFIER, scheduleIdentifier);
 
-            ScheduleManagerDelegate delegateRef = this.delegate.get();
-            if (delegateRef != null) {
-                delegateRef.managerDidRemoveSchedule(this, removedSchedule);
+            if (delegate != null) {
+                ScheduleManagerDelegate delegateRef = this.delegate.get();
+                if (delegateRef != null) {
+                    delegateRef.managerDidRemoveSchedule(this, removedSchedule);
+                }
             }
         }
     }
@@ -98,9 +100,11 @@ public class ScheduleManager {
     public void removeAllSchedules() {
         this.storageManager.removeObjectsWithPrefix(SCHEDULE_GROUP_IDENTIFIER);
 
-        ScheduleManagerDelegate delegateRef = this.delegate.get();
-        if (delegateRef != null) {
-            delegateRef.managerDidRemoveSchedule(this, null);
+        if (delegate != null) {
+            ScheduleManagerDelegate delegateRef = this.delegate.get();
+            if (delegateRef != null) {
+                delegateRef.managerDidRemoveSchedule(this, null);
+            }
         }
     }
 

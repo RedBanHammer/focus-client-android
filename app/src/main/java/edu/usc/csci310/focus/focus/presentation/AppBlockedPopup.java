@@ -17,6 +17,7 @@ import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 import edu.usc.csci310.focus.focus.dataobjects.ScheduledProfile;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
 import edu.usc.csci310.focus.focus.managers.ScheduleManager;
+import edu.usc.csci310.focus.focus.managers.StatsManager;
 
 
 /**
@@ -63,6 +64,10 @@ public class AppBlockedPopup extends DialogFragment {
             for (App a : p.getApps()) {
                 if (a.getName().equals(appName) && !blockingProfiles.contains(p.getName())) {
                     blockingProfiles.add(p.getName());
+
+                    // For each of the blocking profiles, invalidate any focused intervals
+                    StatsManager.getDefaultManager().invalidateFocusedIntervalWithProfileIdentifier(p.getIdentifier());
+
                     continue;
                 }
             }

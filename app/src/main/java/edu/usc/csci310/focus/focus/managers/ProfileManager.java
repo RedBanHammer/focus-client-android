@@ -48,9 +48,11 @@ public class ProfileManager {
         storageManager.setObject(profile, "Profiles", profile.getIdentifier());
 
         // notify delegate
-        ProfileManagerDelegate delegateRef = this.delegate.get();
-        if (delegateRef != null) {
-            delegateRef.managerDidUpdateProfile(this, profile);
+        if (delegate != null) {
+            ProfileManagerDelegate delegateRef = this.delegate.get();
+            if (delegateRef != null) {
+                delegateRef.managerDidUpdateProfile(this, profile);
+            }
         }
     }
 

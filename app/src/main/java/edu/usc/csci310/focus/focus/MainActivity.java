@@ -31,10 +31,12 @@ import android.view.MenuItem;
 import java.util.ArrayList;
 
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
+import edu.usc.csci310.focus.focus.dataobjects.ProfileStat;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
 import edu.usc.csci310.focus.focus.managers.BlockingManager;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
 import edu.usc.csci310.focus.focus.managers.ScheduleManager;
+import edu.usc.csci310.focus.focus.managers.StatsManager;
 import edu.usc.csci310.focus.focus.presentation.NotificationListFragment;
 import edu.usc.csci310.focus.focus.presentation.ProfileList;
 import edu.usc.csci310.focus.focus.storage.StorageManager;
@@ -60,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Set up managers
         StorageManager.getDefaultManagerWithContext(getApplicationContext());
+        StatsManager.getDefaultManager();
 
         BlockingManager.createBlockingManagerWithContext(getApplicationContext());
 //        BlockingManager.getDefaultManagerWithContext(getApplicationContext());
