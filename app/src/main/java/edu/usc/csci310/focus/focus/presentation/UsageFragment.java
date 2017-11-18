@@ -55,15 +55,15 @@ public class UsageFragment extends Fragment {
         appBarChart = (BarChart) v.findViewById(R.id.appBarChart);
         totalPieChart = (PieChart) v.findViewById(R.id.totalPieChart);
 
-        //test data
-        for(int i = 1; i < 8; i++)
-        {
-            ProfileStat stat = new ProfileStat(ProfileManager.getDefaultManager().getAllProfiles().get(0).getIdentifier());
-            Calendar cal = new GregorianCalendar();
-            cal.add(Calendar.DATE, -(Calendar.DAY_OF_WEEK - i));
-
-            stat.addFocusedInterval(cal, 10l);
-        }
+//        //test data
+//        for(int i = 1; i < 8; i++)
+//        {
+//            ProfileStat stat = new ProfileStat(ProfileManager.getDefaultManager().getAllProfiles().get(0).getIdentifier());
+//            Calendar cal = new GregorianCalendar();
+//            cal.add(Calendar.DATE, -(Calendar.DAY_OF_WEEK - i));
+//
+//            stat.addFocusedInterval(cal, 10l);
+//        }
 
         loadDataProfileBarChart();
         loadDataAppBarChart();
@@ -75,7 +75,7 @@ public class UsageFragment extends Fragment {
 
     private void loadDataProfileBarChart() {
         //find day of week string
-        final String [] dayOfWeek = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+        final String [] dayOfWeek = {"S", "M", "T", "W", "Th", "F", "Sa"};
 
         Legend l = profileBarChart.getLegend();
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
@@ -118,28 +118,29 @@ public class UsageFragment extends Fragment {
 
         //week starts at sunday
         //go through the array list, pull out profiles from the last few days (excluding current day)
-        int i, j, k, counter = 0;
+        int i, counter = 0;
         //List<BarEntry> entries = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
-        Calendar extractCal = Calendar.getInstance();
-        extractCal.set(Calendar.HOUR_OF_DAY, 0);
-        extractCal.set(Calendar.MINUTE, 0);
-        extractCal.set(Calendar.SECOND, 0);
-        extractCal.set(Calendar.MILLISECOND, 0);
 
         ArrayList<BarEntry> barEntries = new ArrayList<BarEntry>();
         ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
 
 
         for(i = 1; i < calendar.DAY_OF_WEEK+1; i++) {
-            String[] labels = new String[profileStatArrayList.size()]; //this might not work
-            float[] times = new float[profileStatArrayList.size()]; //this might not work
+            ArrayList<String> labels = new ArrayList<>();
+            ArrayList<Float> times = new ArrayList<>();
 
             for (ProfileStat ps : profileStatArrayList) {
                 //for each profileStat, extract the hours on each day.
                 //set date, month, year, (start time, hour and minute)
                 Float totalTime = 0f;
-//                extractCal.set(Calendar.DAY_OF_WEEK, i);
+
+                Calendar extractCal = Calendar.getInstance();
+                extractCal.set(Calendar.HOUR_OF_DAY, 0);
+                extractCal.set(Calendar.MINUTE, 0);
+                extractCal.set(Calendar.SECOND, 0);
+                extractCal.set(Calendar.MILLISECOND, 0);
+
                 extractCal.add(Calendar.DATE, -(calendar.DAY_OF_WEEK - i));
                 Long duration = 24l*60l; // one day
 
@@ -155,36 +156,31 @@ public class UsageFragment extends Fragment {
                     String profileID = ps.getIdentifier();
                     String profileName = ProfileManager.getDefaultManager().getProfileWithIdentifier(profileID).getName();
                     //name is profileName, hours is in totalTime, day is in i. package it up
-                    labels[counter] = profileName;
-                    times[counter] = totalTime / 60; //store hours, not minutes
+                    labels.add(profileName);
+                    times.add(totalTime / 60); //store hours, not minutes
                 }
-
             }
 
             // Add to
-            barEntries.add(new BarEntry(i, times));
-
-            //for testing
-            //barEntries.add(new BarEntry(i, 5));
-            //barEntries.add(new BarEntry(i, 2));
-
+            float[] primativeFloat = new float[times.size()];
+            int timeCounter = 0;
+            for (Float time : times) {
+                primativeFloat[timeCounter++] = (time != null ? time : Float.NaN);
+            }
+            barEntries.add(new BarEntry(i, primativeFloat));
 
             BarDataSet barDataSet;
-            if (profileBarChart.getData() != null &&
-                    profileBarChart.getData().getDataSetCount() > 0) {
+            if (profileBarChart.getData() != null && profileBarChart.getData().getDataSetCount() > 0) {
                 barDataSet = (BarDataSet) profileBarChart.getData().getDataSetByIndex(0);
                 barDataSet.setValues(barEntries);
-                //profileBarChart.getData().notifyDataChanged();
-                //profileBarChart.notifyDataSetChanged();
             } else {
-                //second parameter shld be day of the week
+                //second parameter should be day of the week
                 barDataSet = new BarDataSet(barEntries, dayOfWeek[i-1]);
                 barDataSet.setDrawIcons(false);
                 //barDataSet.setColors(getColors());
-                barDataSet.setStackLabels(labels);
+                barDataSet.setStackLabels(labels.toArray(new String[labels.size()]));
 
                 dataSets.add(barDataSet);
-
             }
         }
 
@@ -193,9 +189,7 @@ public class UsageFragment extends Fragment {
         data.setValueFormatter(new MyValueFormatter());
         profileBarChart.setData(data);
 
-        profileBarChart.setFitBars(true);
         profileBarChart.invalidate();
-
     }
 
     //
