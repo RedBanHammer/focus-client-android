@@ -3,6 +3,8 @@ package edu.usc.csci310.focus.focus.presentation;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -19,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import edu.usc.csci310.focus.focus.R;
+import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.RecurringTime;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
@@ -76,6 +80,43 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
         // Populate the data from the data object via the viewHolder object
         // into the template view.
         viewHolder.profileName.setText(profile.getName());
+
+
+        // add app UX preview of apps in profile
+        ArrayList<App> apps = this.profile.getApps();
+        ImageView appImage = (ImageView) view.findViewById(R.id.miniApp1);
+
+        for (int i = 0; i < apps.size(); i++) {
+            // Populate the data into the template view using the data object
+            Drawable icon = null;
+            try {
+                icon = this.getContext().getPackageManager().getApplicationIcon(apps.get(i).getIdentifier());
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            appImage.setImageDrawable(icon);
+
+            switch(i) {
+                case 0:
+                    appImage = (ImageView) view.findViewById(R.id.miniApp2);
+                    break;
+                case 1:
+                    appImage = (ImageView) view.findViewById(R.id.miniApp3);
+                    break;
+                case 2:
+                    appImage = (ImageView) view.findViewById(R.id.miniApp4);
+                    break;
+                case 3:
+                    appImage = (ImageView) view.findViewById(R.id.miniApp5);
+                    break;
+                case 4:
+                    appImage = (ImageView) view.findViewById(R.id.miniApp6);
+                    break;
+                case 5:
+                    i = apps.size(); // a way of breaking out of the for loop
+                    break;
+            }
+        }
 
         Schedule timerSchedule = ScheduleManager.getDefaultManager().getScheduleWithName(this.profile.getIdentifier() + Schedule.TIMER_SCHEDULE_POSTFIX);
 
