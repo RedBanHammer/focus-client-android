@@ -25,6 +25,7 @@ public class ProfileStat extends NamedObject {
         super("profile-stats", identifier);
     }
 
+
     /**
      * Add a new focused interval to the internal map.
      * @param startTime
@@ -57,13 +58,17 @@ public class ProfileStat extends NamedObject {
 
         for (Calendar intervalStart : focusedIntervals.keySet()) {
             Long intervalDuration = focusedIntervals.get(intervalStart);
-            Calendar intervalEnd = intervalStart;
-            intervalEnd.add(Calendar.MINUTE, intervalDuration.intValue());
+            Calendar intervalEnd = (Calendar) intervalStart.clone();
+            if(intervalDuration != null)
+            {
+                intervalEnd.add(Calendar.MINUTE, intervalDuration.intValue());
 
-            if (startTime.compareTo(intervalStart) <= 0 && endTime.compareTo(intervalEnd) >= 0) {
-                // Interval time is within this focused interval.
-                filteredFocusedIntervals.put(intervalStart, duration);
+                if (startTime.compareTo(intervalStart) <= 0 && endTime.compareTo(intervalEnd) >= 0) {
+                    // Interval time is within this focused interval.
+                    filteredFocusedIntervals.put(intervalStart, intervalDuration);
+                }
             }
+
         }
 
         return filteredFocusedIntervals;
