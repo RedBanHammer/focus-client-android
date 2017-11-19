@@ -28,4 +28,5 @@
     <string name="title_activity_schedule">Schedule</string>
 
     <string name="edit_schedule_name">New Schedule Name</string>
+    <string name="add_usage_test">Add Usage</string>
 </resources>
