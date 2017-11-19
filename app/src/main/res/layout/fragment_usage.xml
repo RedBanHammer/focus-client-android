@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Profile Usage This Week"
-            android:textSize="24dp"/>
+            android:textSize="24dp" />
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/profileBarChart"

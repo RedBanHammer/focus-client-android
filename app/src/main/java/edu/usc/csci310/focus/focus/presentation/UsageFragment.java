@@ -18,8 +18,10 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -75,7 +77,7 @@ public class UsageFragment extends Fragment {
 
     private void loadDataProfileBarChart() {
         //find day of week string
-        final String [] dayOfWeek = {"S", "M", "T", "W", "Th", "F", "Sa"};
+        final String [] dayOfWeek = {" ", "S", "M", "T", "W", "Th", "F", "Sa", " "};
 
         Legend l = profileBarChart.getLegend();
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
@@ -85,6 +87,7 @@ public class UsageFragment extends Fragment {
         l.setFormSize(8f);
         l.setFormToTextSpace(4f);
         l.setXEntrySpace(6f);
+        l.setYEntrySpace(6f);
 
         profileBarChart.getDescription().setEnabled(false);
         profileBarChart.setPinchZoom(false);
@@ -100,19 +103,13 @@ public class UsageFragment extends Fragment {
         leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
         profileBarChart.getAxisRight().setEnabled(false);
 
-
         XAxis xLabels = profileBarChart.getXAxis();
         XAxis xAxis = profileBarChart.getXAxis();
-        xAxis.setEnabled(false);
-//        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-//        xAxis.setDrawGridLines(false);
+        xAxis.setEnabled(true);
+        xAxis.setPosition(XAxis.XAxisPosition.TOP);
+        xAxis.setDrawGridLines(false);
 //        xAxis.setLabelCount(7, true);
-//        xAxis.setValueFormatter(new IAxisValueFormatter() {
-//            @Override
-//            public String getFormattedValue(float value, AxisBase axis) {
-//                return dayOfWeek[(int) value];
-//            }
-//        });
+
 
         profileBarChart.setExtraBottomOffset(-50f);
 
@@ -125,12 +122,15 @@ public class UsageFragment extends Fragment {
         ArrayList<BarEntry> barEntries = new ArrayList<BarEntry>();
         ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
 
-
         for(i = 1; i < calendar.DAY_OF_WEEK+1; i++) {
             ArrayList<String> labels = new ArrayList<>();
             ArrayList<Float> times = new ArrayList<>();
 
+
             for (ProfileStat ps : profileStatArrayList) {
+
+                String profileID = ps.getIdentifier();
+                String profileName = ProfileManager.getDefaultManager().getProfileWithIdentifier(profileID).getName();
                 //for each profileStat, extract the hours on each day.
                 //set date, month, year, (start time, hour and minute)
                 Float totalTime = 0f;
@@ -152,20 +152,21 @@ public class UsageFragment extends Fragment {
                 }
 
                 if (totalTime > 0) {
+
                     //add it to the bar graph, find the profile name
-                    String profileID = ps.getIdentifier();
-                    String profileName = ProfileManager.getDefaultManager().getProfileWithIdentifier(profileID).getName();
-                    //name is profileName, hours is in totalTime, day is in i. package it up
-                    labels.add(profileName);
+                                        //name is profileName, hours is in totalTime, day is in i. package it up
+                   labels.add(profileName);
                     times.add(totalTime / 60); //store hours, not minutes
                 }
+
+
             }
 
             // Add to
             float[] primativeFloat = new float[times.size()];
             int timeCounter = 0;
             for (Float time : times) {
-                primativeFloat[timeCounter++] = (time != null ? time : Float.NaN);
+                primativeFloat[timeCounter++] = (time != null ? time : 0);
             }
             barEntries.add(new BarEntry(i, primativeFloat));
 
@@ -174,11 +175,14 @@ public class UsageFragment extends Fragment {
                 barDataSet = (BarDataSet) profileBarChart.getData().getDataSetByIndex(0);
                 barDataSet.setValues(barEntries);
             } else {
-                //second parameter should be day of the week
-                barDataSet = new BarDataSet(barEntries, dayOfWeek[i-1]);
+                barDataSet = new BarDataSet(barEntries, " ");
                 barDataSet.setDrawIcons(false);
-                //barDataSet.setColors(getColors());
-                barDataSet.setStackLabels(labels.toArray(new String[labels.size()]));
+                barDataSet.setColors(getColors());
+                if(labels.size() > 0)
+                {
+                    barDataSet.setStackLabels(labels.toArray(new String[labels.size()]));
+
+                }
 
                 dataSets.add(barDataSet);
             }
@@ -187,6 +191,13 @@ public class UsageFragment extends Fragment {
         BarData data = new BarData(dataSets);
         data.setBarWidth(0.9f);
         data.setValueFormatter(new MyValueFormatter());
+        xAxis.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return dayOfWeek[(int) value];
+            }
+        });
+
         profileBarChart.setData(data);
 
         profileBarChart.invalidate();
@@ -200,6 +211,20 @@ public class UsageFragment extends Fragment {
 
     private void loadDataTotalPieChart() {
 
+    }
+
+    private int[] getColors() {
+
+        int stacksize = profileStatArrayList.size();
+
+        // have as many colors as stack-values per entry
+        int[] colors = new int[stacksize];
+
+        for (int i = 0; i < colors.length; i++) {
+            colors[i] = ColorTemplate.MATERIAL_COLORS[i];
+        }
+
+        return colors;
     }
 
 }
