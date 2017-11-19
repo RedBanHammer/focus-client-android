@@ -57,12 +57,12 @@ public class ProfileStat extends NamedObject {
 
         for (Calendar intervalStart : focusedIntervals.keySet()) {
             Long intervalDuration = focusedIntervals.get(intervalStart);
-            Calendar intervalEnd = intervalStart;
+            Calendar intervalEnd = (Calendar)intervalStart.clone();
             intervalEnd.add(Calendar.MINUTE, intervalDuration.intValue());
 
             if (startTime.compareTo(intervalStart) <= 0 && endTime.compareTo(intervalEnd) >= 0) {
                 // Interval time is within this focused interval.
-                filteredFocusedIntervals.put(intervalStart, duration);
+                filteredFocusedIntervals.put(intervalStart, intervalDuration);
             }
         }
 
