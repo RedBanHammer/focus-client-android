@@ -221,7 +221,7 @@ public class UsageFragment extends Fragment {
 
 
     private void loadDataTotalPieChart() {
-        setUpUsageData();
+//        setUpUsageData();
         profileStatArrayList = StatsManager.getDefaultManager().getAllProfileStats();
         totalPieChart.clear();
         List<PieEntry> entries = new ArrayList<>();
@@ -296,7 +296,7 @@ public class UsageFragment extends Fragment {
         int stacksize = profileStatArrayList.size();
 
         // have as many colors as stack-values per entry
-        int[] colors = new int[stacksize];
+        int[] colors = new int[Math.max(1, stacksize)];
 
         for (int i = 0; i < colors.length; i++) {
             colors[i] = ColorTemplate.MATERIAL_COLORS[i];

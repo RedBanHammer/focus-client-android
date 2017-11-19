@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.ProfileStat;
 import edu.usc.csci310.focus.focus.storage.StorageManager;
 
@@ -99,7 +100,12 @@ public class StatsManager {
         ArrayList<ProfileStat> profileStats = new ArrayList<>();
 
         for (Serializable rawProfileStat : rawProfileStats) {
-            profileStats.add((ProfileStat) rawProfileStat);
+            ProfileStat profileStat = (ProfileStat) rawProfileStat;
+            Profile profile = ProfileManager.getDefaultManager().getProfileWithIdentifier(profileStat.getIdentifier());
+
+            if (profile != null) {
+                profileStats.add(profileStat);
+            }
         }
 
         return profileStats;
