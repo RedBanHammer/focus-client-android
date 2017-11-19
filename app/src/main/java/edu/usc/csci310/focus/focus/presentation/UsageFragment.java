@@ -124,15 +124,17 @@ public class UsageFragment extends Fragment {
 
         ArrayList<String> labels = new ArrayList<>();
 
+        for (ProfileStat stat : profileStatArrayList) {
+            String profileID = stat.getIdentifier();
+            String profileName = ProfileManager.getDefaultManager().getProfileWithIdentifier(profileID).getName();
+            labels.add(profileName);
+        }
 
         for(i = 1; i < calendar.DAY_OF_WEEK+1; i++) {
-            ArrayList<Float> times = new ArrayList<>();
+            float[] times = new float[labels.size()];
 
-
+            int statIndex = 0;
             for (ProfileStat ps : profileStatArrayList) {
-
-                String profileID = ps.getIdentifier();
-                String profileName = ProfileManager.getDefaultManager().getProfileWithIdentifier(profileID).getName();
                 //for each profileStat, extract the hours on each day.
                 //set date, month, year, (start time, hour and minute)
                 Float totalTime = 0f;
@@ -154,23 +156,14 @@ public class UsageFragment extends Fragment {
                 }
 
                 if (totalTime > 0) {
-
-                    //add it to the bar graph, find the profile name
-                                        //name is profileName, hours is in totalTime, day is in i. package it up
-                   labels.add(profileName);
-                    times.add(totalTime / 60); //store hours, not minutes
+                    times[statIndex] = (totalTime / 60); //store hours, not minutes
                 }
 
-
+                statIndex++;
             }
 
-            // Add to
-            float[] primativeFloat = new float[times.size()];
-            int timeCounter = 0;
-            for (Float time : times) {
-                primativeFloat[timeCounter++] = (time != null ? time : 0);
-            }
-            barEntries.add(new BarEntry(i, primativeFloat));
+            // Add to dataset
+            barEntries.add(new BarEntry(i, times));
         }
         BarDataSet barDataSet;
         if (profileBarChart.getData() != null && profileBarChart.getData().getDataSetCount() > 0) {
@@ -202,8 +195,7 @@ public class UsageFragment extends Fragment {
 
         profileBarChart.invalidate();
     }
-
-    //
+    
 
     private void loadDataAppBarChart() {
 
