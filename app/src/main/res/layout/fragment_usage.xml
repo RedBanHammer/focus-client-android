@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/fab_margin"
-    tools:context="edu.usc.csci310.focus.focus.presentation.UsageFragment">
+    tools:context="edu.usc.csci310.focus.focus.presentation.UsageFragment"
+    android:focusableInTouchMode="true">
 
     <!-- TODO: Update blank fragment layout -->
     <RelativeLayout
@@ -22,18 +23,25 @@
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:layout_below="@id/profileChartName"/>
-
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/appBarChart"
+        <TextView
+            android:id="@+id/appListName"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Most Blocked Apps"
+            android:textSize="24dp"
             android:layout_below="@id/profileBarChart"/>
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:id="@+id/mostUsedProfiles"
+            android:layout_below="@+id/appListName">
+        </ListView>
 
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/totalPieChart"
             android:layout_width="300dp"
             android:layout_height="300dp"
-            android:layout_below="@id/appBarChart"/>
+            android:layout_below="@id/mostUsedProfiles"/>
 
 
 
