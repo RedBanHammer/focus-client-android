@@ -3,6 +3,10 @@
     <color name="colorPrimary">#011627</color>
     <color name="colorPrimaryDark">#303f9f</color>
     <color name="colorAccent">#04daba</color>
+
+    <color name="primary_color">#011627</color>
+    <color name="button_primary">#efefef</color>
+
     <color name="event_color_01">#7de7ad</color>
     <color name="event_color_02">#5f84e2</color>
     <color name="event_color_03">#e46161</color>

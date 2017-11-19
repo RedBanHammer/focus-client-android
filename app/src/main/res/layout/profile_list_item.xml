@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:text="Name"
-            android:textColor="@color/event_color_01"
+            android:textColor="@color/primary_color"
             android:textSize="21sp" />
 
         <LinearLayout
