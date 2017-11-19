@@ -22,6 +22,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
-        android:background="@color/event_color_03"
+        android:background="@color/button_primary"
         android:text="Done" />
 </LinearLayout>

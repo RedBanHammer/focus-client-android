@@ -181,7 +181,7 @@
                 android:layout_height="wrap_content"
                 android:layout_above="@+id/delete_profile"
                 android:layout_marginBottom="@dimen/page_padding"
-                android:background="@color/event_color_01"
+                android:background="@color/primary_color"
                 android:text="Update"
                 android:textColor="@android:color/white"
                 android:textStyle="bold" />

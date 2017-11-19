@@ -169,7 +169,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/duration_layout"
             android:layout_gravity="center_horizontal"
-            android:background="@color/event_color_01"
+            android:background="@color/primary_color"
             android:text="@string/add_profiles"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
