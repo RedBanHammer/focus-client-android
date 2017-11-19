@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -41,6 +42,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+
+import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 
 import edu.usc.csci310.focus.focus.R;
@@ -55,11 +58,13 @@ import edu.usc.csci310.focus.focus.managers.StatsManager;
  */
 public class UsageFragment extends Fragment {
     private BarChart profileBarChart;
-    private BarChart appBarChart;
     private PieChart totalPieChart;
     private ArrayList<ProfileStat> profileStatArrayList;
     private final static long MINUTES_IN_WEEK = 10080;
-    private ArrayList<Profile> profiles;
+    private ArrayList<Profile> profiles = new ArrayList<>();
+    private ListView mostUsedProfiles;
+    private appViewAdapter appViewAdapter;
+
 
     public UsageFragment() {
         // Required empty public constructor
@@ -71,22 +76,13 @@ public class UsageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_usage, container, false);
+        mostUsedProfiles = (ListView) v.findViewById(R.id.mostUsedProfiles);
         profileBarChart = (BarChart) v.findViewById(R.id.profileBarChart);
-        appBarChart = (BarChart) v.findViewById(R.id.appBarChart);
         totalPieChart = (PieChart) v.findViewById(R.id.totalPieChart);
 
-//        //test data
-//        for(int i = 1; i < 8; i++)
-//        {
-//            ProfileStat stat = new ProfileStat(ProfileManager.getDefaultManager().getAllProfiles().get(0).getIdentifier());
-//            Calendar cal = new GregorianCalendar();
-//            cal.add(Calendar.DATE, -(Calendar.DAY_OF_WEEK - i));
-//
-//            stat.addFocusedInterval(cal, 10l);
-//        }
 
         loadDataProfileBarChart();
-        loadDataAppBarChart();
+        loadDataAppList();
         loadDataTotalPieChart();
 
         // Inflate the layout for this fragment
@@ -215,7 +211,51 @@ public class UsageFragment extends Fragment {
     }
     
 
-    private void loadDataAppBarChart() {
+    private void loadDataAppList() {
+        //change this to a list? or a pie chart?
+        //get the applist of apps to pass to the adapter
+        //most used apps for THE PAST WEEK
+        ArrayList<Profile> maxProfileList = new ArrayList<>();
+        ArrayList<App> appList = new ArrayList<>();
+        Profile maxProfile = null;
+        long maxProfileTime = 0;
+
+        for (ProfileStat ps : profileStatArrayList) {
+            //find most used profile, list those apps.
+            long totalTime = 0;
+
+            Calendar extractCal = Calendar.getInstance();
+            extractCal.set(Calendar.HOUR_OF_DAY, 0);
+            extractCal.set(Calendar.MINUTE, 0);
+            extractCal.set(Calendar.SECOND, 0);
+            extractCal.set(Calendar.MILLISECOND, 0);
+
+            extractCal.add(Calendar.DATE, -7);
+            Long duration = 24l*60l * 7l; // minutes in one week
+
+            HashMap<Calendar, Long> intervalsInInterval = ps.getFocusedIntervalsInInterval(extractCal, duration);
+
+            for (Calendar c : intervalsInInterval.keySet()) {
+                Long addTime = intervalsInInterval.get(c);
+                totalTime += addTime;
+            }
+
+            if(totalTime > maxProfileTime)
+            {
+                //found a new max profile
+                maxProfileTime = totalTime;
+                maxProfile = ProfileManager.getDefaultManager().getProfileWithIdentifier(ps.getIdentifier());
+                //maxProfileList.add(ProfileManager.getDefaultManager().getProfileWithIdentifier(ps.getIdentifier()));
+            }
+
+        }
+        for(App a : maxProfile.getApps())
+        {
+            appList.add(a);
+        }
+
+        appViewAdapter = new appViewAdapter(this.getContext(), appList);
+        mostUsedProfiles.setAdapter(appViewAdapter);
 
     }
 
