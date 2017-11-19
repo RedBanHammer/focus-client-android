@@ -122,8 +122,10 @@ public class UsageFragment extends Fragment {
         ArrayList<BarEntry> barEntries = new ArrayList<BarEntry>();
         ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
 
+        ArrayList<String> labels = new ArrayList<>();
+
+
         for(i = 1; i < calendar.DAY_OF_WEEK+1; i++) {
-            ArrayList<String> labels = new ArrayList<>();
             ArrayList<Float> times = new ArrayList<>();
 
 
@@ -169,23 +171,21 @@ public class UsageFragment extends Fragment {
                 primativeFloat[timeCounter++] = (time != null ? time : 0);
             }
             barEntries.add(new BarEntry(i, primativeFloat));
-
-            BarDataSet barDataSet;
-            if (profileBarChart.getData() != null && profileBarChart.getData().getDataSetCount() > 0) {
-                barDataSet = (BarDataSet) profileBarChart.getData().getDataSetByIndex(0);
-                barDataSet.setValues(barEntries);
-            } else {
-                barDataSet = new BarDataSet(barEntries, " ");
-                barDataSet.setDrawIcons(false);
-                barDataSet.setColors(getColors());
-                if(labels.size() > 0)
-                {
-                    barDataSet.setStackLabels(labels.toArray(new String[labels.size()]));
-
-                }
-
-                dataSets.add(barDataSet);
+        }
+        BarDataSet barDataSet;
+        if (profileBarChart.getData() != null && profileBarChart.getData().getDataSetCount() > 0) {
+            barDataSet = (BarDataSet) profileBarChart.getData().getDataSetByIndex(0);
+            barDataSet.setValues(barEntries);
+        } else {
+            barDataSet = new BarDataSet(barEntries, " ");
+            barDataSet.setDrawIcons(false);
+            barDataSet.setColors(getColors());
+            if(labels.size() > 0)
+            {
+                barDataSet.setStackLabels(labels.toArray(new String[labels.size()]));
             }
+
+            dataSets.add(barDataSet);
         }
 
         BarData data = new BarData(dataSets);
