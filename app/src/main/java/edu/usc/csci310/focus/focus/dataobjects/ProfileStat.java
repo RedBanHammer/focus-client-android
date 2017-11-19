@@ -25,6 +25,7 @@ public class ProfileStat extends NamedObject {
         super("profile-stats", identifier);
     }
 
+
     /**
      * Add a new focused interval to the internal map.
      * @param startTime
@@ -64,6 +65,7 @@ public class ProfileStat extends NamedObject {
                 // Interval time is within this focused interval.
                 filteredFocusedIntervals.put(intervalStart, intervalDuration);
             }
+
         }
 
         return filteredFocusedIntervals;

@@ -10,10 +10,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <TextView
+            android:id="@+id/profileChartName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Profile Usage This Week"
+            android:textSize="24dp" />
+
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/profileBarChart"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="250dp"
+            android:layout_below="@id/profileChartName"/>
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/appBarChart"
