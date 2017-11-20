@@ -58,12 +58,14 @@ public class ProfileStat extends NamedObject {
 
         for (Calendar intervalStart : focusedIntervals.keySet()) {
             Long intervalDuration = focusedIntervals.get(intervalStart);
-            Calendar intervalEnd = (Calendar)intervalStart.clone();
-            intervalEnd.add(Calendar.MINUTE, intervalDuration.intValue());
+            // DRAGON: UI queries for intervals *started* within a time frame, rather than intervals
+            // that fit within a time frame.
+//            Calendar intervalEnd = (Calendar)intervalStart.clone();
+//            intervalEnd.add(Calendar.MINUTE, intervalDuration.intValue());
 
-            if (startTime.compareTo(intervalStart) <= 0 && endTime.compareTo(intervalEnd) >= 0) {
+            if (startTime.compareTo(intervalStart) <= 0 && endTime.compareTo(intervalStart) >= 0) {
                 // Interval time is within this focused interval.
-                filteredFocusedIntervals.put((Calendar) intervalStart.clone(), intervalDuration);
+                filteredFocusedIntervals.put(intervalStart, intervalDuration);
             }
 
         }
