@@ -32,7 +32,7 @@
             android:layout_below="@id/profileBarChart"/>
         <ListView
             android:layout_width="match_parent"
-            android:layout_height="400dp"
+            android:layout_height="200dp"
             android:id="@+id/mostUsedProfiles"
             android:layout_below="@+id/appListName">
         </ListView>
