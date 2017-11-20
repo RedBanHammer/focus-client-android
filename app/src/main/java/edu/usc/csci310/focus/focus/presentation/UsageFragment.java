@@ -94,7 +94,7 @@ public class UsageFragment extends Fragment {
 
     private void loadDataProfileBarChart() {
         //find day of week string
-        final String [] dayOfWeek = {" ", "M", "T", "W", "Th", "F", "Sa", "S", " "};
+        final String [] dayOfWeek = {"S", "M", "T", "W", "Th", "F", "Sa", "S"};
 
         Legend l = profileBarChart.getLegend();
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
@@ -147,40 +147,44 @@ public class UsageFragment extends Fragment {
             labels.add(profileName);
         }
 
-        for(i = 1; i < calendar.DAY_OF_WEEK+1; i++) {
+        int currentDayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+
+        for(i = 1; i < 7+1; i++) {
             float[] times = new float[labels.size()];
 
             int statIndex = 0;
-            for (ProfileStat ps : profileStatArrayList) {
-                //for each profileStat, extract the hours on each day.
-                //set date, month, year, (start time, hour and minute)
-                Float totalTime = 0f;
+            if (i >= currentDayOfWeek) {
+                for (ProfileStat ps : profileStatArrayList) {
+                    //for each profileStat, extract the hours on each day.
+                    //set date, month, year, (start time, hour and minute)
+                    Float totalTime = 0f;
 
-                Calendar extractCal = Calendar.getInstance();
-                extractCal.set(Calendar.HOUR_OF_DAY, 0);
-                extractCal.set(Calendar.MINUTE, 0);
-                extractCal.set(Calendar.SECOND, 0);
-                extractCal.set(Calendar.MILLISECOND, 0);
+                    Calendar extractCal = Calendar.getInstance();
+                    extractCal.set(Calendar.HOUR_OF_DAY, 0);
+                    extractCal.set(Calendar.MINUTE, 0);
+                    extractCal.set(Calendar.SECOND, 0);
+                    extractCal.set(Calendar.MILLISECOND, 0);
 
-                extractCal.add(Calendar.DATE, -(calendar.DAY_OF_WEEK - i));
-                Long duration = 24l*60l; // one day
+                    extractCal.add(Calendar.DAY_OF_WEEK, i-currentDayOfWeek);
+                    Long duration = 24l * 60l; // one day
 
-                HashMap<Calendar, Long> intervalsInInterval = ps.getFocusedIntervalsInInterval(extractCal, duration);
+                    HashMap<Calendar, Long> intervalsInInterval = ps.getFocusedIntervalsInInterval(extractCal, duration);
 
-                for (Calendar c : intervalsInInterval.keySet()) {
-                    Long addTime = intervalsInInterval.get(c);
-                    totalTime += addTime;
+                    for (Calendar c : intervalsInInterval.keySet()) {
+                        Long addTime = intervalsInInterval.get(c);
+                        totalTime += addTime;
+                    }
+
+                    if (totalTime > 0) {
+                        times[statIndex] = (totalTime / 60.0f); //store hours, not minutes
+                    }
+
+                    statIndex++;
                 }
-
-                if (totalTime > 0) {
-                    times[statIndex] = (totalTime / 60.0f); //store hours, not minutes
-                }
-
-                statIndex++;
             }
 
             // Add to dataset
-            barEntries.add(new BarEntry(i, times));
+            barEntries.add(new BarEntry(i-1, times));
         }
         BarDataSet barDataSet;
         if (profileBarChart.getData() != null && profileBarChart.getData().getDataSetCount() > 0) {
