@@ -63,7 +63,7 @@ public class ProfileStat extends NamedObject {
 
             if (startTime.compareTo(intervalStart) <= 0 && endTime.compareTo(intervalEnd) >= 0) {
                 // Interval time is within this focused interval.
-                filteredFocusedIntervals.put(intervalStart, intervalDuration);
+                filteredFocusedIntervals.put((Calendar) intervalStart.clone(), intervalDuration);
             }
 
         }

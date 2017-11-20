@@ -71,6 +71,11 @@ public class UsageFragment extends Fragment {
         profileStatArrayList = StatsManager.getDefaultManager().getAllProfileStats();
     }
 
+    private void render() {
+        loadDataProfileBarChart();
+        loadDataAppList();
+        loadDataTotalPieChart();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -81,9 +86,7 @@ public class UsageFragment extends Fragment {
         totalPieChart = (PieChart) v.findViewById(R.id.totalPieChart);
 
 
-        loadDataProfileBarChart();
-        loadDataAppList();
-        loadDataTotalPieChart();
+        render();
 
         // Inflate the layout for this fragment
         return v;
@@ -91,7 +94,7 @@ public class UsageFragment extends Fragment {
 
     private void loadDataProfileBarChart() {
         //find day of week string
-        final String [] dayOfWeek = {" ", "S", "M", "T", "W", "Th", "F", "Sa", " "};
+        final String [] dayOfWeek = {" ", "M", "T", "W", "Th", "F", "Sa", "S", " "};
 
         Legend l = profileBarChart.getLegend();
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
@@ -170,7 +173,7 @@ public class UsageFragment extends Fragment {
                 }
 
                 if (totalTime > 0) {
-                    times[statIndex] = (totalTime / 60); //store hours, not minutes
+                    times[statIndex] = (totalTime / 60.0f); //store hours, not minutes
                 }
 
                 statIndex++;
@@ -220,39 +223,49 @@ public class UsageFragment extends Fragment {
         Profile maxProfile = null;
         long maxProfileTime = 0;
 
-        for (ProfileStat ps : profileStatArrayList) {
-            //find most used profile, list those apps.
-            long totalTime = 0;
+            for (ProfileStat ps : profileStatArrayList) {
 
-            Calendar extractCal = Calendar.getInstance();
-            extractCal.set(Calendar.HOUR_OF_DAY, 0);
-            extractCal.set(Calendar.MINUTE, 0);
-            extractCal.set(Calendar.SECOND, 0);
-            extractCal.set(Calendar.MILLISECOND, 0);
+                //find most used profile, list those apps.
+                long totalTime = 0;
 
-            extractCal.add(Calendar.DATE, -7);
-            Long duration = 24l*60l * 7l; // minutes in one week
+                Calendar extractCal = Calendar.getInstance();
+                extractCal.set(Calendar.HOUR_OF_DAY, 0);
+                extractCal.set(Calendar.MINUTE, 0);
+                extractCal.set(Calendar.SECOND, 0);
+                extractCal.set(Calendar.MILLISECOND, 0);
 
-            HashMap<Calendar, Long> intervalsInInterval = ps.getFocusedIntervalsInInterval(extractCal, duration);
+                extractCal.add(Calendar.DATE, -7);
+                Long duration = 24l*60l * 7l; // minutes in one week
 
-            for (Calendar c : intervalsInInterval.keySet()) {
-                Long addTime = intervalsInInterval.get(c);
-                totalTime += addTime;
+                HashMap<Calendar, Long> intervalsInInterval = ps.getFocusedIntervalsInInterval(extractCal, duration);
+
+                for (Calendar c : intervalsInInterval.keySet()) {
+                    Long addTime = intervalsInInterval.get(c);
+                    totalTime += addTime;
+                }
+
+                if(totalTime > maxProfileTime)
+                {
+                    //found a new max profile
+                    if(ProfileManager.getDefaultManager().getProfileWithIdentifier(ps.getIdentifier()) != null)
+                    {
+                        maxProfileTime = totalTime;
+                        maxProfile = ProfileManager.getDefaultManager().getProfileWithIdentifier(ps.getIdentifier());
+
+                    }
+
+                }
+
             }
-
-            if(totalTime > maxProfileTime)
+            if(maxProfile != null)
             {
-                //found a new max profile
-                maxProfileTime = totalTime;
-                maxProfile = ProfileManager.getDefaultManager().getProfileWithIdentifier(ps.getIdentifier());
-                //maxProfileList.add(ProfileManager.getDefaultManager().getProfileWithIdentifier(ps.getIdentifier()));
+                maxProfileList.add(maxProfile);
+                for(App a : maxProfile.getApps())
+                {
+                    appList.add(a);
+                }
             }
 
-        }
-        for(App a : maxProfile.getApps())
-        {
-            appList.add(a);
-        }
 
         appViewAdapter = new appViewAdapter(this.getContext(), appList);
         mostUsedProfiles.setAdapter(appViewAdapter);
