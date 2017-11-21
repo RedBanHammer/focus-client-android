@@ -365,7 +365,7 @@ public class UsageFragment extends Fragment implements StatsManagerDelegate {
     MenuItem optionsMenuItem;
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        optionsMenuItem = menu.add("Test Data");
+        optionsMenuItem = menu.add("Clear Data");
     }
 
     @Override
@@ -401,8 +401,8 @@ public class UsageFragment extends Fragment implements StatsManagerDelegate {
 //        profileStat2.addFocusedInterval(currDay, durations.get(1));
 //        profileStat2.addFocusedInterval(nextDay, durations.get(3));
         StatsManager.getDefaultManager().removeAllProfileStats();
-        StatsManager.getDefaultManager().addFocusedIntervalWithProfileIdentifier(profileStat1.getIdentifier(), currDay, durations.get(0));
-        StatsManager.getDefaultManager().addFocusedIntervalWithProfileIdentifier(profileStat2.getIdentifier(), nextDay, durations.get(1));
+//        StatsManager.getDefaultManager().addFocusedIntervalWithProfileIdentifier(profileStat1.getIdentifier(), currDay, durations.get(0));
+//        StatsManager.getDefaultManager().addFocusedIntervalWithProfileIdentifier(profileStat2.getIdentifier(), nextDay, durations.get(1));
     }
 
 }
