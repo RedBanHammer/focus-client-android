@@ -1,6 +1,7 @@
 package edu.usc.csci310.focus.focus.managers;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
@@ -9,6 +10,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
+import edu.usc.csci310.focus.focus.dataobjects.AchievementStat;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.ProfileStat;
 import edu.usc.csci310.focus.focus.dataobjects.StreakStat;
@@ -27,6 +29,10 @@ public class StatsManager {
     public static final String WEEKLY_STREAK_IDENTIFIER = "weekly-streaks";
     public static final String MONTHLY_STREAK_IDENTIFIER = "monthly-streaks";
     public static final String YEARLY_STREAK_IDENTIFIER = "yearly-streaks";
+
+    public static final String ACHIEVEMENT_GROUP_IDENTIFIER = "achievements";
+
+
 
     public WeakReference<StatsManagerDelegate> delegate;
 
@@ -336,6 +342,40 @@ public class StatsManager {
         Integer streak = getYearlyStreak() + 1;
         setYearlyStreak(streak);
     }
+
+
+
+
+
+    /** Achievements **/
+
+    /**
+     * Grant the user an achievement.
+     * @param identifier A string identifier uniquely identifying the achievement earned.
+     */
+    public void setAchievement(@NonNull String identifier) {
+        AchievementStat achievement = new AchievementStat(identifier);
+        storageManager.setObject(achievement, ACHIEVEMENT_GROUP_IDENTIFIER, identifier);
+    }
+
+    /**
+     * Remove an achievement the user has earned. Can remove non-existent achievements.
+     * @param identifier A string identifier of the achievemnt to remove.
+     */
+    public void removeAchievement(@NonNull String identifier) {
+        storageManager.removeObject(ACHIEVEMENT_GROUP_IDENTIFIER, identifier);
+    }
+
+    /**
+     * Get the achievement statistic given an achievement identifier.
+     * @param identifier A string identifier uniquely identifying the achievement earned.
+     * @return An AchievementStat if one exists, null if the user has not earned this achievement.
+     */
+    public @Nullable AchievementStat getAchievement(@NonNull String identifier) {
+        return (AchievementStat) storageManager.getObject(ACHIEVEMENT_GROUP_IDENTIFIER, identifier);
+    }
+
+
 
     /** Util **/
     private long daysBetween(Calendar startDate, Calendar endDate) {
