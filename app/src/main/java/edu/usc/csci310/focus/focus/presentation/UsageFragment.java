@@ -5,9 +5,11 @@ import android.app.usage.UsageStatsManager;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,17 +53,19 @@ import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.ProfileStat;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
 import edu.usc.csci310.focus.focus.managers.StatsManager;
+import edu.usc.csci310.focus.focus.managers.StatsManagerDelegate;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UsageFragment extends Fragment {
+public class UsageFragment extends Fragment implements StatsManagerDelegate {
     private BarChart profileBarChart;
     private PieChart totalPieChart;
     private ArrayList<ProfileStat> profileStatArrayList;
     private final static long MINUTES_IN_WEEK = 10080;
-    private ArrayList<Profile> profiles = new ArrayList<>();
+    private final static long MINUTES_IN_HOUR = 60;
+	private ArrayList<Profile> profiles = new ArrayList<>();
     private ListView mostUsedProfiles;
     private appViewAdapter appViewAdapter;
 
@@ -76,6 +80,26 @@ public class UsageFragment extends Fragment {
         loadDataAppList();
         loadDataTotalPieChart();
     }
+	public void managerDidUpdateProfileStat(StatsManager manager, ProfileStat stat) {
+        render();
+    }
+
+    public void managerDidRemoveProfileStat(StatsManager manager) {
+        render();
+    }
+
+    private void render() {
+        loadDataProfileBarChart();
+        loadDataAppBarChart();
+        loadDataTotalPieChart();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        StatsManager.getDefaultManager().setDelegate(this);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -84,7 +108,6 @@ public class UsageFragment extends Fragment {
         mostUsedProfiles = (ListView) v.findViewById(R.id.mostUsedProfiles);
         profileBarChart = (BarChart) v.findViewById(R.id.profileBarChart);
         totalPieChart = (PieChart) v.findViewById(R.id.totalPieChart);
-
 
         render();
 
@@ -278,25 +301,23 @@ public class UsageFragment extends Fragment {
 
 
     private void loadDataTotalPieChart() {
-//        setUpUsageData();
         profileStatArrayList = StatsManager.getDefaultManager().getAllProfileStats();
         totalPieChart.clear();
         List<PieEntry> entries = new ArrayList<>();
         Long totalHours = new Long(0);
         for (int index = 0; index< profileStatArrayList.size(); index++){
             Calendar currDay = getLastWeek();
-            Calendar endTime = (Calendar) currDay.clone();
-            endTime.add(Calendar.DATE, 6);
             HashMap<Calendar, Long> profileWeek = profileStatArrayList.get(index).getFocusedIntervalsInInterval(currDay, MINUTES_IN_WEEK);
             Long profileTotal = new Long(0);
             for (Map.Entry<Calendar, Long> entry: profileWeek.entrySet()){
                 profileTotal += entry.getValue();
                 totalHours +=entry.getValue();
             }
-            String profileName = getProfileName(profileStatArrayList.get(index));
+            String profileName = ProfileManager.getDefaultManager().getProfileWithIdentifier(profileStatArrayList.get(index).getIdentifier()).getName();
+            profileTotal /= MINUTES_IN_HOUR;
             entries.add(new PieEntry(profileTotal.floatValue(), profileName));
         }
-        PieDataSet set = new PieDataSet(entries, "Total HRS blocked: " + totalHours);
+        PieDataSet set = new PieDataSet(entries, "Total HRS blocked: " + totalHours/MINUTES_IN_HOUR);
         int[] colors = {
                 getResources().getColor(R.color.event_color_01),
                 getResources().getColor(R.color.event_color_02),
@@ -310,11 +331,11 @@ public class UsageFragment extends Fragment {
         }
         set.setColors(colorList);
         PieData data = new PieData(set);
-        //data.setValueFormatter(new PercentFormatter());
+        data.setValueFormatter(new PercentFormatter());
         data.setValueTextSize(10f);
         data.setValueTextColor(Color.WHITE);
         totalPieChart.setData(data);
-        totalPieChart.setUsePercentValues(false);
+        totalPieChart.setUsePercentValues(true);
         totalPieChart.setDrawHoleEnabled(true);
         totalPieChart.setHoleColor(R.color.colorPrimaryDark);
         Description desc = new Description();
@@ -329,23 +350,8 @@ public class UsageFragment extends Fragment {
 
     public Calendar getLastWeek(){
         Calendar currDay = Calendar.getInstance();
-        Date date = new Date();
-        currDay.setTime(date);
-        int i = currDay.get(Calendar.DAY_OF_WEEK) - currDay.getFirstDayOfWeek();
-        currDay.add(Calendar.DATE, -i - 7);
-        currDay.set(Calendar.HOUR_OF_DAY, 0);
-        currDay.set(Calendar.MINUTE, 0);
-        currDay.set(Calendar.SECOND, 0);
-        currDay.set(Calendar.MILLISECOND, 0);
+        currDay.add(Calendar.DATE, -6);
         return currDay;
-    }
-    private String getProfileName(ProfileStat profileStat){
-        for (Profile p: profiles){
-            if (p.getIdentifier().equals(profileStat.getIdentifier())){
-                return p.getName();
-            }
-        }
-        return "";
     }
 
     private int[] getColors() {
@@ -362,32 +368,47 @@ public class UsageFragment extends Fragment {
         return colors;
     }
 
-   private void setUpUsageData(){
+    MenuItem optionsMenuItem;
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        optionsMenuItem = menu.add("Test Data");
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+
+        //noinspection SimplifiableIfStatement
+        if (item == optionsMenuItem) {
+            setUpUsageData();
+            render();
+            return true;
+        }
+        return false;
+    }
+
+    private void setUpUsageData(){
         ArrayList<Long> durations = new ArrayList<>();
-        durations.add(new Long(30));
+        durations.add(new Long(120));
         durations.add(new Long(60));
         durations.add(new Long(10));
         durations.add(new Long(45));
-        profiles = new ArrayList<>();
+        ArrayList<Profile> profiles = ProfileManager.getDefaultManager().getAllProfiles();
 
-        for (int i = 0; i<5; i++){
-            Profile usageProfile = new Profile("Usage Profile " + i);
-            profiles.add(usageProfile);
-        }
         Calendar currDay = getLastWeek();
+        Calendar nextDay = (Calendar)currDay.clone();
+        nextDay.add(Calendar.DATE, 1);
         ProfileStat profileStat1 = new ProfileStat(profiles.get(0).getIdentifier());
-        profileStat1.addFocusedInterval(currDay, durations.get(0));
-        ProfileStat profileStat2 = new ProfileStat(profiles.get(1).getIdentifier());
-        profileStat2.addFocusedInterval(currDay, durations.get(1));
-        ProfileStat profileStat3 = new ProfileStat(profiles.get(2).getIdentifier());
-        profileStat3.addFocusedInterval(currDay, durations.get(2));
-        ProfileStat profileStat4 = new ProfileStat(profiles.get(3).getIdentifier());
-        profileStat4.addFocusedInterval(currDay, durations.get(3));
+//        profileStat1.addFocusedInterval(currDay, durations.get(0));
+//        profileStat1.addFocusedInterval(nextDay, durations.get(2));
+        ProfileStat profileStat2 = new ProfileStat(profiles.get(2).getIdentifier());
+//        profileStat2.addFocusedInterval(currDay, durations.get(1));
+//        profileStat2.addFocusedInterval(nextDay, durations.get(3));
         StatsManager.getDefaultManager().removeAllProfileStats();
         StatsManager.getDefaultManager().addFocusedIntervalWithProfileIdentifier(profileStat1.getIdentifier(), currDay, durations.get(0));
-        StatsManager.getDefaultManager().addFocusedIntervalWithProfileIdentifier(profileStat2.getIdentifier(), currDay, durations.get(1));
-        StatsManager.getDefaultManager().addFocusedIntervalWithProfileIdentifier(profileStat3.getIdentifier(), currDay, durations.get(2));
-        StatsManager.getDefaultManager().addFocusedIntervalWithProfileIdentifier(profileStat4.getIdentifier(), currDay, durations.get(3));
+        StatsManager.getDefaultManager().addFocusedIntervalWithProfileIdentifier(profileStat2.getIdentifier(), nextDay, durations.get(1));
     }
 
 }

@@ -26,6 +26,10 @@ public class StatsManager {
         return defaultManager;
     }
 
+    public void setDelegate(StatsManagerDelegate delegate){
+        this.delegate = new WeakReference<StatsManagerDelegate>(delegate);
+    }
+
     private StorageManager storageManager = StorageManager.getDefaultManager();
 
     /**
