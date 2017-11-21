@@ -30,10 +30,12 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import edu.usc.csci310.focus.focus.dataobjects.AchievementStat;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.ProfileStat;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
     ViewPager mViewPager;
     TabLayout tabLayout;
-
+    private ArrayList<AchievementStat> achievementStats;
     private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
 
     // Tab titles
@@ -72,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         // Set up managers
         StorageManager.getDefaultManagerWithContext(getApplicationContext());
         StatsManager.getDefaultManager();
+        achievementStats = StatsManager.getDefaultManager().createAchievements();
 
         BlockingManager.createBlockingManagerWithContext(getApplicationContext());
 //        BlockingManager.getDefaultManagerWithContext(getApplicationContext());
@@ -106,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
-        private int NUM_TABS = 4;
+        private int NUM_TABS = 5;
         private FragmentManager fm;
 
         public MyPagerAdapter(FragmentManager fragmentManager) {
@@ -133,8 +136,8 @@ public class MainActivity extends AppCompatActivity {
                     return NotificationListFragment.newInstance(2, tabs[2]);
                 case 3: // Usage Tab Fragment
                     return new UsageFragment();
-//                case 4: // Achievement Tab Fragment
-//                    return new AchievementFragment();
+                case 4: // Achievement Tab Fragment
+                    return AchievementFragment.newInstance(achievementStats);
                 default:
                     return null;
             }

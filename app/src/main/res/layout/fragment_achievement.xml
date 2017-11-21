@@ -1,13 +1,90 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="@dimen/fab_margin"
+    android:orientation="vertical"
     tools:context="edu.usc.csci310.focus.focus.presentation.AchievementFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-
-</ScrollView>
+        <GridLayout
+            android:id="@+id/grid_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            android:rowCount="2"
+            android:orientation="horizontal"
+            android:layout_marginBottom="@dimen/fab_margin">
+            <TextView
+                android:id="@+id/day_counter_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:text="@string/zero"
+                style="@style/Base.TextAppearance.AppCompat.Large"/>
+            <TextView
+                android:id="@+id/week_counter_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:text="@string/zero"
+                style="@style/Base.TextAppearance.AppCompat.Large"/>
+            <TextView
+                android:id="@+id/month_counter_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:text="@string/zero"
+                style="@style/Base.TextAppearance.AppCompat.Large"/>
+            <TextView
+                android:id="@+id/year_counter_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:text="@string/zero"
+                style="@style/Base.TextAppearance.AppCompat.Large"/>
+            <TextView
+                android:id="@+id/day_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:text="@string/days"
+                style="@style/Base.TextAppearance.AppCompat.Medium"/>
+            <TextView
+                android:id="@+id/week_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:text="@string/weeks"
+                style="@style/Base.TextAppearance.AppCompat.Medium"/>
+            <TextView
+                android:id="@+id/month_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:text="@string/months"
+                style="@style/Base.TextAppearance.AppCompat.Medium"/>
+            <TextView
+                android:id="@+id/year_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:gravity="center"
+                android:text="@string/years"
+                style="@style/Base.TextAppearance.AppCompat.Medium"/>
+        </GridLayout>
+        <GridView
+            android:id="@+id/achievements_grid_view"
+            android:layout_below="@id/grid_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:stretchMode="columnWidth"
+            android:numColumns="3"/>
+</RelativeLayout>

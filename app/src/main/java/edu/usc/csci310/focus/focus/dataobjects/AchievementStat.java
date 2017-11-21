@@ -10,6 +10,25 @@ import java.util.Calendar;
 
 public class AchievementStat extends NamedObject {
     private static final long serialVersionUID = 1L;
+    private String name;
+    private String description;
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     private Calendar timestamp = Calendar.getInstance();
 

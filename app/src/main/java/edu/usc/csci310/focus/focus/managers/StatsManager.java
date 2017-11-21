@@ -349,13 +349,28 @@ public class StatsManager {
 
     /** Achievements **/
 
+    public ArrayList<AchievementStat> createAchievements(){
+        ArrayList<AchievementStat> achievementStats = new ArrayList<>();
+        String [] names = {"Work Week", "One Week", "2 Weeks", "3 Weeks",
+                            "1 Month", "2 Months", "3 Months", "1 Year", "2 Years"};
+        String [] descriptions = {"Survived one work week!", "Survived one whole week!",
+                                    "Survived two weeks!", "Survived 3 weeks!", "Survived a month!",
+                                    "Survived 2 months!", "Survived 3 months!", "Survived 1 year!",
+                                    "Survived 2 whole years!!"};
+        for (int i=0; i<names.length; i++){
+            AchievementStat achievementStat = new AchievementStat(names[i]);
+            achievementStat.setName(names[i]);
+            achievementStat.setDescription(descriptions[i]);
+            achievementStats.add(achievementStat);
+        }
+        return achievementStats;
+    }
     /**
      * Grant the user an achievement.
-     * @param identifier A string identifier uniquely identifying the achievement earned.
+     * @param achievement A string identifier uniquely identifying the achievement earned.
      */
-    public void setAchievement(@NonNull String identifier) {
-        AchievementStat achievement = new AchievementStat(identifier);
-        storageManager.setObject(achievement, ACHIEVEMENT_GROUP_IDENTIFIER, identifier);
+    public void setAchievement(@NonNull AchievementStat achievement) {
+        storageManager.setObject(achievement, ACHIEVEMENT_GROUP_IDENTIFIER, achievement.getIdentifier());
     }
 
     /**
