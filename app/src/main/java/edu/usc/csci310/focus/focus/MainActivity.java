@@ -34,6 +34,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import edu.usc.csci310.focus.focus.dataobjects.AchievementStat;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
@@ -283,17 +284,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpWeeklyNotification(){
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = new GregorianCalendar();
         calendar.set(Calendar.HOUR_OF_DAY, 10);
         calendar.set(Calendar.MINUTE, 30);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.AM_PM, Calendar.AM );
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
 
-//        // Check we aren't setting it in the past which would trigger it to fire instantly
-//        if(calendar.getTimeInMillis() < System.currentTimeMillis()) {
-//            calendar.add(Calendar.DAY_OF_YEAR, 7);
-//        }
+        // Check we aren't setting it in the past which would trigger it to fire instantly
+        if(calendar.getTimeInMillis() < System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_YEAR, 7);
+        }
         int page = 3;
         Intent notifyIntent = new Intent(this, AlarmReceiver.class);
         notifyIntent.putExtra("Usage", page);
