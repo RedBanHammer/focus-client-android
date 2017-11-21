@@ -155,6 +155,7 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
     public void run() {
         while (true) {
             this.updateBlockingModuleApps();
+            this.updateStreakStats();
 
             try {
                 Thread.sleep(UPDATE_POLL_INTERVAL);
@@ -278,6 +279,14 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
 
 //        Intent notificationBlockingServiceIntent = new Intent(this, NotificationBlocker.class);
 //        this.startService(notificationBlockingServiceIntent);
+    }
+
+
+    /** Statistics **/
+    private void updateStreakStats() {
+        StatsManager.getDefaultManager().incrementDailyStreak();
+        StatsManager.getDefaultManager().incrementMonthlyStreak();
+        StatsManager.getDefaultManager().incrementYearlyStreak();
     }
 
     /** ProfileManagerDelegate implementation **/
