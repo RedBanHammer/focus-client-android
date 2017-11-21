@@ -37,6 +37,15 @@
         <service
             android:name=".managers.BlockingManager"
             android:exported="false" />
+        <service android:name=".receivers.NotificationIntentService" />
+        <receiver
+            android:name=".receivers.AlarmReceiver"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name=".receivers.AlarmReceiver" >
+                </action>
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name=".MainActivity"

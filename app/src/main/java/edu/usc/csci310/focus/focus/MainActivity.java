@@ -1,10 +1,12 @@
 package edu.usc.csci310.focus.focus;
 
 import android.Manifest;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.AppOpsManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -43,8 +45,11 @@ import edu.usc.csci310.focus.focus.managers.StatsManager;
 import edu.usc.csci310.focus.focus.presentation.NotificationListFragment;
 import edu.usc.csci310.focus.focus.presentation.ProfileList;
 import edu.usc.csci310.focus.focus.presentation.UsageFragment;
+import edu.usc.csci310.focus.focus.receivers.AlarmReceiver;
 import edu.usc.csci310.focus.focus.storage.StorageManager;
 import edu.usc.csci310.focus.focus.presentation.schedule.ScheduleList;
+
+import static edu.usc.csci310.focus.focus.R.id.viewPager;
 
 public class MainActivity extends AppCompatActivity {
     public static Context mainActivityContext;
@@ -76,15 +81,21 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mViewPager = (ViewPager) findViewById(R.id.viewPager);
+        mViewPager = (ViewPager) findViewById(viewPager);
         viewPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(viewPagerAdapter);
+
+        //set up intent for navigating to usage tab
+        int defaultValue = 0;
+        int page = getIntent().getIntExtra("Usage", defaultValue);
+        mViewPager.setCurrentItem(page);
 
         tabLayout = (TabLayout)findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         this.createNotificationChannel();
+        this.setUpWeeklyNotification();
         this.requestPermissions();
     }
 
@@ -266,6 +277,29 @@ public class MainActivity extends AppCompatActivity {
         } catch (PackageManager.NameNotFoundException e) {
             return false;
         }
+    }
+
+    private void setUpWeeklyNotification(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 10);
+        calendar.set(Calendar.MINUTE, 30);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.AM_PM, Calendar.AM );
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+
+//        // Check we aren't setting it in the past which would trigger it to fire instantly
+//        if(calendar.getTimeInMillis() < System.currentTimeMillis()) {
+//            calendar.add(Calendar.DAY_OF_YEAR, 7);
+//        }
+        int page = 3;
+        Intent notifyIntent = new Intent(this, AlarmReceiver.class);
+        notifyIntent.putExtra("Usage", page);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast
+                (this, 0, notifyIntent, 0);
+        AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7,
+                 pendingIntent);
     }
 
     private void createNotificationChannel(){
