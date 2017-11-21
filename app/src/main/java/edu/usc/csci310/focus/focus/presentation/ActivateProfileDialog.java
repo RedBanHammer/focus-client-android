@@ -68,17 +68,13 @@ public class ActivateProfileDialog extends AppCompatActivity {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 if (newVal == 10) {
+                    minutesPicker.setMinValue(0);
                     minutesPicker.setValue(0);
                     minutesPicker.setEnabled(false);
                 } else {
-                    if (oldVal == 10) {
-                        minutesPicker.setEnabled(true);
-                    } else if (oldVal == 0) {
-                        minutesPicker.setMinValue(0);
-                    }
-                    if (newVal == 0) {
-                        minutesPicker.setMinValue(10);
-                    }
+                    if (newVal == 0) minutesPicker.setMinValue(10);
+                    else minutesPicker.setMinValue(0);
+                    minutesPicker.setEnabled(true);
                 }
             }
         });

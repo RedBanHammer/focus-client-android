@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,7 +91,8 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
             // Populate the data into the template view using the data object
             Drawable icon = null;
             try {
-                icon = this.getContext().getPackageManager().getApplicationIcon(apps.get(i).getIdentifier());
+                if (i < apps.size()) icon = this.getContext().getPackageManager().getApplicationIcon(apps.get(i).getIdentifier());
+                else icon = ContextCompat.getDrawable(this.getContext(), R.drawable.ic_add_black_24dp);
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }
