@@ -29,4 +29,9 @@
 
     <string name="edit_schedule_name">New Schedule Name</string>
     <string name="add_usage_test">Add Usage</string>
+    <string name="zero">0</string>
+    <string name="days">Days</string>
+    <string name="weeks">Weeks</string>
+    <string name="months">Months</string>
+    <string name="years">Years</string>
 </resources>

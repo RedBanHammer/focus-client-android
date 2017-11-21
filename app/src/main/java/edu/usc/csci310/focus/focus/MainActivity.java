@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
-        private int NUM_TABS = 4;
+        private int NUM_TABS = 5;
         private FragmentManager fm;
 
         public MyPagerAdapter(FragmentManager fragmentManager) {
@@ -122,8 +122,8 @@ public class MainActivity extends AppCompatActivity {
                     return NotificationListFragment.newInstance(2, tabs[2]);
                 case 3: // Usage Tab Fragment
                     return new UsageFragment();
-//                case 4: // Achievement Tab Fragment
-//                    return new AchievementFragment();
+                case 4: // Achievement Tab Fragment
+                    return new AchievementFragment();
                 default:
                     return null;
             }
