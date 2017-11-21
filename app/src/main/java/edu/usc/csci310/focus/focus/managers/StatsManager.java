@@ -375,6 +375,21 @@ public class StatsManager {
         return (AchievementStat) storageManager.getObject(ACHIEVEMENT_GROUP_IDENTIFIER, identifier);
     }
 
+    /**
+     * Get a list of all achievements the user earned.
+     * @return An ArrayList of AchievementStats that the user earned.
+     */
+    public @NonNull ArrayList<AchievementStat> getAllAchievements() {
+        ArrayList<Serializable> rawAchievements = storageManager.getObjectsWithPrefix(ACHIEVEMENT_GROUP_IDENTIFIER);
+        ArrayList<AchievementStat> achievements = new ArrayList<>();
+
+        for (Serializable rawAchievement : rawAchievements) {
+            achievements.add((AchievementStat) rawAchievement);
+        }
+
+        return achievements;
+    }
+
 
 
     /** Util **/
