@@ -7,9 +7,11 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.ProfileStat;
+import edu.usc.csci310.focus.focus.dataobjects.StreakStat;
 import edu.usc.csci310.focus.focus.storage.StorageManager;
 
 /**
@@ -19,6 +21,12 @@ import edu.usc.csci310.focus.focus.storage.StorageManager;
 public class StatsManager {
     private static StatsManager defaultManager = new StatsManager();
     public static final String STATS_GROUP_IDENTIFIER = "profile-stats";
+
+    public static final String STREAKS_GROUP_IDENTIFIER = "streaks";
+    public static final String DAILY_STREAK_IDENTIFIER = "daily-streaks";
+    public static final String WEEKLY_STREAK_IDENTIFIER = "weekly-streaks";
+    public static final String MONTHLY_STREAK_IDENTIFIER = "monthly-streaks";
+    public static final String YEARLY_STREAK_IDENTIFIER = "yearly-streaks";
 
     public WeakReference<StatsManagerDelegate> delegate;
 
@@ -42,6 +50,8 @@ public class StatsManager {
         this.storageManager = storageManager;
     }
 
+
+    /** Profile Statistics **/
     /**
      * Forcefully set the app usage statistics for a profile. Overwrites previously saved stats.
      * @param obj A profile statistics container object.
@@ -119,7 +129,7 @@ public class StatsManager {
      * Remove all profile statistics from storage.
      */
     public void removeAllProfileStats() {
-        storageManager.getDefaultManager().removeObjectsWithPrefix(STATS_GROUP_IDENTIFIER);
+        storageManager.removeObjectsWithPrefix(STATS_GROUP_IDENTIFIER);
     }
 
     /**
@@ -127,11 +137,162 @@ public class StatsManager {
      * @param identifier The identifier of the profile (and stats object) to remove.
      */
     public void removeProfileStatWithIdentifier(@NonNull String identifier) {
-        storageManager.getDefaultManager().removeObject(STATS_GROUP_IDENTIFIER, identifier);
+        storageManager.removeObject(STATS_GROUP_IDENTIFIER, identifier);
 
         StatsManagerDelegate delegateRef = delegate.get();
         if (delegateRef != null) {
             delegateRef.managerDidRemoveProfileStat(this);
         }
+    }
+
+
+
+
+
+    /** Streak Statistics **/
+
+    /**
+     * Set the daily streak to a specific value and save it to disk.
+     * @param count The value to set the daily streak stat to.
+     */
+    public void setDailyStreak(@NonNull Integer count) {
+        StreakStat stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, DAILY_STREAK_IDENTIFIER);
+        if (stat != null) {
+            stat.setCount(count);
+        } else {
+            stat = new StreakStat(DAILY_STREAK_IDENTIFIER, count);
+        }
+
+        storageManager.setObject(stat, STREAKS_GROUP_IDENTIFIER, DAILY_STREAK_IDENTIFIER);
+    }
+
+    /**
+     * Get the current daily streak value.
+     * @return An Integer representing the current daily streak.
+     */
+    public Integer getDailyStreak() {
+        StreakStat stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, DAILY_STREAK_IDENTIFIER);
+        if (stat != null) {
+            return stat.getCount();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Increment the daily streak stat object by one and save it to disk.
+     */
+    public void incrementDailyStreak() {
+        StreakStat stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, YEARLY_STREAK_IDENTIFIER);
+
+        if (stat != null &&
+                (Calendar.getInstance().compareTo(stat.getTimestamp()) <= 0 ||
+                        Calendar.getInstance().getTimeInMillis() - stat.getTimestamp().getTimeInMillis() < 24*60*60*1000)) {
+            return;
+        }
+
+        Integer streak = getDailyStreak() + 1;
+        setDailyStreak(streak);
+    }
+
+
+
+
+    /**
+     * Set the monthly streak to a specific value and save it to disk.
+     * @param count The value to set the monthly streak stat to.
+     */
+    public void setMonthlyStreak(@NonNull Integer count) {
+        StreakStat stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, MONTHLY_STREAK_IDENTIFIER);
+        if (stat != null) {
+            stat.setCount(count);
+        } else {
+            stat = new StreakStat(MONTHLY_STREAK_IDENTIFIER, count);
+        }
+
+        storageManager.setObject(stat, STREAKS_GROUP_IDENTIFIER, MONTHLY_STREAK_IDENTIFIER);
+    }
+
+    /**
+     * Get the current monthly streak value.
+     * @return An Integer representing the current monthly streak.
+     */
+    public Integer getMonthlyStreak() {
+        StreakStat stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, MONTHLY_STREAK_IDENTIFIER);
+        if (stat != null) {
+            return stat.getCount();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Increment the monthly streak stat object by one and save it to disk.
+     */
+    public void incrementMonthlyStreak() {
+        StreakStat stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, MONTHLY_STREAK_IDENTIFIER);
+
+        if (stat != null &&
+                (Calendar.getInstance().compareTo(stat.getTimestamp()) <= 0 ||
+                        daysBetween(Calendar.getInstance(), stat.getTimestamp()) < 30)) {
+            return;
+        }
+
+        Integer streak = getMonthlyStreak() + 1;
+        setMonthlyStreak(streak);
+    }
+
+
+
+
+    /**
+     * Set the yearly streak to a specific value and save it to disk.
+     * @param count The value to set the yearly streak stat to.
+     */
+    public void setYearlyStreak(@NonNull Integer count) {
+        StreakStat stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, YEARLY_STREAK_IDENTIFIER);
+        if (stat != null) {
+            stat.setCount(count);
+        } else {
+            stat = new StreakStat(YEARLY_STREAK_IDENTIFIER, count);
+        }
+
+        storageManager.setObject(stat, STREAKS_GROUP_IDENTIFIER, YEARLY_STREAK_IDENTIFIER);
+    }
+
+    /**
+     * Get the current yearly streak value.
+     * @return An Integer representing the current yearly streak.
+     */
+    public Integer getYearlyStreak() {
+        StreakStat stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, YEARLY_STREAK_IDENTIFIER);
+        if (stat != null) {
+            return stat.getCount();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Increment the yearly streak stat object by one and save it to disk.
+     */
+    public void incrementYearlyStreak() {
+        StreakStat stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, YEARLY_STREAK_IDENTIFIER);
+
+        if (stat != null &&
+                (Calendar.getInstance().compareTo(stat.getTimestamp()) <= 0 ||
+                daysBetween(Calendar.getInstance(), stat.getTimestamp()) < 365)) {
+            return;
+        }
+
+        Integer streak = getYearlyStreak() + 1;
+        setYearlyStreak(streak);
+    }
+
+    /** Util **/
+    private long daysBetween(Calendar startDate, Calendar endDate) {
+        long end = endDate.getTimeInMillis();
+        long start = startDate.getTimeInMillis();
+        return TimeUnit.MILLISECONDS.toDays(Math.abs(end - start));
     }
 }
