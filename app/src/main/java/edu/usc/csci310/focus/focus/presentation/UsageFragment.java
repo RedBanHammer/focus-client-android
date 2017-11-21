@@ -394,10 +394,10 @@ public class UsageFragment extends Fragment implements StatsManagerDelegate {
         Calendar currDay = getLastWeek();
         Calendar nextDay = (Calendar)currDay.clone();
         nextDay.add(Calendar.DATE, 1);
-        ProfileStat profileStat1 = new ProfileStat(profiles.get(0).getIdentifier());
+//        ProfileStat profileStat1 = new ProfileStat(profiles.get(0).getIdentifier());
 //        profileStat1.addFocusedInterval(currDay, durations.get(0));
 //        profileStat1.addFocusedInterval(nextDay, durations.get(2));
-        ProfileStat profileStat2 = new ProfileStat(profiles.get(2).getIdentifier());
+//        ProfileStat profileStat2 = new ProfileStat(profiles.get(2).getIdentifier());
 //        profileStat2.addFocusedInterval(currDay, durations.get(1));
 //        profileStat2.addFocusedInterval(nextDay, durations.get(3));
         StatsManager.getDefaultManager().removeAllProfileStats();
