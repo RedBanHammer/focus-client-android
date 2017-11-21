@@ -170,7 +170,7 @@ public class UsageFragment extends Fragment implements StatsManagerDelegate {
             float[] times = new float[labels.size()];
 
             int statIndex = 0;
-            if (i >= currentDayOfWeek) {
+            if (i <= currentDayOfWeek) {
                 for (ProfileStat ps : profileStatArrayList) {
                     //for each profileStat, extract the hours on each day.
                     //set date, month, year, (start time, hour and minute)
