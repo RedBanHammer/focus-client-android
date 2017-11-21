@@ -87,12 +87,12 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
         ArrayList<App> apps = this.profile.getApps();
         ImageView appImage = (ImageView) view.findViewById(R.id.miniApp1);
 
-        for (int i = 0; i < apps.size(); i++) {
+        for (int i = 0; i < 6; i++) {
             // Populate the data into the template view using the data object
             Drawable icon = null;
             try {
                 if (i < apps.size()) icon = this.getContext().getPackageManager().getApplicationIcon(apps.get(i).getIdentifier());
-                else icon = ContextCompat.getDrawable(this.getContext(), R.drawable.ic_add_black_24dp);
+                else icon = ContextCompat.getDrawable(this.getContext(), R.drawable.ic_transparent);
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }
@@ -115,7 +115,7 @@ public class ProfileListViewAdapter extends ArrayAdapter<Profile> {
                     appImage = (ImageView) view.findViewById(R.id.miniApp6);
                     break;
                 case 5:
-                    i = apps.size(); // a way of breaking out of the for loop
+                    //i = apps.size(); // a way of breaking out of the for loop
                     break;
             }
         }
