@@ -88,12 +88,6 @@ public class UsageFragment extends Fragment implements StatsManagerDelegate {
         render();
     }
 
-    private void render() {
-        loadDataProfileBarChart();
-        loadDataAppBarChart();
-        loadDataTotalPieChart();
-    }
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
