@@ -199,6 +199,54 @@ public class StatsManager {
 
 
     /**
+     * Set the weekly streak to a specific value and save it to disk.
+     * @param count The value to set the weekly streak stat to.
+     */
+    public void setWeeklyStreak(@NonNull Integer count) {
+        StreakStat stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, WEEKLY_STREAK_IDENTIFIER);
+        if (stat != null) {
+            stat.setCount(count);
+        } else {
+            stat = new StreakStat(WEEKLY_STREAK_IDENTIFIER, count);
+        }
+
+        storageManager.setObject(stat, STREAKS_GROUP_IDENTIFIER, WEEKLY_STREAK_IDENTIFIER);
+    }
+
+    /**
+     * Get the current weekly streak value.
+     * @return An Integer representing the current weekly streak.
+     */
+    public Integer getWeeklyStreak() {
+        StreakStat stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, WEEKLY_STREAK_IDENTIFIER);
+        if (stat != null) {
+            return stat.getCount();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Increment the weekly streak stat object by one and save it to disk.
+     */
+    public void incrementWeeklyStreak() {
+        StreakStat stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, WEEKLY_STREAK_IDENTIFIER);
+
+        if (stat != null &&
+                (Calendar.getInstance().compareTo(stat.getTimestamp()) <= 0 ||
+                        daysBetween(Calendar.getInstance(), stat.getTimestamp()) < 7)) {
+            return;
+        }
+
+        Integer streak = getWeeklyStreak() + 1;
+        setWeeklyStreak(streak);
+    }
+
+
+
+
+
+    /**
      * Set the monthly streak to a specific value and save it to disk.
      * @param count The value to set the monthly streak stat to.
      */
