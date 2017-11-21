@@ -28,10 +28,12 @@ public class StreakStat extends NamedObject {
     public StreakStat(@NonNull String identifier, @NonNull Integer count) {
         super("streak-stat", identifier);
         this.count = count;
+        this.timestamp = Calendar.getInstance();
     }
 
     public void setCount(@NonNull Integer count) {
         this.count = count;
+        this.timestamp = Calendar.getInstance();
     }
 
     public @NonNull Integer getCount() {
