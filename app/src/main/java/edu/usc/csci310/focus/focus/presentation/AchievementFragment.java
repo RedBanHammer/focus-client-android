@@ -2,6 +2,7 @@ package edu.usc.csci310.focus.focus.presentation;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -117,7 +118,7 @@ public class AchievementFragment extends Fragment {
         public View getView(int position, View convertView, ViewGroup viewGroup) {
             View view = convertView;
 
-            AchievementStat achievementStat = achievementsList.get(position);
+            final AchievementStat achievementStat = achievementsList.get(position);
 
             // Check if an existing view is being reused, otherwise inflate the view
             ViewHolder viewHolder = null; // view lookup cache stored in tag
@@ -145,11 +146,20 @@ public class AchievementFragment extends Fragment {
                 viewHolder.achievementImage.setEnabled(false);
             }
 
-            //TODO: Launch sharing to Twitter/Facebook
             viewHolder.achievementImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    //this opens a sharing page for apps that are on the emulator
+                    //if there is only 1 app it automatically chooses to share.
+                    final String MESSAGE = achievementStat.getDescription();
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_SEND);
 
+                    // change the type of data you need to share,
+                    // for image use "image/*"
+                    intent.setType("text/plain");
+                    intent.putExtra(Intent.EXTRA_TEXT, MESSAGE);
+                    startActivity(Intent.createChooser(intent, "Share"));
                 }
             });
 
