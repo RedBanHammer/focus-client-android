@@ -41,7 +41,7 @@ public class AchievementFragment extends Fragment {
             R.drawable.light_green_badge, R.drawable.magenta_badge, R.drawable.pink_badge,
             R.drawable.red_badge, R.drawable.sky_blue_badge, R.drawable.yellow_badge, R.drawable.blank_achievement};
     private static final int NUM_ACHIEVEMENTS = 9;
-    int [] dayCounts = {5, 7, 14, 21, 31, 61, 91, 365, 730};
+    int [] dayCounts = {5, 7, 14, 21, 30, 60, 90, 365, 730};
     public AchievementFragment() {
         // Required empty public constructor
     }
