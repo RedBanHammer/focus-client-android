@@ -41,9 +41,7 @@ public class AchievementFragment extends Fragment {
             R.drawable.light_green_badge, R.drawable.magenta_badge, R.drawable.pink_badge,
             R.drawable.red_badge, R.drawable.sky_blue_badge, R.drawable.yellow_badge, R.drawable.blank_achievement};
     private static final int NUM_ACHIEVEMENTS = 9;
-    int [] dayCounts = {5, 7, 14, 21, 31, 61, 91, 365, 730};
-    String days, weeks, months, years;
-    int totalDays;
+    int [] dayCounts = {5, 7, 14, 21, 30, 60, 90, 365, 730};
     public AchievementFragment() {
         // Required empty public constructor
     }
@@ -72,16 +70,25 @@ public class AchievementFragment extends Fragment {
         weekCount = v.findViewById(R.id.week_counter_text);
         monthCount = v.findViewById(R.id.month_counter_text);
         yearCount = v.findViewById(R.id.year_counter_text);
-        days = Integer.toString(StatsManager.getDefaultManager().getDailyStreak());
-        weeks = Integer.toString(StatsManager.getDefaultManager().getWeeklyStreak());
-        months = Integer.toString(StatsManager.getDefaultManager().getMonthlyStreak());
-        years = Integer.toString(StatsManager.getDefaultManager().getYearlyStreak());
-        totalDays = StatsManager.getDefaultManager().getDailyStreak() + StatsManager.getDefaultManager().getWeeklyStreak()*7 +
-                StatsManager.getDefaultManager().getMonthlyStreak()*30 + StatsManager.getDefaultManager().getYearlyStreak()*365;
-        dayCount.setText(days);
-        weekCount.setText(weeks);
-        monthCount.setText(months);
-        yearCount.setText(years);
+        int totalDays = StatsManager.getDefaultManager().getDailyStreak();
+        int days =0; int weeks=0; int months=0; int years=0;
+        while(totalDays-365>=0){
+            totalDays -=365;
+            years++;
+        }
+        while (totalDays-30>=0){
+            totalDays -=30;
+            months++;
+        }
+        while (totalDays-7>=0){
+            totalDays -=7;
+            weeks++;
+        }
+        days = totalDays;
+        dayCount.setText(Integer.toString(days));
+        weekCount.setText(Integer.toString(weeks));
+        monthCount.setText(Integer.toString(months));
+        yearCount.setText(Integer.toString(years));
 
         achievementsAdapter = new AchievementsAdapter(getContext(), achievementStats);
         gridView.setAdapter(achievementsAdapter);
@@ -139,7 +146,7 @@ public class AchievementFragment extends Fragment {
             viewHolder.achievementName.setText(achievementStat.getName());
             viewHolder.achievementDesc.setText(achievementStat.getDescription());
 
-            if (totalDays >= dayCounts[position]){
+            if (StatsManager.getDefaultManager().getDailyStreak() >= dayCounts[position]){
                 viewHolder.achievementImage.setImageResource(imageIds[position]);
             }else{
                 viewHolder.achievementImage.setImageResource(imageIds[NUM_ACHIEVEMENTS]);
