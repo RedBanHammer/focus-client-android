@@ -20,6 +20,7 @@ import edu.usc.csci310.focus.focus.dataobjects.App;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.managers.BlockingManager;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
+import edu.usc.csci310.focus.focus.managers.StatsManager;
 import edu.usc.csci310.focus.focus.presentation.SplashScreen;
 
 /**
@@ -80,6 +81,8 @@ public class AppBlocker extends IntentService implements Blocker {
                             LogEntry logEntry = new LogEntry(app, null, null, LogEntry.LogEntryEventType.OPEN);
                             LoggingService.logEntry(logEntry);
 
+                            this.clearStreaks();
+
                             // Block the app by bringing Focus into the foreground with info.
                             this.bringToForeground(app);
 
@@ -97,6 +100,10 @@ public class AppBlocker extends IntentService implements Blocker {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void clearStreaks() {
+        StatsManager.getDefaultManager().resetAllStreaks();
     }
 
     private void bringToForeground(App app) {

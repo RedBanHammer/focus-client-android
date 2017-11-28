@@ -285,6 +285,7 @@ public class BlockingManager extends IntentService implements ProfileManagerDele
     /** Statistics **/
     private void updateStreakStats() {
         StatsManager.getDefaultManager().incrementDailyStreak();
+        StatsManager.getDefaultManager().incrementWeeklyStreak();
         StatsManager.getDefaultManager().incrementMonthlyStreak();
         StatsManager.getDefaultManager().incrementYearlyStreak();
     }

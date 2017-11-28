@@ -158,6 +158,16 @@ public class StatsManager {
     /** Streak Statistics **/
 
     /**
+     * Resets all streaks back to zero. Happens when the user opens a blocked app.
+     */
+    public void resetAllStreaks() {
+        setDailyStreak(0);
+        setWeeklyStreak(0);
+        setMonthlyStreak(0);
+        setYearlyStreak(0);
+    }
+
+    /**
      * Set the daily streak to a specific value and save it to disk.
      * @param count The value to set the daily streak stat to.
      */
@@ -189,7 +199,12 @@ public class StatsManager {
      * Increment the daily streak stat object by one and save it to disk.
      */
     public void incrementDailyStreak() {
-        StreakStat stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, YEARLY_STREAK_IDENTIFIER);
+        StreakStat stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, DAILY_STREAK_IDENTIFIER);
+
+        if (stat == null) {
+            setDailyStreak(0);
+            stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, DAILY_STREAK_IDENTIFIER);
+        }
 
         if (stat != null &&
                 (Calendar.getInstance().compareTo(stat.getTimestamp()) <= 0 ||
@@ -197,7 +212,7 @@ public class StatsManager {
             return;
         }
 
-        Integer streak = getDailyStreak() + 1;
+        Integer streak = getDailyStreak() + (int)daysBetween(stat.getTimestamp(), Calendar.getInstance());
         setDailyStreak(streak);
     }
 
@@ -238,13 +253,18 @@ public class StatsManager {
     public void incrementWeeklyStreak() {
         StreakStat stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, WEEKLY_STREAK_IDENTIFIER);
 
+        if (stat == null) {
+            setWeeklyStreak(0);
+            stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, WEEKLY_STREAK_IDENTIFIER);
+        }
+
         if (stat != null &&
                 (Calendar.getInstance().compareTo(stat.getTimestamp()) <= 0 ||
                         daysBetween(Calendar.getInstance(), stat.getTimestamp()) < 7)) {
             return;
         }
 
-        Integer streak = getWeeklyStreak() + 1;
+        Integer streak = getWeeklyStreak() + (int)daysBetween(stat.getTimestamp(), Calendar.getInstance())/7;
         setWeeklyStreak(streak);
     }
 
@@ -286,13 +306,18 @@ public class StatsManager {
     public void incrementMonthlyStreak() {
         StreakStat stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, MONTHLY_STREAK_IDENTIFIER);
 
+        if (stat == null) {
+            setMonthlyStreak(0);
+            stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, MONTHLY_STREAK_IDENTIFIER);
+        }
+
         if (stat != null &&
                 (Calendar.getInstance().compareTo(stat.getTimestamp()) <= 0 ||
                         daysBetween(Calendar.getInstance(), stat.getTimestamp()) < 30)) {
             return;
         }
 
-        Integer streak = getMonthlyStreak() + 1;
+        Integer streak = getMonthlyStreak() + (int)daysBetween(stat.getTimestamp(), Calendar.getInstance())/30;
         setMonthlyStreak(streak);
     }
 
@@ -333,13 +358,18 @@ public class StatsManager {
     public void incrementYearlyStreak() {
         StreakStat stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, YEARLY_STREAK_IDENTIFIER);
 
+        if (stat == null) {
+            setYearlyStreak(0);
+            stat = storageManager.getObject(STREAKS_GROUP_IDENTIFIER, YEARLY_STREAK_IDENTIFIER);
+        }
+
         if (stat != null &&
                 (Calendar.getInstance().compareTo(stat.getTimestamp()) <= 0 ||
                 daysBetween(Calendar.getInstance(), stat.getTimestamp()) < 365)) {
             return;
         }
 
-        Integer streak = getYearlyStreak() + 1;
+        Integer streak = getYearlyStreak() + (int)daysBetween(stat.getTimestamp(), Calendar.getInstance())/365;
         setYearlyStreak(streak);
     }
 
