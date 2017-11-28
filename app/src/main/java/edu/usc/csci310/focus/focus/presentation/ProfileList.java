@@ -4,6 +4,7 @@ package edu.usc.csci310.focus.focus.presentation;
  */
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,9 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
-import edu.usc.csci310.focus.focus.managers.BlockingManager;
-import android.widget.ToggleButton;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -26,14 +24,8 @@ import java.util.Calendar;
 
 import edu.usc.csci310.focus.focus.R;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
-import edu.usc.csci310.focus.focus.dataobjects.RecurringTime;
-import edu.usc.csci310.focus.focus.dataobjects.Schedule;
-import edu.usc.csci310.focus.focus.managers.BlockingManager;
+import edu.usc.csci310.focus.focus.dataobjects.ProfileStat;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
-import edu.usc.csci310.focus.focus.managers.ScheduleManager;
-
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
 
 public class ProfileList extends Fragment {
     public static ProfileList profileList = null;
@@ -43,6 +35,7 @@ public class ProfileList extends Fragment {
     FloatingActionButton addProfileButton;
     ProfileListViewAdapter profileListViewAdapter;
     public final static String PROFILE_ARRAYLIST = "profile_arraylist";
+
     // newInstance constructor for creating fragment with arguments
     public static ProfileList newInstance(int page, String title) {
         ProfileList profileListFragment = new ProfileList();
@@ -102,6 +95,8 @@ public class ProfileList extends Fragment {
         ArrayList<Profile> newProfiles = ProfileManager.getDefaultManager().getAllProfiles();
         this.profileListViewAdapter.setProfiles(newProfiles);
         this.profiles = newProfiles;
+
+        //parent.measure(parent.getWidth(), parent.getHeight());
     }
 
     @Override

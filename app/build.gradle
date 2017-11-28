@@ -48,11 +48,11 @@ dependencies {
     compile 'com.github.alamkanak:android-week-view:1.2.6'
     compile 'com.google.android.gms:play-services-plus:11.0.4'
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.2'
+    compile 'nl.dionsegijn:konfetti:1.1.0'
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:2.7.22'
     androidTestCompile 'com.android.support.test.espresso:espresso-intents:2.2.2'
     androidTestCompile 'com.android.support:support-annotations:23.1.1'
     androidTestCompile 'org.mockito:mockito-android:2.7.22'
     androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.1'
-
 }
