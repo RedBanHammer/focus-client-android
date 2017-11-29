@@ -43,6 +43,7 @@ import edu.usc.csci310.focus.focus.dataobjects.AchievementStat;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.ProfileStat;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
+import edu.usc.csci310.focus.focus.dataobjects.ScheduledProfile;
 import edu.usc.csci310.focus.focus.managers.BlockingManager;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
 import edu.usc.csci310.focus.focus.managers.ScheduleManager;
@@ -141,24 +142,41 @@ public class MainActivity extends AppCompatActivity {
 
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) - 1);
-            Long duration= new Long(2);
+            Long duration= new Long(3);
 
-            HashMap<Calendar, Long> focusedIntervals;
+            HashMap<Calendar, Long> focusedIntervals = null;
+            ArrayList<Schedule> activeSchedules = ScheduleManager.getDefaultManager().getActiveSchedules();
 
-            for (ProfileStat ps : profileStatArrayList) {
-                focusedIntervals = ps.getFocusedIntervalsInInterval(calendar, duration);
-                if (focusedIntervals.size() > 0) {
-                    konfettiView.build()
-                            .addColors(Color.rgb(66, 220, 244), Color.rgb(49, 226, 223), Color.rgb(43, 179, 188))
-                            .setDirection(0.0, 359.0)
-                            .setSpeed(1f, 5f)
-                            .setFadeOutEnabled(true)
-                            .setTimeToLive(2000L)
-                            .addShapes(Shape.RECT, Shape.CIRCLE)
-                            .addSizes(new Size(12, 5f))
-                            .setPosition(-50f, konfettiView.getWidth() + 50f, -50f, -50f)
-                            .stream(300, 5000L);
-                    break;
+            for (Schedule s : activeSchedules) {
+                ArrayList<ScheduledProfile> profiles = s.getScheduledProfiles();
+
+                for (ScheduledProfile p : profiles) {
+                    ArrayList<Long> timesRemaining = s.getTimesRemainingWithProfileIdentifier(p.identifier);
+
+                    for (ProfileStat ps : profileStatArrayList) {
+                        if (ps.getIdentifier().equals(p.identifier)) {
+                            focusedIntervals = ps.getFocusedIntervalsInInterval(calendar, duration);
+                            break;
+                        }
+                    }
+
+                    for (Long t : timesRemaining) {
+                        if (t == 0) {
+                            if (focusedIntervals != null && focusedIntervals.size() > 0) {
+                                konfettiView.build()
+                                        .addColors(Color.rgb(66, 220, 244), Color.rgb(49, 226, 223), Color.rgb(43, 179, 188))
+                                        .setDirection(0.0, 359.0)
+                                        .setSpeed(1f, 5f)
+                                        .setFadeOutEnabled(true)
+                                        .setTimeToLive(2000L)
+                                        .addShapes(Shape.RECT, Shape.CIRCLE)
+                                        .addSizes(new Size(12, 5f))
+                                        .setPosition(-50f, konfettiView.getWidth() + 50f, -50f, -50f)
+                                        .stream(300, 5000L);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
 
