@@ -70,30 +70,24 @@ public class AppBlocker extends IntentService implements Blocker {
 
     public void run() {
         while (true) {
-            // If blocking, monitor system apps
-//            synchronized (this.isBlockingMutex) {
-//                if (this.isBlocking) {
-                    String packageName = this.getRecentAppPackageName(this);
 
-                    for (App app : this.apps) {
-                        if (packageName.equals(app.getIdentifier())) {
-                            // Create a log entry
-                            LogEntry logEntry = new LogEntry(app, null, null, LogEntry.LogEntryEventType.OPEN);
-                            LoggingService.logEntry(logEntry);
+            String packageName = this.getRecentAppPackageName(this);
 
-                            this.clearStreaks();
+            for (App app : this.apps) {
+                if (packageName.equals(app.getIdentifier())) {
+                    // Create a log entry
+                    LogEntry logEntry = new LogEntry(app, null, null, LogEntry.LogEntryEventType.OPEN);
+                    LoggingService.logEntry(logEntry);
 
-                            // Block the app by bringing Focus into the foreground with info.
-                            this.bringToForeground(app);
+                    this.clearStreaks();
 
-                            break;
-                        }
-                    }
+                    // Block the app by bringing Focus into the foreground with info.
+                    this.bringToForeground(app);
 
-//                }
-//            }
+                    break;
+                }
+            }
 
-//            Thread.yield();
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {

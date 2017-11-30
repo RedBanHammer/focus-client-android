@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -29,17 +30,20 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 
 import edu.usc.csci310.focus.focus.dataobjects.AchievementStat;
 import edu.usc.csci310.focus.focus.dataobjects.Profile;
 import edu.usc.csci310.focus.focus.dataobjects.ProfileStat;
 import edu.usc.csci310.focus.focus.dataobjects.Schedule;
+import edu.usc.csci310.focus.focus.dataobjects.ScheduledProfile;
 import edu.usc.csci310.focus.focus.managers.BlockingManager;
 import edu.usc.csci310.focus.focus.managers.ProfileManager;
 import edu.usc.csci310.focus.focus.managers.ScheduleManager;
@@ -51,6 +55,9 @@ import edu.usc.csci310.focus.focus.presentation.UsageFragment;
 import edu.usc.csci310.focus.focus.receivers.AlarmReceiver;
 import edu.usc.csci310.focus.focus.storage.StorageManager;
 import edu.usc.csci310.focus.focus.presentation.schedule.ScheduleList;
+import nl.dionsegijn.konfetti.KonfettiView;
+import nl.dionsegijn.konfetti.models.Shape;
+import nl.dionsegijn.konfetti.models.Size;
 
 import static edu.usc.csci310.focus.focus.R.id.viewPager;
 
@@ -62,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
     ViewPager mViewPager;
     TabLayout tabLayout;
     private ArrayList<AchievementStat> achievementStats;
+    private ArrayList<ProfileStat> profileStatArrayList;
+
     private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
 
     // Tab titles
@@ -127,6 +136,50 @@ public class MainActivity extends AppCompatActivity {
         // Returns the fragment to display for that page
         @Override
         public Fragment getItem(int position) {
+            final KonfettiView konfettiView = (KonfettiView)findViewById(R.id.konfettiView);
+
+            profileStatArrayList = StatsManager.getDefaultManager().getAllProfileStats();
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE) - 1);
+            Long duration= new Long(3);
+
+            HashMap<Calendar, Long> focusedIntervals = null;
+            ArrayList<Schedule> activeSchedules = ScheduleManager.getDefaultManager().getActiveSchedules();
+
+            for (Schedule s : activeSchedules) {
+                ArrayList<ScheduledProfile> profiles = s.getScheduledProfiles();
+
+                for (ScheduledProfile p : profiles) {
+                    ArrayList<Long> timesRemaining = s.getTimesRemainingWithProfileIdentifier(p.identifier);
+
+                    for (ProfileStat ps : profileStatArrayList) {
+                        if (ps.getIdentifier().equals(p.identifier)) {
+                            focusedIntervals = ps.getFocusedIntervalsInInterval(calendar, duration);
+                            break;
+                        }
+                    }
+
+                    for (Long t : timesRemaining) {
+                        if (t == 0) {
+                            if (focusedIntervals != null && focusedIntervals.size() > 0) {
+                                konfettiView.build()
+                                        .addColors(Color.rgb(66, 220, 244), Color.rgb(49, 226, 223), Color.rgb(43, 179, 188))
+                                        .setDirection(0.0, 359.0)
+                                        .setSpeed(1f, 5f)
+                                        .setFadeOutEnabled(true)
+                                        .setTimeToLive(2000L)
+                                        .addShapes(Shape.RECT, Shape.CIRCLE)
+                                        .addSizes(new Size(12, 5f))
+                                        .setPosition(-50f, konfettiView.getWidth() + 50f, -50f, -50f)
+                                        .stream(300, 5000L);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
             ArrayList<Profile> profiles = ProfileManager.getDefaultManager().getAllProfiles();
             switch (position) {
                 case 0: // Profile List Fragment
@@ -162,6 +215,8 @@ public class MainActivity extends AppCompatActivity {
                     return null;
             }
         }
+
+
     }
 
     private void requestPermissions() {

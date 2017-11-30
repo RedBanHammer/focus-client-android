@@ -214,8 +214,11 @@ public class Schedule extends NamedObject {
                 // Check if contained within the start and start+duration
                 if (minutesPassed >= key && minutesPassed <= key + duration) {
                     timesRemaining.add(new Long(key + duration - minutesPassed));
-                } else {
+                } else if (minutesPassed >= key + duration && minutesPassed <= key + duration + 2) {
                     timesRemaining.add(new Long(0));
+                }
+                else {
+                    timesRemaining.add(new Long(-1));
                 }
             }
         }
